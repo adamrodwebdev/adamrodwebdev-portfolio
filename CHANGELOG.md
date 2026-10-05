@@ -2,6 +2,16 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.1.0] - 2026-10-05
+
+### Ajouté
+- Démo jouable de Catapulte Mania (8 niveaux) hébergée sur `/demos/catapulte-mania/`, ouverte dans un nouvel onglet depuis le carrousel.
+- Option `newTab` pour les liens des projets.
+
+### Corrigé
+- Le bouton de Catapulte Mania menait vers la version complète protégée par un verrou d'accès.
+- Démo : remplacement du texte `__VITE_PRELOAD__` laissé par Vite, qui bloquait le chargement.
+
 ## [1.0.0] - 2026-10-05
 
 Première mise en ligne sur https://adamrodwebdev.com.

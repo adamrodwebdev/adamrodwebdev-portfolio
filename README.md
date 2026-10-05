@@ -42,6 +42,13 @@ robots.txt, sitemap.xml, manifest.webmanifest, netlify.toml
 - **Autre hébergeur** : passez `formMode` à `'endpoint'` et renseignez `formEndpoint` (Formspree, Web3Forms, votre API).
 - **Démo** : `formMode: 'demo'` joue l'animation sans rien envoyer.
 
+## Démo de Catapulte Mania
+
+`demos/catapulte-mania/index.html` est la démo autonome du jeu (8 niveaux, sans verrou), générée dans le dépôt du jeu avec `npm run build:demo`.
+Pour la mettre à jour : reconstruisez la démo, remplacez ce fichier, puis poussez.
+
+Correctif appliqué à la version 4.1.1 : Vite avait laissé le texte `__VITE_PRELOAD__` dans le code (le jeu restait bloqué sur « Chargement… »). Il a été remplacé par `void 0` et l'empreinte `sha256` de la Content-Security-Policy recalculée. À corriger à la source dans `vite.config.js` du jeu.
+
 ## Ajouter un projet au carrousel
 
 Copiez un objet dans `js/data/projects.js` :
