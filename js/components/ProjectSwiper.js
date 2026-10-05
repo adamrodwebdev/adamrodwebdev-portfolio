@@ -153,7 +153,7 @@ export default {
             <h3 class="slide__title">{{ s.title }}</h3>
             <p class="slide__desc">{{ s.description }}</p>
             <ul class="slide__tags" role="list"><li v-for="t in s.tags" :key="t">{{ t }}</li></ul>
-            <a v-if="s.url" class="slide__link" :href="s.url" :target="s.url.startsWith('http') ? '_blank' : null" :rel="s.url.startsWith('http') ? 'noopener' : null">
+            <a v-if="s.url" class="slide__link" :href="s.url" :target="s.newTab || s.url.startsWith('http') ? '_blank' : null" :rel="s.newTab || s.url.startsWith('http') ? 'noopener' : null">
               {{ s.linkLabel || ('Découvrir ' + s.title) }}
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
             </a>

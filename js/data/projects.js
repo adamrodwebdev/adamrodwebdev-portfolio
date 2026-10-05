@@ -3,6 +3,7 @@
  * Pour ajouter un projet : copiez un objet, changez les champs, c'est tout.
  *  - status : 'live' (en ligne), 'dev' (en développement) ou 'soon' (à venir)
  *  - url    : lien vers le projet (laisser vide si non publié)
+ *  - newTab : true pour ouvrir le lien dans un nouvel onglet (automatique pour les liens externes)
  *  - art    : 'catapult', 'bastion' ou 'classified' (illustration générée)
  *            ou image : 'assets/projets/mon-projet.webp' (prioritaire si renseigné)
  */
@@ -13,8 +14,9 @@ export const projects = [
     status: 'live',
     description: "Jeu de catapulte médiéval jouable dans le navigateur : 100 niveaux en 10 chapitres, châteaux destructibles, mode solo ou coopération à deux. Moins de 400 Ko, jouable hors ligne.",
     tags: ['Vue 3', 'Vite', 'Physique 2D', 'Audio synthétisé'],
-    url: 'https://catapulte-mania.netlify.app',
-    linkLabel: 'Jouer à Catapulte Mania',
+    url: '/demos/catapulte-mania/',
+    newTab: true,
+    linkLabel: 'Jouer à la démo (8 niveaux)',
     art: 'catapult',
   },
   {

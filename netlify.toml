@@ -27,6 +27,13 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
+# Démo jouable de Catapulte Mania : non indexée (le jeu complet reste la page de référence)
+[[headers]]
+  for = "/demos/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    X-Frame-Options = "SAMEORIGIN"
+
 [[redirects]]
   from = "/*"
   to = "/404.html"
