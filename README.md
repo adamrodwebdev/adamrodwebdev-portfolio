@@ -31,7 +31,7 @@ robots.txt, sitemap.xml, manifest.webmanifest, netlify.toml
 
 ## À personnaliser avant la mise en ligne
 
-1. **Domaine** : remplacez `https://www.adamrodwebdev.com/` partout (index.html, robots.txt, sitemap.xml) par votre vrai domaine.
+1. **Domaine** : `https://adamrodwebdev.com` (constante `ORIGIN` dans `scripts/build-pages.mjs`, plus robots.txt et sitemap.xml).
 2. **Projets** : dans `js/data/projects.js`, complétez descriptions et liens de Catapulte Mania et Bastion. Pour une capture d'écran, ajoutez `image: 'assets/projets/bastion.webp'` et `imageAlt: '…'` (format WebP, 1520×800 conseillé).
 3. **E-mail** : `contactEmail` dans `js/config.js`.
 4. **Mentions légales** : complétez `mentions-legales.html` (obligatoire en France : SIRET, hébergeur…).
@@ -49,14 +49,30 @@ Pour la mettre à jour : reconstruisez la démo, remplacez ce fichier, puis pous
 
 Correctif appliqué à la version 4.1.1 : Vite avait laissé le texte `__VITE_PRELOAD__` dans le code (le jeu restait bloqué sur « Chargement… »). Il a été remplacé par `void 0` et l'empreinte `sha256` de la Content-Security-Policy recalculée. À corriger à la source dans `vite.config.js` du jeu.
 
+## Traductions (français / anglais)
+
+Le site existe en français (`/`) et en anglais (`/en/`). Tous les textes sont dans **`js/i18n/messages.js`**.
+
+- Les composants Vue les affichent avec **vue-i18n** (`t('cle')`), chargé depuis jsDelivr via l'import map.
+- Les pages statiques `index.html` et `en/index.html` sont **générées** à partir de `templates/index.html` :
+  ```bash
+  node scripts/build-pages.mjs
+  ```
+  Netlify lance cette commande à chaque déploiement. Ne modifiez pas `index.html` ou `en/index.html` à la main : modifiez le template ou les traductions.
+- Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @).
+
+Ajouter une langue : un bloc dans `messages.js`, une entrée dans `SUPPORTED` et dans `pages` (script de génération).
+
 ## Ajouter un projet au carrousel
 
-Copiez un objet dans `js/data/projects.js` :
-
-```js
-{ id: 'mon-projet', title: 'Mon projet', status: 'live', description: '…',
-  tags: ['Vue 3'], url: 'https://…', art: 'classified' }
-```
+1. Ajoutez un objet dans `js/data/projects.js` :
+   ```js
+   { id: 'mon-projet', status: 'live', url: 'https://…', art: 'classified' }
+   ```
+2. Ajoutez ses textes dans `js/i18n/messages.js`, en français **et** en anglais :
+   ```js
+   'mon-projet': { title: 'Mon projet', description: '…', tags: ['Vue 3'], link: 'Voir le projet' },
+   ```
 
 Le carrousel, les puces et le compteur s'adaptent automatiquement.
 

@@ -1,9 +1,11 @@
 import { ref, onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 /** Lecteur de la bande-son originale. Le moteur audio n'est chargé qu'au premier clic. */
 export default {
   name: 'MusicPlayer',
   setup() {
+    const { t } = useI18n();
     const playing = ref(false);
     const open = ref(false);
     const loading = ref(false);
@@ -54,19 +56,19 @@ export default {
     const onVolume = () => engine?.setVolume(volume.value / 100);
     onBeforeUnmount(() => { cancelAnimationFrame(raf); engine?.stop(); });
 
-    return { playing, open, loading, volume, viz, toggle, onVolume };
+    return { playing, open, loading, volume, viz, toggle, onVolume, t };
   },
   template: `
-  <aside class="player" :class="{ 'is-playing': playing, 'is-open': open }" aria-label="Bande-son du site">
+  <aside class="player" :class="{ 'is-playing': playing, 'is-open': open }" :aria-label="t('player.region')">
     <button class="player__toggle" type="button" @click="toggle" :aria-pressed="playing ? 'true' : 'false'"
-            :aria-label="playing ? 'Mettre la bande-son en pause' : 'Écouter la bande-son originale'">
+            :aria-label="playing ? t('player.pause') : t('player.play')">
       <canvas v-show="playing" ref="viz" class="player__viz" width="46" height="46" aria-hidden="true"></canvas>
       <span v-show="!playing" class="player__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </button>
     <div class="player__info" :inert="!open || null">
       <span class="player__title">Ascension</span>
-      <span class="player__sub">Thème original, synthétisé en direct</span>
-      <label class="visually-hidden" for="player-volume">Volume de la bande-son</label>
+      <span class="player__sub">{{ t('player.sub') }}</span>
+      <label class="visually-hidden" for="player-volume">{{ t('player.volume') }}</label>
       <input id="player-volume" class="player__vol" type="range" min="0" max="100" v-model.number="volume" @input="onVolume">
     </div>
   </aside>

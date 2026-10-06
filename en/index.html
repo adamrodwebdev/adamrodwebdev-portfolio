@@ -4,15 +4,15 @@
   Source : templates/index.html + js/i18n/messages.js
   Régénérer : node scripts/build-pages.mjs
 -->
-<html lang="fr" dir="ltr">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>AdamRodWebDev | Développeur web front-end Vue.js, sites rapides et SEO</title>
-  <meta name="description" content="AdamRodWebDev conçoit des sites web et applications Vue.js rapides, accessibles et optimisés pour le référencement. Portfolio, projets et demande de devis.">
+  <title>AdamRodWebDev | Front-end Vue.js web developer, fast sites and SEO</title>
+  <meta name="description" content="AdamRodWebDev designs and builds fast, accessible, search-optimized websites and Vue.js applications. Portfolio, projects and free quotes.">
   <meta name="author" content="AdamRodWebDev">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <link rel="canonical" href="https://adamrodwebdev.com/">
+  <link rel="canonical" href="https://adamrodwebdev.com/en/">
   <link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/">
   <link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/">
   <link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/">
@@ -22,19 +22,19 @@
   <meta name="color-scheme" content="dark light">
 
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="fr_FR">
-  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="fr_FR">
   <meta property="og:site_name" content="AdamRodWebDev">
-  <meta property="og:title" content="AdamRodWebDev, développeur web front-end Vue.js">
-  <meta property="og:description" content="Sites web et applications Vue.js rapides, accessibles et optimisés SEO.">
-  <meta property="og:url" content="https://adamrodwebdev.com/">
+  <meta property="og:title" content="AdamRodWebDev, front-end Vue.js web developer">
+  <meta property="og:description" content="Fast, accessible, SEO-optimized websites and Vue.js applications.">
+  <meta property="og:url" content="https://adamrodwebdev.com/en/">
   <meta property="og:image" content="https://adamrodwebdev.com/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Logo AdamRodWebDev en or sur fond noir">
+  <meta property="og:image:alt" content="AdamRodWebDev logo in gold on a black background">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AdamRodWebDev, développeur web front-end Vue.js">
-  <meta name="twitter:description" content="Sites web et applications Vue.js rapides, accessibles et optimisés SEO.">
+  <meta name="twitter:title" content="AdamRodWebDev, front-end Vue.js web developer">
+  <meta name="twitter:description" content="Fast, accessible, SEO-optimized websites and Vue.js applications.">
   <meta name="twitter:image" content="https://adamrodwebdev.com/assets/og-image.png">
 
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -93,10 +93,10 @@
         "@type": "ProfessionalService",
         "@id": "https://adamrodwebdev.com/#entreprise",
         "name": "AdamRodWebDev",
-        "url": "https://adamrodwebdev.com/",
+        "url": "https://adamrodwebdev.com/en/",
         "logo": "https://adamrodwebdev.com/assets/icon-512.png",
         "image": "https://adamrodwebdev.com/assets/og-image.png",
-        "description": "Conception et développement de sites web et d'applications Vue.js rapides, accessibles et optimisés pour le référencement.",
+        "description": "Design and development of fast, accessible, search-optimized websites and Vue.js applications.",
         "areaServed": { "@type": "Country", "name": "France" },
         "knowsAbout": ["Vue.js", "JavaScript", "HTML", "CSS", "SEO", "Web accessibility", "Web performance"]
       },
@@ -110,9 +110,9 @@
       },
       {
         "@type": "WebPage",
-        "url": "https://adamrodwebdev.com/",
-        "name": "AdamRodWebDev | Développeur web front-end Vue.js, sites rapides et SEO",
-        "inLanguage": "fr-FR",
+        "url": "https://adamrodwebdev.com/en/",
+        "name": "AdamRodWebDev | Front-end Vue.js web developer, fast sites and SEO",
+        "inLanguage": "en",
         "isPartOf": { "@id": "https://adamrodwebdev.com/#site" }
       }
     ]
@@ -120,24 +120,24 @@
   </script>
 </head>
 <body>
-  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <a class="skip-link" href="#contenu">Skip to content</a>
   <div class="scroll-progress" aria-hidden="true"></div>
 
   <header class="site-header" id="haut">
     <div id="nav-app">
-      <nav class="nav container" aria-label="Navigation principale">
-        <a class="brand" href="#accueil" aria-label="AdamRodWebDev, retour à l'accueil">
+      <nav class="nav container" aria-label="Main navigation">
+        <a class="brand" href="#accueil" aria-label="AdamRodWebDev, back to home">
           <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
           <span class="brand__name">AdamRod<b>WebDev</b></span>
         </a>
         <ul class="nav__links">
           <li><a href="#services">Services</a></li>
-          <li><a href="#projets">Projets</a></li>
-          <li><a href="#methode">Méthode</a></li>
+          <li><a href="#projets">Projects</a></li>
+          <li><a href="#methode">Process</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="nav__tools">
-          <a class="icon-btn lang-btn" href="/en/" hreflang="en" lang="en" aria-label="Read this site in English">EN</a>
+          <a class="icon-btn lang-btn" href="/" hreflang="fr" lang="fr" aria-label="Lire ce site en français">FR</a>
         </div>
       </nav>
     </div>
@@ -150,15 +150,15 @@
 
       <div class="container hero__inner">
         <div class="hero__copy">
-          <p class="hero__status"><span class="pulse-dot" aria-hidden="true"></span>Disponible pour de nouveaux projets</p>
+          <p class="hero__status"><span class="pulse-dot" aria-hidden="true"></span>Available for new projects</p>
           <h1 id="hero-title" class="hero__title">
             <span class="hero__line" data-scramble>AdamRod</span>
             <span class="hero__line hero__line--outline" data-scramble>WebDev</span>
           </h1>
-          <p class="hero__lead">Des sites web augmentés : rapides, accessibles et pensés pour marquer les esprits. Je conçois et développe vos interfaces avec Vue.js, du premier croquis à la mise en ligne.</p>
+          <p class="hero__lead">Augmented websites: fast, accessible and built to stand out. I design and build your interfaces with Vue.js, from the first sketch to launch day.</p>
           <div class="hero__actions">
-            <a class="btn btn--gold magnetic" href="#projets"><span>Voir les projets</span></a>
-            <a class="btn btn--ghost magnetic" href="#contact"><span>Démarrer un projet</span></a>
+            <a class="btn btn--gold magnetic" href="#projets"><span>See the projects</span></a>
+            <a class="btn btn--ghost magnetic" href="#contact"><span>Start a project</span></a>
           </div>
         </div>
 
@@ -177,59 +177,59 @@
             </g>
           </svg>
           <div class="hud-panel">
-            <p class="hud-panel__row"><span>Localisation</span><b>France, à distance</b></p>
-            <p class="hud-panel__row"><span>Heure locale</span><b class="hud-clock" data-clock>--:--:--</b></p>
-            <p class="hud-panel__row"><span>Spécialité</span><b>Vue.js, performance, SEO</b></p>
+            <p class="hud-panel__row"><span>Location</span><b>France, remote</b></p>
+            <p class="hud-panel__row"><span>Local time</span><b class="hud-clock" data-clock>--:--:--</b></p>
+            <p class="hud-panel__row"><span>Specialty</span><b>Vue.js, performance, SEO</b></p>
           </div>
         </div>
       </div>
 
-      <a class="hero__scroll" href="#services" aria-label="Descendre vers les services"><span></span></a>
+      <a class="hero__scroll" href="#services" aria-label="Scroll down to services"><span></span></a>
     </section>
 
     <section id="services" class="section" aria-labelledby="services-title">
       <div class="container">
         <header class="section__head reveal">
           <p class="section__tag">Augmentations</p>
-          <h2 id="services-title" class="section__title" data-scramble>Ce que j'apporte à votre projet</h2>
-          <p class="section__intro">Chaque site est construit pour trois choses : charger vite, être trouvé sur Google et convaincre vos visiteurs.</p>
+          <h2 id="services-title" class="section__title" data-scramble>What I bring to your project</h2>
+          <p class="section__intro">Every site is built to do three things: load fast, get found on Google and win over your visitors.</p>
         </header>
 
         <ul class="aug-grid" role="list">
           <li class="aug reveal tilt" style="--i:0">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 10h36v24H6zM18 40h12M24 34v6"/><path d="M12 18h14M12 24h20"/></svg>
-            <h3 class="aug__title">Sites vitrines</h3>
-            <p class="aug__text">Un site sur mesure qui présente votre activité clairement et transforme les visiteurs en clients.</p>
+            <h3 class="aug__title">Business websites</h3>
+            <p class="aug__text">A custom site that presents your business clearly and turns visitors into customers.</p>
             <p class="aug__meta">HTML, CSS, JavaScript</p>
           </li>
           <li class="aug reveal tilt" style="--i:1">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 8h10l10 17 10-17h10L24 42Z"/><path d="M14 8l10 17 10-17"/></svg>
-            <h3 class="aug__title">Applications Vue.js</h3>
-            <p class="aug__text">Interfaces riches et réactives : tableaux de bord, espaces clients, outils internes.</p>
+            <h3 class="aug__title">Vue.js applications</h3>
+            <p class="aug__text">Rich, responsive interfaces: dashboards, customer portals, internal tools.</p>
             <p class="aug__meta">Vue 3, Pinia, Vite</p>
           </li>
           <li class="aug reveal tilt" style="--i:2">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a18 18 0 1 1 32 0"/><path d="M24 34l9-13"/><circle cx="24" cy="34" r="3"/></svg>
             <h3 class="aug__title">Performance</h3>
-            <p class="aug__text">Objectif 95 et plus sur Lighthouse : images optimisées, code léger, chargement immédiat.</p>
+            <p class="aug__text">A Lighthouse score of 95 or more: optimized images, lean code, instant loading.</p>
             <p class="aug__meta">Core Web Vitals</p>
           </li>
           <li class="aug reveal tilt" style="--i:3">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="12"/><path d="M29 29l13 13M14 20h12M20 14v12"/></svg>
-            <h3 class="aug__title">Référencement</h3>
-            <p class="aug__text">Balisage sémantique, données structurées, métadonnées et sitemap pour être visible dès le lancement.</p>
-            <p class="aug__meta">SEO technique</p>
+            <h3 class="aug__title">SEO</h3>
+            <p class="aug__text">Semantic markup, structured data, metadata and a sitemap so you are visible from day one.</p>
+            <p class="aug__meta">Technical SEO</p>
           </li>
           <li class="aug reveal tilt" style="--i:4">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M8 17l16 4 16-4M24 21v8l-7 13M24 29l7 13"/></svg>
-            <h3 class="aug__title">Accessibilité</h3>
-            <p class="aug__text">Navigation au clavier, contrastes, lecteurs d'écran : un site utilisable par tous, conforme aux normes WCAG.</p>
-            <p class="aug__meta">WCAG 2.2, RGAA</p>
+            <h3 class="aug__title">Accessibility</h3>
+            <p class="aug__text">Keyboard navigation, contrast, screen readers: a site everyone can use, built to WCAG standards.</p>
+            <p class="aug__meta">WCAG 2.2</p>
           </li>
           <li class="aug reveal tilt" style="--i:5">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 38c8-20 14-28 18-28s6 12 10 12 6-6 8-8"/><path d="M6 38h36"/></svg>
             <h3 class="aug__title">Animation</h3>
-            <p class="aug__text">Transitions fluides et micro-interactions qui guident l'œil sans ralentir la page.</p>
+            <p class="aug__text">Smooth transitions and micro-interactions that guide the eye without slowing the page down.</p>
             <p class="aug__meta">CSS, View Transitions</p>
           </li>
         </ul>
@@ -239,16 +239,16 @@
     <section id="projets" class="section section--projects" aria-labelledby="projets-title">
       <div class="container">
         <header class="section__head reveal">
-          <p class="section__tag">Dossiers</p>
-          <h2 id="projets-title" class="section__title" data-scramble>Projets réalisés et à venir</h2>
-          <p class="section__intro">Faites glisser, utilisez les flèches du clavier ou les boutons pour parcourir les projets.</p>
+          <p class="section__tag">Case files</p>
+          <h2 id="projets-title" class="section__title" data-scramble>Projects, live and upcoming</h2>
+          <p class="section__intro">Swipe, use the arrow keys or the buttons to browse the projects.</p>
         </header>
       </div>
       <div id="projects-app" class="projects-app">
         <ul class="projects-static container" role="list">
-          <li><h3>Catapulte Mania</h3><p>Jeu de catapulte médiéval jouable dans le navigateur : 100 niveaux, châteaux destructibles, mode coopératif. <a href="/demos/catapulte-mania/">Jouer à la démo de Catapulte Mania</a></p></li>
-          <li><h3>Bastion</h3><p>Tower defense gratuit sur navigateur et mobile, six niveaux de vagues ennemies. <a href="https://bastion-tower-defense.netlify.app">Jouer à Bastion</a></p></li>
-          <li><h3>Projets à venir</h3><p>De nouveaux projets sont en cours de développement.</p></li>
+          <li><h3>Catapulte Mania</h3><p>A medieval catapult game you play in the browser: 100 levels, destructible castles, co-op mode. <a href="/demos/catapulte-mania/">Play the Catapulte Mania demo</a></p></li>
+          <li><h3>Bastion</h3><p>A free tower defense game for browser and mobile, with six levels of enemy waves. <a href="https://bastion-tower-defense.netlify.app">Play Bastion</a></p></li>
+          <li><h3>Upcoming projects</h3><p>New projects are in development.</p></li>
         </ul>
       </div>
     </section>
@@ -256,31 +256,31 @@
     <section id="methode" class="section" aria-labelledby="methode-title">
       <div class="container">
         <header class="section__head reveal">
-          <p class="section__tag">Protocole</p>
-          <h2 id="methode-title" class="section__title" data-scramble>Comment se déroule un projet</h2>
-          <p class="section__intro">Quatre étapes, un interlocuteur unique et des points d'étape réguliers.</p>
+          <p class="section__tag">Protocol</p>
+          <h2 id="methode-title" class="section__title" data-scramble>How a project runs</h2>
+          <p class="section__intro">Four steps, one point of contact and regular check-ins.</p>
         </header>
 
         <ol class="protocol" role="list">
           <li class="protocol__step reveal" style="--i:0">
             <span class="protocol__num" aria-hidden="true">01</span>
-            <h3>Analyse</h3>
-            <p>Un appel pour comprendre vos objectifs, votre public et vos contraintes. Vous recevez un devis détaillé.</p>
+            <h3>Discovery</h3>
+            <p>A call to understand your goals, your audience and your constraints. You get a detailed quote.</p>
           </li>
           <li class="protocol__step reveal" style="--i:1">
             <span class="protocol__num" aria-hidden="true">02</span>
-            <h3>Conception</h3>
-            <p>Maquettes de l'interface et arborescence du site, validées avec vous avant la moindre ligne de code.</p>
+            <h3>Design</h3>
+            <p>Interface mockups and site structure, approved with you before a single line of code.</p>
           </li>
           <li class="protocol__step reveal" style="--i:2">
             <span class="protocol__num" aria-hidden="true">03</span>
-            <h3>Développement</h3>
-            <p>Intégration, animations et optimisation. Une version de test en ligne vous permet de suivre l'avancement.</p>
+            <h3>Development</h3>
+            <p>Build, animation and optimization. A live preview lets you follow progress.</p>
           </li>
           <li class="protocol__step reveal" style="--i:3">
             <span class="protocol__num" aria-hidden="true">04</span>
-            <h3>Mise en ligne</h3>
-            <p>Audit Lighthouse, référencement, déploiement et formation. Le suivi continue après le lancement.</p>
+            <h3>Launch</h3>
+            <p>Lighthouse audit, SEO, deployment and training. Support continues after launch.</p>
           </li>
         </ol>
       </div>
@@ -288,7 +288,7 @@
 
     <section class="section section--tight" aria-labelledby="arsenal-title">
       <div class="container">
-        <h2 id="arsenal-title" class="section__title section__title--small reveal">Outils et technologies</h2>
+        <h2 id="arsenal-title" class="section__title section__title--small reveal">Tools and technologies</h2>
       </div>
       <div class="marquee" aria-hidden="true">
         <div class="marquee__track">
@@ -296,37 +296,37 @@
           <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Vue 3</span><span>Vite</span><span>Pinia</span><span>Nuxt</span><span>Web Audio</span><span>Canvas</span><span>Figma</span><span>Git</span><span>Netlify</span>
         </div>
       </div>
-      <p class="visually-hidden">Technologies utilisées : HTML5, CSS3, JavaScript, Vue 3, Vite, Pinia, Nuxt, Web Audio, Canvas, Figma, Git et Netlify.</p>
+      <p class="visually-hidden">Technologies used: HTML5, CSS3, JavaScript, Vue 3, Vite, Pinia, Nuxt, Web Audio, Canvas, Figma, Git and Netlify.</p>
     </section>
 
     <section id="contact" class="section section--contact" aria-labelledby="contact-title">
       <div class="container contact">
         <div class="contact__intro reveal">
           <p class="section__tag">Transmission</p>
-          <h2 id="contact-title" class="section__title" data-scramble>Parlons de votre projet</h2>
-          <p class="section__intro">Décrivez votre besoin en quelques lignes. Je vous réponds sous 48 heures ouvrées avec une première estimation.</p>
+          <h2 id="contact-title" class="section__title" data-scramble>Let's talk about your project</h2>
+          <p class="section__intro">Describe what you need in a few lines. I reply within 2 business days with a first estimate.</p>
           <dl class="contact__facts">
-            <div><dt>Délai de réponse</dt><dd>48 h ouvrées</dd></div>
-            <div><dt>Zone</dt><dd>France et international, à distance</dd></div>
-            <div><dt>Devis</dt><dd>Gratuit et sans engagement</dd></div>
+            <div><dt>Response time</dt><dd>2 business days</dd></div>
+            <div><dt>Area</dt><dd>France and worldwide, remote</dd></div>
+            <div><dt>Quote</dt><dd>Free, no commitment</dd></div>
           </dl>
         </div>
 
         <div id="contact-app" class="contact__form-wrap reveal" style="--i:1">
           <!-- Formulaire de secours (sans JavaScript), détecté aussi par Netlify Forms -->
-          <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/merci.html">
+          <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/en/thank-you.html">
             <input type="hidden" name="form-name" value="contact">
-            <p class="visually-hidden"><label>Ne pas remplir ce champ <input name="bot-field"></label></p>
-            <p class="field"><label for="f-nom">Nom</label><input id="f-nom" name="nom" autocomplete="name" required></p>
-            <p class="field"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" required></p>
-            <p class="field"><label for="f-entreprise">Entreprise</label><input id="f-entreprise" name="entreprise" autocomplete="organization"></p>
-            <p class="field"><label for="f-type">Type de projet</label>
-              <select id="f-type" name="type"><option>Site vitrine</option><option>Application Vue.js</option><option>Refonte</option><option>SEO et performance</option><option>Autre</option></select></p>
+            <p class="visually-hidden"><label>Leave this field empty <input name="bot-field"></label></p>
+            <p class="field"><label for="f-nom">Name</label><input id="f-nom" name="nom" autocomplete="name" required></p>
+            <p class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></p>
+            <p class="field"><label for="f-entreprise">Company</label><input id="f-entreprise" name="entreprise" autocomplete="organization"></p>
+            <p class="field"><label for="f-type">Project type</label>
+              <select id="f-type" name="type"><option>Business website</option><option>Vue.js application</option><option>Redesign</option><option>SEO and performance</option><option>Other</option></select></p>
             <p class="field"><label for="f-budget">Budget</label>
-              <select id="f-budget" name="budget"><option>Moins de 2 000 €</option><option>2 000 à 5 000 €</option><option>5 000 à 10 000 €</option><option>Plus de 10 000 €</option></select></p>
+              <select id="f-budget" name="budget"><option>Under €2,000</option><option>€2,000 to €5,000</option><option>€5,000 to €10,000</option><option>Over €10,000</option></select></p>
             <p class="field"><label for="f-message">Message</label><textarea id="f-message" name="message" rows="5" required></textarea></p>
-            <p class="field field--check"><input id="f-rgpd" name="rgpd" type="checkbox" required><label for="f-rgpd">J'accepte que mes données soient utilisées pour répondre à ma demande.</label></p>
-            <button class="btn btn--gold" type="submit"><span>Envoyer la demande</span></button>
+            <p class="field field--check"><input id="f-rgpd" name="rgpd" type="checkbox" required><label for="f-rgpd">I agree that my data will be used to reply to my request.</label></p>
+            <button class="btn btn--gold" type="submit"><span>Send request</span></button>
           </form>
         </div>
       </div>
@@ -335,21 +335,21 @@
 
   <footer class="site-footer">
     <div class="container footer">
-      <a class="brand" href="#accueil" aria-label="AdamRodWebDev, retour en haut de page">
+      <a class="brand" href="#accueil" aria-label="AdamRodWebDev, back to top">
         <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
         <span class="brand__name">AdamRod<b>WebDev</b></span>
       </a>
-      <nav aria-label="Navigation du pied de page">
+      <nav aria-label="Footer navigation">
         <ul class="footer__links">
           <li><a href="#services">Services</a></li>
-          <li><a href="#projets">Projets</a></li>
-          <li><a href="#methode">Méthode</a></li>
+          <li><a href="#projets">Projects</a></li>
+          <li><a href="#methode">Process</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a href="/mentions-legales.html">Mentions légales</a></li>
-          <li><a href="/en/" hreflang="en" lang="en">English</a></li>
+          <li><a href="/en/legal-notice.html">Legal notice</a></li>
+          <li><a href="/" hreflang="fr" lang="fr">Français</a></li>
         </ul>
       </nav>
-      <p class="footer__copy">© <span data-year>2026</span> AdamRodWebDev. Site conçu et développé en Vue.js.</p>
+      <p class="footer__copy">© <span data-year>2026</span> AdamRodWebDev. Site designed and built with Vue.js.</p>
     </div>
   </footer>
 

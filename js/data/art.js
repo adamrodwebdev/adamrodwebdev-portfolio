@@ -1,4 +1,7 @@
-/* Illustrations vectorielles des projets (animées quand la diapositive est active). */
+/* Illustrations vectorielles des projets (animées quand la diapositive est active).
+   Chaque fonction reçoit l'identifiant du projet et la fonction de traduction t() de vue-i18n. */
+
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
 const grid = `
   <defs>
@@ -13,8 +16,8 @@ const grid = `
   <rect width="760" height="400" fill="url(#g-{id})"/>
   <rect width="760" height="400" fill="url(#r-{id})"/>`;
 
-const catapult = (id) => `
-<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration : une catapulte lance un projectile vers une tour de blocs">
+const catapult = (id, t) => `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.catapultAlt'))}">
   ${grid.replaceAll('{id}', id)}
   <path d="M0 330H760" class="a-line"/>
   <path d="M0 338H760" class="a-soft" stroke-dasharray="4 10"/>
@@ -44,14 +47,14 @@ const catapult = (id) => `
     <path d="M620 210V180l18 8-18 8" class="a-line"/>
   </g>
   <g class="a-hud">
-    <text x="40" y="56" class="a-text">ANGLE 42°</text>
-    <text x="40" y="80" class="a-text">PUISSANCE 87 %</text>
+    <text x="40" y="56" class="a-text">${esc(t('art.angle'))}</text>
+    <text x="40" y="80" class="a-text">${esc(t('art.power'))}</text>
     <path d="M40 92h120" class="a-line"/>
     <path d="M40 92h104" class="a-line a-thick art-anim a-meter"/>
   </g>
 </svg>`;
 
-const bastion = (id) => {
+const bastion = (id, t) => {
   // Fort en étoile (tracé trace italienne) calculé
   const pts = (n, R, r, cx, cy, rot = -Math.PI / 2) => {
     const out = [];
@@ -63,7 +66,7 @@ const bastion = (id) => {
     return out.join(' ');
   };
   return `
-<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration : plan d'une forteresse en étoile vue du ciel, balayée par un radar">
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.bastionAlt'))}">
   ${grid.replaceAll('{id}', id)}
   <g transform="translate(0 0)">
     <polygon points="${pts(5, 165, 95, 380, 205)}" class="a-line a-soft-fill"/>
@@ -80,13 +83,13 @@ const bastion = (id) => {
       <rect x="600" y="300" width="10" height="10" class="a-fill art-anim a-blink" style="animation-delay:-2s"/>
     </g>
   </g>
-  <text x="40" y="56" class="a-text">SECTEUR 7 SÉCURISÉ</text>
-  <text x="40" y="80" class="a-text">REMPARTS 5/5</text>
+  <text x="40" y="56" class="a-text">${esc(t('art.sector'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.ramparts'))}</text>
 </svg>`;
 };
 
-const classified = (id) => `
-<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration : dossier verrouillé en cours de déchiffrement">
+const classified = (id, t) => `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.classifiedAlt'))}">
   ${grid.replaceAll('{id}', id)}
   <g class="a-float art-anim">
     <path d="M380 70 470 122v104l-90 52-90-52V122Z" class="a-line a-soft-fill"/>
@@ -100,8 +103,8 @@ const classified = (id) => `
     <rect x="330" y="320" width="60" height="12" class="a-fill art-anim a-blink" style="animation-delay:-.6s"/>
     <rect x="400" y="320" width="160" height="12" class="a-fill art-anim a-blink" style="animation-delay:-1.2s"/>
   </g>
-  <text x="40" y="56" class="a-text">ACCÈS RESTREINT</text>
-  <text x="40" y="80" class="a-text">DÉCHIFFREMENT EN COURS</text>
+  <text x="40" y="56" class="a-text">${esc(t('art.restricted'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.decrypting'))}</text>
 </svg>`;
 
 export const art = { catapult, bastion, classified };

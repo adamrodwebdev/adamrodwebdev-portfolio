@@ -2,6 +2,20 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.2.0] - 2026-10-06
+
+### Ajouté
+- Version anglaise du site sur `/en/`, avec sélecteur de langue (FR / EN) dans l'en-tête et le pied de page ; la section affichée est conservée au changement de langue.
+- vue-i18n (dernière version 11.x) : tous les composants Vue (menu, carrousel, formulaire, lecteur audio, illustrations) sont traduits.
+- `js/i18n/messages.js` : source unique des textes français et anglais.
+- `templates/index.html` et `scripts/build-pages.mjs` : génèrent les pages statiques `index.html` et `en/index.html` (référencement), exécutés automatiquement par Netlify.
+- Pages anglaises : mentions légales, remerciement et 404.
+- Balises `hreflang`, sitemap bilingue, `og:locale:alternate`.
+
+### Modifié
+- Adresse canonique : `https://adamrodwebdev.com` (sans www), le domaine principal sur Netlify.
+- Les textes des projets sont déplacés de `js/data/projects.js` vers les traductions.
+
 ## [1.1.0] - 2026-10-05
 
 ### Ajouté

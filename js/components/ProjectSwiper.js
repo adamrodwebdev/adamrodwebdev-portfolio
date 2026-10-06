@@ -1,5 +1,6 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
-import { projects, statusLabels } from '../data/projects.js';
+import { useI18n } from 'vue-i18n';
+import { projects } from '../data/projects.js';
 import { art } from '../data/art.js';
 
 const AUTOPLAY_MS = 7000;
@@ -12,11 +13,20 @@ const AUTOPLAY_MS = 7000;
 export default {
   name: 'ProjectSwiper',
   setup() {
-    const slides = projects.map((p) => ({
-      ...p,
-      statusLabel: statusLabels[p.status] || '',
-      svg: p.image ? '' : (art[p.art] || art.classified)(p.id),
-    }));
+    const { t, te, tm, rt } = useI18n();
+    const slides = projects.map((p) => {
+      const k = `projects.${p.id}`;
+      const title = t(`${k}.title`);
+      return {
+        ...p,
+        title,
+        description: t(`${k}.description`),
+        tags: (tm(`${k}.tags`) || []).map((m) => rt(m)),
+        linkLabel: te(`${k}.link`) ? t(`${k}.link`) : t('swiper.discover', { title }),
+        statusLabel: t(`swiper.status.${p.status}`),
+        svg: p.image ? '' : (art[p.art] || art.classified)(p.id, t),
+      };
+    });
     const count = slides.length;
     const index = ref(0);
     const drag = ref(0);            // décalage en fraction de diapositive pendant le glissement
@@ -129,19 +139,19 @@ export default {
 
     return {
       slides, count, index, dragging, paused, running, timerKey, root, viewport, styles,
-      go, next, prev, onDown, onMove, onUp, onKey, onClickCapture, AUTOPLAY_MS,
+      go, next, prev, onDown, onMove, onUp, onKey, onClickCapture, AUTOPLAY_MS, t,
       pad: (n) => String(n).padStart(2, '0'),
     };
   },
   template: `
-  <div ref="root" class="swiper" role="region" aria-roledescription="carrousel" aria-label="Projets"
+  <div ref="root" class="swiper" role="region" :aria-roledescription="t('swiper.roledescription')" :aria-label="t('swiper.region')"
        @mouseenter="paused = true" @mouseleave="paused = false" @focusin="paused = true" @focusout="paused = false">
     <div ref="viewport" class="swiper__viewport" :class="{ 'is-dragging': dragging }" tabindex="0" role="group"
-         aria-label="Utilisez les flèches gauche et droite pour changer de projet"
+         :aria-label="t('swiper.viewport')"
          @keydown="onKey" @pointerdown="onDown" @pointermove="onMove" @pointerup="onUp" @pointercancel="onUp" @lostpointercapture="onUp"
          @click.capture="onClickCapture" @dragstart.prevent>
       <article v-for="(s, i) in slides" :key="s.id" class="slide" :class="{ 'is-active': i === index }" :style="styles[i]"
-        role="group" aria-roledescription="diapositive" :aria-label="(i + 1) + ' sur ' + count + ' : ' + s.title"
+        role="group" :aria-roledescription="t('swiper.slideRole')" :aria-label="t('swiper.slideLabel', { n: i + 1, count, title: s.title })"
         :aria-hidden="i !== index ? 'true' : 'false'" :inert="i !== index || null">
         <div class="slide__card">
           <div class="slide__visual">
@@ -154,7 +164,7 @@ export default {
             <p class="slide__desc">{{ s.description }}</p>
             <ul class="slide__tags" role="list"><li v-for="t in s.tags" :key="t">{{ t }}</li></ul>
             <a v-if="s.url" class="slide__link" :href="s.url" :target="s.newTab || s.url.startsWith('http') ? '_blank' : null" :rel="s.newTab || s.url.startsWith('http') ? 'noopener' : null">
-              {{ s.linkLabel || ('Découvrir ' + s.title) }}
+              {{ s.linkLabel }}
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
             </a>
           </div>
@@ -163,15 +173,15 @@ export default {
     </div>
 
     <div class="swiper__controls">
-      <button class="icon-btn" type="button" @click="prev" aria-label="Projet précédent">
+      <button class="icon-btn" type="button" @click="prev" :aria-label="t('swiper.prev')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
       </button>
       <div class="swiper__bullets">
         <button v-for="(s, i) in slides" :key="s.id" class="swiper__bullet" type="button"
-          :aria-label="'Afficher ' + s.title" :aria-current="i === index ? 'true' : 'false'" @click="go(i)"></button>
+          :aria-label="t('swiper.show', { title: s.title })" :aria-current="i === index ? 'true' : 'false'" @click="go(i)"></button>
       </div>
       <p class="swiper__counter" :aria-live="running ? 'off' : 'polite'"><b>{{ pad(index + 1) }}</b> / {{ pad(count) }}</p>
-      <button class="icon-btn" type="button" @click="next" aria-label="Projet suivant" style="position:relative">
+      <button class="icon-btn" type="button" @click="next" :aria-label="t('swiper.next')" style="position:relative">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
         <span :key="timerKey + '-' + index" class="swiper__timer" :class="{ 'is-running': true, 'is-paused': !running }" :style="{ '--autoplay': AUTOPLAY_MS + 'ms' }" aria-hidden="true"></span>
       </button>
