@@ -2,6 +2,11 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.2.1] - 2026-10-06
+
+### Corrigé
+- Le template `templates/index.html` et le dossier `scripts/` étaient accessibles en ligne : ils renvoient désormais une erreur 404.
+
 ## [1.2.0] - 2026-10-06
 
 ### Ajouté
