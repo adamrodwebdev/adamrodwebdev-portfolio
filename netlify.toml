@@ -1,6 +1,11 @@
 # Déploiement Netlify : site statique, aucune compilation nécessaire.
 [build]
   publish = "."
+  # Régénère index.html et en/index.html à partir des traductions (aucune dépendance)
+  command = "node scripts/build-pages.mjs"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 [[headers]]
   for = "/*"
@@ -33,6 +38,11 @@
   [headers.values]
     X-Robots-Tag = "noindex"
     X-Frame-Options = "SAMEORIGIN"
+
+[[redirects]]
+  from = "/en/*"
+  to = "/en/404.html"
+  status = 404
 
 [[redirects]]
   from = "/*"

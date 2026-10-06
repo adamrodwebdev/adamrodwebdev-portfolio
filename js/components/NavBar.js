@@ -1,16 +1,19 @@
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useTheme } from '../composables/useTheme.js';
+import { altBase, altLocale } from '../i18n/index.js';
 
 const links = [
-  { id: 'services', label: 'Services' },
-  { id: 'projets', label: 'Projets' },
-  { id: 'methode', label: 'Méthode' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'services', key: 'nav.services' },
+  { id: 'projets', key: 'nav.projects' },
+  { id: 'methode', key: 'nav.method' },
+  { id: 'contact', key: 'nav.contact' },
 ];
 
 export default {
   name: 'NavBar',
   setup() {
+    const { t } = useI18n();
     const open = ref(false);
     const active = ref('');
     const { isDark, toggle } = useTheme();
@@ -57,22 +60,25 @@ export default {
     });
 
     const go = () => { open.value = false; };
-    return { links, open, active, isDark, toggle, go, burger };
+    // Changement de langue : on garde la section affichée (#projets, #contact…)
+    const switchLang = (e) => { e.currentTarget.href = altBase + location.hash; };
+    return { links, open, active, isDark, toggle, go, burger, t, altBase, altLocale, switchLang };
   },
   template: `
-  <nav class="nav container" aria-label="Navigation principale">
-    <a class="brand" href="#accueil" aria-label="AdamRodWebDev, retour à l'accueil" @click="go">
+  <nav class="nav container" :aria-label="t('a11y.mainNav')">
+    <a class="brand" href="#accueil" :aria-label="t('a11y.brandHome')" @click="go">
       <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
       <span class="brand__name">AdamRod<b>WebDev</b></span>
     </a>
     <ul class="nav__links">
       <li v-for="l in links" :key="l.id">
-        <a class="nav__link" :class="{ 'is-active': active === l.id }" :href="'#' + l.id" :aria-current="active === l.id ? 'location' : null">{{ l.label }}</a>
+        <a class="nav__link" :class="{ 'is-active': active === l.id }" :href="'#' + l.id" :aria-current="active === l.id ? 'location' : null">{{ t(l.key) }}</a>
       </li>
     </ul>
     <div class="nav__tools">
+      <a class="icon-btn lang-btn" :href="altBase" :hreflang="altLocale" :lang="altLocale" :aria-label="t('nav.langSwitchLabel')" @click="switchLang">{{ t('nav.langSwitch') }}</a>
       <button class="icon-btn" :class="{ 'is-dark': isDark }" type="button" @click="toggle($event)"
-        :aria-label="isDark ? 'Activer le mode clair' : 'Activer le mode sombre'" :aria-pressed="isDark ? 'true' : 'false'">
+        :aria-label="isDark ? t('nav.themeLight') : t('nav.themeDark')" :aria-pressed="isDark ? 'true' : 'false'">
         <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
           <mask id="moon-mask"><rect width="24" height="24" fill="#fff"/><circle class="theme-icon__mask-circle" :cx="isDark ? 17 : 30" :cy="isDark ? 7 : -6" r="7" fill="#000"/></mask>
           <circle class="theme-icon__core" cx="12" cy="12" :r="isDark ? 8 : 5" fill="currentColor" mask="url(#moon-mask)"/>
@@ -82,7 +88,7 @@ export default {
         </svg>
       </button>
       <button ref="burger" class="icon-btn burger" type="button" @click="open = !open"
-        :aria-expanded="open ? 'true' : 'false'" aria-controls="menu-mobile" :aria-label="open ? 'Fermer le menu' : 'Ouvrir le menu'">
+        :aria-expanded="open ? 'true' : 'false'" aria-controls="menu-mobile" :aria-label="open ? t('nav.menuClose') : t('nav.menuOpen')">
         <span class="burger__bars" aria-hidden="true"><span></span><span></span><span></span></span>
       </button>
     </div>
@@ -90,9 +96,9 @@ export default {
   <Teleport to="body">
   <div id="menu-mobile" class="mobile-menu" :class="{ 'is-open': open }" :inert="!open || null">
     <ul>
-      <li v-for="(l, i) in links" :key="l.id"><a :href="'#' + l.id" :style="{ '--i': i }" :class="{ 'is-active': active === l.id }" @click="go">{{ l.label }}</a></li>
+      <li v-for="(l, i) in links" :key="l.id"><a :href="'#' + l.id" :style="{ '--i': i }" :class="{ 'is-active': active === l.id }" @click="go">{{ t(l.key) }}</a></li>
     </ul>
-    <p class="mobile-menu__foot">AdamRodWebDev, développement web front-end.</p>
+    <p class="mobile-menu__foot">{{ t('nav.menuFoot') }}</p>
   </div>
   </Teleport>
   `,

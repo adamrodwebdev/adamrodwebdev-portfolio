@@ -1,4 +1,9 @@
 <!doctype html>
+<!--
+  FICHIER GÉNÉRÉ — ne pas modifier directement.
+  Source : templates/index.html + js/i18n/messages.js
+  Régénérer : node scripts/build-pages.mjs
+-->
 <html lang="fr" dir="ltr">
 <head>
   <meta charset="utf-8">
@@ -7,36 +12,36 @@
   <meta name="description" content="AdamRodWebDev conçoit des sites web et applications Vue.js rapides, accessibles et optimisés pour le référencement. Portfolio, projets et demande de devis.">
   <meta name="author" content="AdamRodWebDev">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <link rel="canonical" href="https://www.adamrodwebdev.com/">
-  <link rel="alternate" hreflang="fr" href="https://www.adamrodwebdev.com/">
-  <link rel="alternate" hreflang="x-default" href="https://www.adamrodwebdev.com/">
+  <link rel="canonical" href="https://adamrodwebdev.com/">
+  <link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/">
+  <link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/">
+  <link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/">
 
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
   <meta name="color-scheme" content="dark light">
 
-  <!-- Open Graph / réseaux sociaux -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
+  <meta property="og:locale:alternate" content="en_US">
   <meta property="og:site_name" content="AdamRodWebDev">
   <meta property="og:title" content="AdamRodWebDev, développeur web front-end Vue.js">
   <meta property="og:description" content="Sites web et applications Vue.js rapides, accessibles et optimisés SEO.">
-  <meta property="og:url" content="https://www.adamrodwebdev.com/">
-  <meta property="og:image" content="https://www.adamrodwebdev.com/assets/og-image.png">
+  <meta property="og:url" content="https://adamrodwebdev.com/">
+  <meta property="og:image" content="https://adamrodwebdev.com/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Logo AdamRodWebDev en or sur fond noir">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AdamRodWebDev, développeur web front-end Vue.js">
   <meta name="twitter:description" content="Sites web et applications Vue.js rapides, accessibles et optimisés SEO.">
-  <meta name="twitter:image" content="https://www.adamrodwebdev.com/assets/og-image.png">
+  <meta name="twitter:image" content="https://adamrodwebdev.com/assets/og-image.png">
 
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
 
-  <!-- Thème appliqué avant le premier rendu (évite le flash) -->
   <script>
     (function () {
       try {
@@ -47,31 +52,38 @@
     })();
   </script>
 
-  <!-- Polices : chargement non bloquant -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap"></noscript>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 
-  <!-- Vue 3 (dernière version stable de la branche 3.x) -->
+  <!-- Vue 3 et vue-i18n (dernières versions stables) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script type="importmap">
-    { "imports": { "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js" } }
+    {
+      "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js",
+        "vue-i18n": "https://cdn.jsdelivr.net/npm/vue-i18n@11/dist/vue-i18n.esm-browser.prod.js"
+      }
+    }
   </script>
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js" crossorigin>
-  <link rel="modulepreload" href="js/main.js">
-  <link rel="modulepreload" href="js/components/NavBar.js">
-  <link rel="modulepreload" href="js/components/ProjectSwiper.js">
-  <link rel="modulepreload" href="js/components/ContactForm.js">
-  <link rel="modulepreload" href="js/components/MusicPlayer.js">
-  <link rel="modulepreload" href="js/composables/useTheme.js">
-  <link rel="modulepreload" href="js/data/projects.js">
-  <link rel="modulepreload" href="js/data/art.js">
-  <link rel="modulepreload" href="js/fx/effects.js">
-  <link rel="modulepreload" href="js/fx/particles.js">
-  <link rel="modulepreload" href="js/config.js">
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vue-i18n@11/dist/vue-i18n.esm-browser.prod.js" crossorigin>
+  <link rel="modulepreload" href="/js/main.js">
+  <link rel="modulepreload" href="/js/i18n/index.js">
+  <link rel="modulepreload" href="/js/i18n/messages.js">
+  <link rel="modulepreload" href="/js/components/NavBar.js">
+  <link rel="modulepreload" href="/js/components/ProjectSwiper.js">
+  <link rel="modulepreload" href="/js/components/ContactForm.js">
+  <link rel="modulepreload" href="/js/components/MusicPlayer.js">
+  <link rel="modulepreload" href="/js/composables/useTheme.js">
+  <link rel="modulepreload" href="/js/data/projects.js">
+  <link rel="modulepreload" href="/js/data/art.js">
+  <link rel="modulepreload" href="/js/fx/effects.js">
+  <link rel="modulepreload" href="/js/fx/particles.js">
+  <link rel="modulepreload" href="/js/config.js">
 
   <script type="application/ld+json">
   {
@@ -79,23 +91,29 @@
     "@graph": [
       {
         "@type": "ProfessionalService",
-        "@id": "https://www.adamrodwebdev.com/#entreprise",
+        "@id": "https://adamrodwebdev.com/#entreprise",
         "name": "AdamRodWebDev",
-        "url": "https://www.adamrodwebdev.com/",
-        "logo": "https://www.adamrodwebdev.com/assets/icon-512.png",
-        "image": "https://www.adamrodwebdev.com/assets/og-image.png",
+        "url": "https://adamrodwebdev.com/",
+        "logo": "https://adamrodwebdev.com/assets/icon-512.png",
+        "image": "https://adamrodwebdev.com/assets/og-image.png",
         "description": "Conception et développement de sites web et d'applications Vue.js rapides, accessibles et optimisés pour le référencement.",
         "areaServed": { "@type": "Country", "name": "France" },
-        "knowsAbout": ["Vue.js", "JavaScript", "HTML", "CSS", "SEO", "Accessibilité web", "Performance web"],
-        "serviceType": ["Développement web", "Création de site vitrine", "Application web Vue.js", "Optimisation SEO technique"]
+        "knowsAbout": ["Vue.js", "JavaScript", "HTML", "CSS", "SEO", "Web accessibility", "Web performance"]
       },
       {
         "@type": "WebSite",
-        "@id": "https://www.adamrodwebdev.com/#site",
-        "url": "https://www.adamrodwebdev.com/",
+        "@id": "https://adamrodwebdev.com/#site",
+        "url": "https://adamrodwebdev.com/",
         "name": "AdamRodWebDev",
+        "inLanguage": ["fr-FR", "en"],
+        "publisher": { "@id": "https://adamrodwebdev.com/#entreprise" }
+      },
+      {
+        "@type": "WebPage",
+        "url": "https://adamrodwebdev.com/",
+        "name": "AdamRodWebDev | Développeur web front-end Vue.js, sites rapides et SEO",
         "inLanguage": "fr-FR",
-        "publisher": { "@id": "https://www.adamrodwebdev.com/#entreprise" }
+        "isPartOf": { "@id": "https://adamrodwebdev.com/#site" }
       }
     ]
   }
@@ -107,7 +125,6 @@
 
   <header class="site-header" id="haut">
     <div id="nav-app">
-      <!-- Version statique (sans JavaScript) remplacée par le composant Vue -->
       <nav class="nav container" aria-label="Navigation principale">
         <a class="brand" href="#accueil" aria-label="AdamRodWebDev, retour à l'accueil">
           <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
@@ -119,12 +136,14 @@
           <li><a href="#methode">Méthode</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
+        <div class="nav__tools">
+          <a class="icon-btn lang-btn" href="/en/" hreflang="en" lang="en" aria-label="Read this site in English">EN</a>
+        </div>
       </nav>
     </div>
   </header>
 
   <main id="contenu">
-    <!-- ============ HERO ============ -->
     <section id="accueil" class="hero" aria-labelledby="hero-title">
       <canvas class="hero__shards" aria-hidden="true"></canvas>
       <div class="hero__veil" aria-hidden="true"></div>
@@ -136,7 +155,7 @@
             <span class="hero__line" data-scramble>AdamRod</span>
             <span class="hero__line hero__line--outline" data-scramble>WebDev</span>
           </h1>
-          <p class="hero__lead">Des sites web augmentés&nbsp;: rapides, accessibles et pensés pour marquer les esprits. Je conçois et développe vos interfaces avec Vue.js, du premier croquis à la mise en ligne.</p>
+          <p class="hero__lead">Des sites web augmentés : rapides, accessibles et pensés pour marquer les esprits. Je conçois et développe vos interfaces avec Vue.js, du premier croquis à la mise en ligne.</p>
           <div class="hero__actions">
             <a class="btn btn--gold magnetic" href="#projets"><span>Voir les projets</span></a>
             <a class="btn btn--ghost magnetic" href="#contact"><span>Démarrer un projet</span></a>
@@ -168,13 +187,12 @@
       <a class="hero__scroll" href="#services" aria-label="Descendre vers les services"><span></span></a>
     </section>
 
-    <!-- ============ SERVICES ============ -->
     <section id="services" class="section" aria-labelledby="services-title">
       <div class="container">
         <header class="section__head reveal">
           <p class="section__tag">Augmentations</p>
           <h2 id="services-title" class="section__title" data-scramble>Ce que j'apporte à votre projet</h2>
-          <p class="section__intro">Chaque site est construit pour trois choses&nbsp;: charger vite, être trouvé sur Google et convaincre vos visiteurs.</p>
+          <p class="section__intro">Chaque site est construit pour trois choses : charger vite, être trouvé sur Google et convaincre vos visiteurs.</p>
         </header>
 
         <ul class="aug-grid" role="list">
@@ -187,13 +205,13 @@
           <li class="aug reveal tilt" style="--i:1">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 8h10l10 17 10-17h10L24 42Z"/><path d="M14 8l10 17 10-17"/></svg>
             <h3 class="aug__title">Applications Vue.js</h3>
-            <p class="aug__text">Interfaces riches et réactives&nbsp;: tableaux de bord, espaces clients, outils internes.</p>
+            <p class="aug__text">Interfaces riches et réactives : tableaux de bord, espaces clients, outils internes.</p>
             <p class="aug__meta">Vue 3, Pinia, Vite</p>
           </li>
           <li class="aug reveal tilt" style="--i:2">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a18 18 0 1 1 32 0"/><path d="M24 34l9-13"/><circle cx="24" cy="34" r="3"/></svg>
             <h3 class="aug__title">Performance</h3>
-            <p class="aug__text">Objectif 95&nbsp;et plus sur Lighthouse&nbsp;: images optimisées, code léger, chargement immédiat.</p>
+            <p class="aug__text">Objectif 95 et plus sur Lighthouse : images optimisées, code léger, chargement immédiat.</p>
             <p class="aug__meta">Core Web Vitals</p>
           </li>
           <li class="aug reveal tilt" style="--i:3">
@@ -205,7 +223,7 @@
           <li class="aug reveal tilt" style="--i:4">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M8 17l16 4 16-4M24 21v8l-7 13M24 29l7 13"/></svg>
             <h3 class="aug__title">Accessibilité</h3>
-            <p class="aug__text">Navigation au clavier, contrastes, lecteurs d'écran&nbsp;: un site utilisable par tous, conforme aux normes WCAG.</p>
+            <p class="aug__text">Navigation au clavier, contrastes, lecteurs d'écran : un site utilisable par tous, conforme aux normes WCAG.</p>
             <p class="aug__meta">WCAG 2.2, RGAA</p>
           </li>
           <li class="aug reveal tilt" style="--i:5">
@@ -218,7 +236,6 @@
       </div>
     </section>
 
-    <!-- ============ PROJETS ============ -->
     <section id="projets" class="section section--projects" aria-labelledby="projets-title">
       <div class="container">
         <header class="section__head reveal">
@@ -228,16 +245,14 @@
         </header>
       </div>
       <div id="projects-app" class="projects-app">
-        <!-- Contenu statique pour les moteurs de recherche et la navigation sans JavaScript -->
         <ul class="projects-static container" role="list">
-          <li><h3>Catapulte Mania</h3><p>Jeu de catapulte médiéval jouable dans le navigateur&nbsp;: 100 niveaux, châteaux destructibles, mode coopératif. <a href="/demos/catapulte-mania/">Jouer à la démo de Catapulte Mania</a></p></li>
+          <li><h3>Catapulte Mania</h3><p>Jeu de catapulte médiéval jouable dans le navigateur : 100 niveaux, châteaux destructibles, mode coopératif. <a href="/demos/catapulte-mania/">Jouer à la démo de Catapulte Mania</a></p></li>
           <li><h3>Bastion</h3><p>Tower defense gratuit sur navigateur et mobile, six niveaux de vagues ennemies. <a href="https://bastion-tower-defense.netlify.app">Jouer à Bastion</a></p></li>
           <li><h3>Projets à venir</h3><p>De nouveaux projets sont en cours de développement.</p></li>
         </ul>
       </div>
     </section>
 
-    <!-- ============ MÉTHODE ============ -->
     <section id="methode" class="section" aria-labelledby="methode-title">
       <div class="container">
         <header class="section__head reveal">
@@ -271,7 +286,6 @@
       </div>
     </section>
 
-    <!-- ============ ARSENAL ============ -->
     <section class="section section--tight" aria-labelledby="arsenal-title">
       <div class="container">
         <h2 id="arsenal-title" class="section__title section__title--small reveal">Outils et technologies</h2>
@@ -282,18 +296,17 @@
           <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Vue 3</span><span>Vite</span><span>Pinia</span><span>Nuxt</span><span>Web Audio</span><span>Canvas</span><span>Figma</span><span>Git</span><span>Netlify</span>
         </div>
       </div>
-      <p class="visually-hidden">Technologies utilisées&nbsp;: HTML5, CSS3, JavaScript, Vue 3, Vite, Pinia, Nuxt, Web Audio, Canvas, Figma, Git et Netlify.</p>
+      <p class="visually-hidden">Technologies utilisées : HTML5, CSS3, JavaScript, Vue 3, Vite, Pinia, Nuxt, Web Audio, Canvas, Figma, Git et Netlify.</p>
     </section>
 
-    <!-- ============ CONTACT ============ -->
     <section id="contact" class="section section--contact" aria-labelledby="contact-title">
       <div class="container contact">
         <div class="contact__intro reveal">
           <p class="section__tag">Transmission</p>
           <h2 id="contact-title" class="section__title" data-scramble>Parlons de votre projet</h2>
-          <p class="section__intro">Décrivez votre besoin en quelques lignes. Je vous réponds sous 48&nbsp;heures ouvrées avec une première estimation.</p>
+          <p class="section__intro">Décrivez votre besoin en quelques lignes. Je vous réponds sous 48 heures ouvrées avec une première estimation.</p>
           <dl class="contact__facts">
-            <div><dt>Délai de réponse</dt><dd>48&nbsp;h ouvrées</dd></div>
+            <div><dt>Délai de réponse</dt><dd>48 h ouvrées</dd></div>
             <div><dt>Zone</dt><dd>France et international, à distance</dd></div>
             <div><dt>Devis</dt><dd>Gratuit et sans engagement</dd></div>
           </dl>
@@ -303,12 +316,12 @@
           <!-- Formulaire de secours (sans JavaScript), détecté aussi par Netlify Forms -->
           <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/merci.html">
             <input type="hidden" name="form-name" value="contact">
-            <p class="visually-hidden"><label>Ne pas remplir&nbsp;: <input name="bot-field"></label></p>
+            <p class="visually-hidden"><label>Ne pas remplir ce champ <input name="bot-field"></label></p>
             <p class="field"><label for="f-nom">Nom</label><input id="f-nom" name="nom" autocomplete="name" required></p>
             <p class="field"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" required></p>
             <p class="field"><label for="f-entreprise">Entreprise</label><input id="f-entreprise" name="entreprise" autocomplete="organization"></p>
             <p class="field"><label for="f-type">Type de projet</label>
-              <select id="f-type" name="type"><option>Site vitrine</option><option>Application Vue.js</option><option>Refonte</option><option>Optimisation SEO et performance</option><option>Autre</option></select></p>
+              <select id="f-type" name="type"><option>Site vitrine</option><option>Application Vue.js</option><option>Refonte</option><option>SEO et performance</option><option>Autre</option></select></p>
             <p class="field"><label for="f-budget">Budget</label>
               <select id="f-budget" name="budget"><option>Moins de 2 000 €</option><option>2 000 à 5 000 €</option><option>5 000 à 10 000 €</option><option>Plus de 10 000 €</option></select></p>
             <p class="field"><label for="f-message">Message</label><textarea id="f-message" name="message" rows="5" required></textarea></p>
@@ -332,7 +345,8 @@
           <li><a href="#projets">Projets</a></li>
           <li><a href="#methode">Méthode</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a href="mentions-legales.html">Mentions légales</a></li>
+          <li><a href="/mentions-legales.html">Mentions légales</a></li>
+          <li><a href="/en/" hreflang="en" lang="en">English</a></li>
         </ul>
       </nav>
       <p class="footer__copy">© <span data-year>2026</span> AdamRodWebDev. Site conçu et développé en Vue.js.</p>
@@ -342,6 +356,6 @@
   <div id="music-app"></div>
   <div class="cursor" aria-hidden="true"><span class="cursor__ring"></span><span class="cursor__dot"></span></div>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="/js/main.js"></script>
 </body>
 </html>

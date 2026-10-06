@@ -1,0 +1,361 @@
+<!doctype html>
+<!--
+  FICHIER GÉNÉRÉ — ne pas modifier directement.
+  Source : templates/index.html + js/i18n/messages.js
+  Régénérer : node scripts/build-pages.mjs
+-->
+<html lang="[[@lang]]" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>[[meta.title]]</title>
+  <meta name="description" content="[[meta.description]]">
+  <meta name="author" content="AdamRodWebDev">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="[[@url]]">
+  <link rel="alternate" hreflang="fr" href="[[@urlFr]]">
+  <link rel="alternate" hreflang="en" href="[[@urlEn]]">
+  <link rel="alternate" hreflang="x-default" href="[[@urlFr]]">
+
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="[[meta.ogLocale]]">
+  <meta property="og:locale:alternate" content="[[@ogAltLocale]]">
+  <meta property="og:site_name" content="AdamRodWebDev">
+  <meta property="og:title" content="[[meta.ogTitle]]">
+  <meta property="og:description" content="[[meta.ogDescription]]">
+  <meta property="og:url" content="[[@url]]">
+  <meta property="og:image" content="[[@origin]]/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="[[meta.ogImageAlt]]">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="[[meta.ogTitle]]">
+  <meta name="twitter:description" content="[[meta.ogDescription]]">
+  <meta name="twitter:image" content="[[@origin]]/assets/og-image.png">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('arwd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+      document.documentElement.classList.add('js');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap"></noscript>
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Vue 3 et vue-i18n (dernières versions stables) -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js",
+        "vue-i18n": "https://cdn.jsdelivr.net/npm/vue-i18n@11/dist/vue-i18n.esm-browser.prod.js"
+      }
+    }
+  </script>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vue-i18n@11/dist/vue-i18n.esm-browser.prod.js" crossorigin>
+  <link rel="modulepreload" href="/js/main.js">
+  <link rel="modulepreload" href="/js/i18n/index.js">
+  <link rel="modulepreload" href="/js/i18n/messages.js">
+  <link rel="modulepreload" href="/js/components/NavBar.js">
+  <link rel="modulepreload" href="/js/components/ProjectSwiper.js">
+  <link rel="modulepreload" href="/js/components/ContactForm.js">
+  <link rel="modulepreload" href="/js/components/MusicPlayer.js">
+  <link rel="modulepreload" href="/js/composables/useTheme.js">
+  <link rel="modulepreload" href="/js/data/projects.js">
+  <link rel="modulepreload" href="/js/data/art.js">
+  <link rel="modulepreload" href="/js/fx/effects.js">
+  <link rel="modulepreload" href="/js/fx/particles.js">
+  <link rel="modulepreload" href="/js/config.js">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        "@id": "[[@origin]]/#entreprise",
+        "name": "AdamRodWebDev",
+        "url": "[[@url]]",
+        "logo": "[[@origin]]/assets/icon-512.png",
+        "image": "[[@origin]]/assets/og-image.png",
+        "description": "[[meta.ldDescription]]",
+        "areaServed": { "@type": "Country", "name": "France" },
+        "knowsAbout": ["Vue.js", "JavaScript", "HTML", "CSS", "SEO", "Web accessibility", "Web performance"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "[[@origin]]/#site",
+        "url": "[[@origin]]/",
+        "name": "AdamRodWebDev",
+        "inLanguage": ["fr-FR", "en"],
+        "publisher": { "@id": "[[@origin]]/#entreprise" }
+      },
+      {
+        "@type": "WebPage",
+        "url": "[[@url]]",
+        "name": "[[meta.title]]",
+        "inLanguage": "[[meta.ldLanguage]]",
+        "isPartOf": { "@id": "[[@origin]]/#site" }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#contenu">[[a11y.skip]]</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="site-header" id="haut">
+    <div id="nav-app">
+      <nav class="nav container" aria-label="[[a11y.mainNav]]">
+        <a class="brand" href="#accueil" aria-label="[[a11y.brandHome]]">
+          <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+          <span class="brand__name">AdamRod<b>WebDev</b></span>
+        </a>
+        <ul class="nav__links">
+          <li><a href="#services">[[nav.services]]</a></li>
+          <li><a href="#projets">[[nav.projects]]</a></li>
+          <li><a href="#methode">[[nav.method]]</a></li>
+          <li><a href="#contact">[[nav.contact]]</a></li>
+        </ul>
+        <div class="nav__tools">
+          <a class="icon-btn lang-btn" href="[[@altBase]]" hreflang="[[@altLang]]" lang="[[@altLang]]" aria-label="[[nav.langSwitchLabel]]">[[nav.langSwitch]]</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section id="accueil" class="hero" aria-labelledby="hero-title">
+      <canvas class="hero__shards" aria-hidden="true"></canvas>
+      <div class="hero__veil" aria-hidden="true"></div>
+
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <p class="hero__status"><span class="pulse-dot" aria-hidden="true"></span>[[hero.status]]</p>
+          <h1 id="hero-title" class="hero__title">
+            <span class="hero__line" data-scramble>AdamRod</span>
+            <span class="hero__line hero__line--outline" data-scramble>WebDev</span>
+          </h1>
+          <p class="hero__lead">[[hero.lead]]</p>
+          <div class="hero__actions">
+            <a class="btn btn--gold magnetic" href="#projets"><span>[[hero.ctaProjects]]</span></a>
+            <a class="btn btn--ghost magnetic" href="#contact"><span>[[hero.ctaContact]]</span></a>
+          </div>
+        </div>
+
+        <div class="hero__emblem" aria-hidden="true">
+          <svg viewBox="0 0 400 400" class="emblem">
+            <g class="emblem__ring emblem__ring--outer"><circle cx="200" cy="200" r="186" /></g>
+            <g class="emblem__ring emblem__ring--inner"><circle cx="200" cy="200" r="150" /></g>
+            <path class="emblem__hex" d="M200 62 319.5 131v138L200 338 80.5 269V131Z" pathLength="1"/>
+            <path class="emblem__hex emblem__hex--small" d="M200 104 283 152v96l-83 48-83-48v-96Z" pathLength="1"/>
+            <path class="emblem__a" d="M150 262 200 140l50 122M170 218h60" pathLength="1"/>
+            <g class="emblem__shards">
+              <path d="M200 62 236 82 200 104Z"/>
+              <path d="M319.5 131 283 152 300 120Z"/>
+              <path d="M80.5 269 117 248 100 280Z"/>
+              <path d="M200 338 164 318 200 296Z"/>
+            </g>
+          </svg>
+          <div class="hud-panel">
+            <p class="hud-panel__row"><span>[[hero.hudLocation]]</span><b>[[hero.hudLocationValue]]</b></p>
+            <p class="hud-panel__row"><span>[[hero.hudTime]]</span><b class="hud-clock" data-clock>--:--:--</b></p>
+            <p class="hud-panel__row"><span>[[hero.hudSpecialty]]</span><b>[[hero.hudSpecialtyValue]]</b></p>
+          </div>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#services" aria-label="[[a11y.scrollDown]]"><span></span></a>
+    </section>
+
+    <section id="services" class="section" aria-labelledby="services-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">[[services.tag]]</p>
+          <h2 id="services-title" class="section__title" data-scramble>[[services.title]]</h2>
+          <p class="section__intro">[[services.intro]]</p>
+        </header>
+
+        <ul class="aug-grid" role="list">
+          <li class="aug reveal tilt" style="--i:0">
+            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 10h36v24H6zM18 40h12M24 34v6"/><path d="M12 18h14M12 24h20"/></svg>
+            <h3 class="aug__title">[[services.showcase.title]]</h3>
+            <p class="aug__text">[[services.showcase.text]]</p>
+            <p class="aug__meta">[[services.showcase.meta]]</p>
+          </li>
+          <li class="aug reveal tilt" style="--i:1">
+            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 8h10l10 17 10-17h10L24 42Z"/><path d="M14 8l10 17 10-17"/></svg>
+            <h3 class="aug__title">[[services.apps.title]]</h3>
+            <p class="aug__text">[[services.apps.text]]</p>
+            <p class="aug__meta">[[services.apps.meta]]</p>
+          </li>
+          <li class="aug reveal tilt" style="--i:2">
+            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a18 18 0 1 1 32 0"/><path d="M24 34l9-13"/><circle cx="24" cy="34" r="3"/></svg>
+            <h3 class="aug__title">[[services.perf.title]]</h3>
+            <p class="aug__text">[[services.perf.text]]</p>
+            <p class="aug__meta">[[services.perf.meta]]</p>
+          </li>
+          <li class="aug reveal tilt" style="--i:3">
+            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="12"/><path d="M29 29l13 13M14 20h12M20 14v12"/></svg>
+            <h3 class="aug__title">[[services.seo.title]]</h3>
+            <p class="aug__text">[[services.seo.text]]</p>
+            <p class="aug__meta">[[services.seo.meta]]</p>
+          </li>
+          <li class="aug reveal tilt" style="--i:4">
+            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M8 17l16 4 16-4M24 21v8l-7 13M24 29l7 13"/></svg>
+            <h3 class="aug__title">[[services.a11y.title]]</h3>
+            <p class="aug__text">[[services.a11y.text]]</p>
+            <p class="aug__meta">[[services.a11y.meta]]</p>
+          </li>
+          <li class="aug reveal tilt" style="--i:5">
+            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 38c8-20 14-28 18-28s6 12 10 12 6-6 8-8"/><path d="M6 38h36"/></svg>
+            <h3 class="aug__title">[[services.motion.title]]</h3>
+            <p class="aug__text">[[services.motion.text]]</p>
+            <p class="aug__meta">[[services.motion.meta]]</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="projets" class="section section--projects" aria-labelledby="projets-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">[[projectsSection.tag]]</p>
+          <h2 id="projets-title" class="section__title" data-scramble>[[projectsSection.title]]</h2>
+          <p class="section__intro">[[projectsSection.intro]]</p>
+        </header>
+      </div>
+      <div id="projects-app" class="projects-app">
+        <ul class="projects-static container" role="list">
+          <li><h3>Catapulte Mania</h3><p>[[projects.catapulte-mania.staticText]] <a href="/demos/catapulte-mania/">[[projects.catapulte-mania.staticLink]]</a></p></li>
+          <li><h3>Bastion</h3><p>[[projects.bastion.staticText]] <a href="https://bastion-tower-defense.netlify.app">[[projects.bastion.staticLink]]</a></p></li>
+          <li><h3>[[projectsSection.upcomingTitle]]</h3><p>[[projectsSection.upcomingText]]</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="methode" class="section" aria-labelledby="methode-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">[[method.tag]]</p>
+          <h2 id="methode-title" class="section__title" data-scramble>[[method.title]]</h2>
+          <p class="section__intro">[[method.intro]]</p>
+        </header>
+
+        <ol class="protocol" role="list">
+          <li class="protocol__step reveal" style="--i:0">
+            <span class="protocol__num" aria-hidden="true">01</span>
+            <h3>[[method.s1.title]]</h3>
+            <p>[[method.s1.text]]</p>
+          </li>
+          <li class="protocol__step reveal" style="--i:1">
+            <span class="protocol__num" aria-hidden="true">02</span>
+            <h3>[[method.s2.title]]</h3>
+            <p>[[method.s2.text]]</p>
+          </li>
+          <li class="protocol__step reveal" style="--i:2">
+            <span class="protocol__num" aria-hidden="true">03</span>
+            <h3>[[method.s3.title]]</h3>
+            <p>[[method.s3.text]]</p>
+          </li>
+          <li class="protocol__step reveal" style="--i:3">
+            <span class="protocol__num" aria-hidden="true">04</span>
+            <h3>[[method.s4.title]]</h3>
+            <p>[[method.s4.text]]</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--tight" aria-labelledby="arsenal-title">
+      <div class="container">
+        <h2 id="arsenal-title" class="section__title section__title--small reveal">[[tools.title]]</h2>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Vue 3</span><span>Vite</span><span>Pinia</span><span>Nuxt</span><span>Web Audio</span><span>Canvas</span><span>Figma</span><span>Git</span><span>Netlify</span>
+          <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Vue 3</span><span>Vite</span><span>Pinia</span><span>Nuxt</span><span>Web Audio</span><span>Canvas</span><span>Figma</span><span>Git</span><span>Netlify</span>
+        </div>
+      </div>
+      <p class="visually-hidden">[[tools.hidden]]</p>
+    </section>
+
+    <section id="contact" class="section section--contact" aria-labelledby="contact-title">
+      <div class="container contact">
+        <div class="contact__intro reveal">
+          <p class="section__tag">[[contactSection.tag]]</p>
+          <h2 id="contact-title" class="section__title" data-scramble>[[contactSection.title]]</h2>
+          <p class="section__intro">[[contactSection.intro]]</p>
+          <dl class="contact__facts">
+            <div><dt>[[contactSection.factDelay]]</dt><dd>[[contactSection.factDelayValue]]</dd></div>
+            <div><dt>[[contactSection.factZone]]</dt><dd>[[contactSection.factZoneValue]]</dd></div>
+            <div><dt>[[contactSection.factQuote]]</dt><dd>[[contactSection.factQuoteValue]]</dd></div>
+          </dl>
+        </div>
+
+        <div id="contact-app" class="contact__form-wrap reveal" style="--i:1">
+          <!-- Formulaire de secours (sans JavaScript), détecté aussi par Netlify Forms -->
+          <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="[[@thanks]]">
+            <input type="hidden" name="form-name" value="contact">
+            <p class="visually-hidden"><label>[[form.bot]] <input name="bot-field"></label></p>
+            <p class="field"><label for="f-nom">[[form.name]]</label><input id="f-nom" name="nom" autocomplete="name" required></p>
+            <p class="field"><label for="f-email">[[form.email]]</label><input id="f-email" name="email" type="email" autocomplete="email" required></p>
+            <p class="field"><label for="f-entreprise">[[form.company]]</label><input id="f-entreprise" name="entreprise" autocomplete="organization"></p>
+            <p class="field"><label for="f-type">[[form.type]]</label>
+              <select id="f-type" name="type">[[@typeOptions]]</select></p>
+            <p class="field"><label for="f-budget">[[form.budgetShort]]</label>
+              <select id="f-budget" name="budget">[[@budgetOptions]]</select></p>
+            <p class="field"><label for="f-message">[[form.messageShort]]</label><textarea id="f-message" name="message" rows="5" required></textarea></p>
+            <p class="field field--check"><input id="f-rgpd" name="rgpd" type="checkbox" required><label for="f-rgpd">[[form.consentShort]]</label></p>
+            <button class="btn btn--gold" type="submit"><span>[[@sendLabel]]</span></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer">
+      <a class="brand" href="#accueil" aria-label="[[a11y.brandTop]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebDev</b></span>
+      </a>
+      <nav aria-label="[[a11y.footerNav]]">
+        <ul class="footer__links">
+          <li><a href="#services">[[nav.services]]</a></li>
+          <li><a href="#projets">[[nav.projects]]</a></li>
+          <li><a href="#methode">[[nav.method]]</a></li>
+          <li><a href="#contact">[[nav.contact]]</a></li>
+          <li><a href="[[@legal]]">[[nav.legal]]</a></li>
+          <li><a href="[[@altBase]]" hreflang="[[@altLang]]" lang="[[@altLang]]">[[@altLangName]]</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© <span data-year>2026</span> AdamRodWebDev. [[footer.copy]]</p>
+    </div>
+  </footer>
+
+  <div id="music-app"></div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__ring"></span><span class="cursor__dot"></span></div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

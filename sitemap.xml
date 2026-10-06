@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.adamrodwebdev.com/</loc><lastmod>2026-10-05</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://www.adamrodwebdev.com/mentions-legales.html</loc><lastmod>2026-10-05</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://adamrodwebdev.com/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
+    <lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
+    <lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/mentions-legales.html</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/mentions-legales.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/legal-notice.html"/>
+    <lastmod>2026-10-06</lastmod><changefreq>yearly</changefreq><priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/en/legal-notice.html</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/mentions-legales.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/legal-notice.html"/>
+    <lastmod>2026-10-06</lastmod><changefreq>yearly</changefreq><priority>0.2</priority>
+  </url>
 </urlset>
