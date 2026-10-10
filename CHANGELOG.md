@@ -4,6 +4,9 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 
 ## [1.3.0] - 2026-10-10
 
+### Corrigé
+- Cache navigateur : le JavaScript et le CSS restaient 7 jours en cache, les visiteurs déjà venus ne voyaient pas les mises à jour. Ils sont maintenant revérifiés à chaque visite.
+
 ### Ajouté
 - Projet **Skull Darts 71** dans le carrousel (plateforme web du club de fléchettes, https://skulldarts71.fr), en français et en anglais.
 - Nouvelle illustration animée `darts` : cible de fléchettes et fléchette qui se plante dans le triple 20.
