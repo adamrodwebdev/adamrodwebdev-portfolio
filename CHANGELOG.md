@@ -2,6 +2,12 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.3.0] - 2026-10-10
+
+### Ajouté
+- Projet **Skull Darts 71** dans le carrousel (plateforme web du club de fléchettes, https://skulldarts71.fr), en français et en anglais.
+- Nouvelle illustration animée `darts` : cible de fléchettes et fléchette qui se plante dans le triple 20.
+
 ## [1.2.1] - 2026-10-06
 
 ### Corrigé

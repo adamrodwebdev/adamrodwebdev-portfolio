@@ -107,4 +107,45 @@ const classified = (id, t) => `
   <text x="40" y="80" class="a-text">${esc(t('art.decrypting'))}</text>
 </svg>`;
 
-export const art = { catapult, bastion, classified };
+const darts = (id, t) => {
+  // Cible de fléchettes : 20 secteurs, anneaux simple / triple / double, bull
+  const cx = 380, cy = 205, R = 150;
+  const rings = [R, R * 0.94, R * 0.62, R * 0.56, R * 0.12, R * 0.05];
+  const order = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
+  let spokes = '', labels = '';
+  for (let i = 0; i < 20; i++) {
+    const a = ((i * 18 - 99) * Math.PI) / 180;
+    spokes += `<path d="M${(cx + Math.cos(a) * rings[4]).toFixed(1)} ${(cy + Math.sin(a) * rings[4]).toFixed(1)}L${(cx + Math.cos(a) * R).toFixed(1)} ${(cy + Math.sin(a) * R).toFixed(1)}" class="a-soft"/>`;
+    const b = ((i * 18 - 90) * Math.PI) / 180;
+    labels += `<text x="${(cx + Math.cos(b) * (R + 20)).toFixed(1)}" y="${(cy + Math.sin(b) * (R + 20) + 6).toFixed(1)}" text-anchor="middle" class="a-num">${order[i]}</text>`;
+  }
+  // Secteur du triple 20 (en haut), mis en valeur
+  const arc = (r1, r2, a1, a2) => {
+    const p = (r, a) => `${(cx + Math.cos(a) * r).toFixed(1)} ${(cy + Math.sin(a) * r).toFixed(1)}`;
+    return `M${p(r1, a1)}A${r1} ${r1} 0 0 1 ${p(r1, a2)}L${p(r2, a2)}A${r2} ${r2} 0 0 0 ${p(r2, a1)}Z`;
+  };
+  const t20 = arc(rings[2], rings[3], (-99 * Math.PI) / 180, (-81 * Math.PI) / 180);
+  const ty = cy - R * 0.59;
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.dartsAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <g class="a-board">
+    <circle cx="${cx}" cy="${cy}" r="${R + 34}" class="a-soft"/>
+    ${rings.map((r, i) => `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}" class="${i === 0 || i === 2 ? 'a-line' : 'a-soft'}"/>`).join('')}
+    ${spokes}
+    <path d="${t20}" class="a-fill a-pulse art-anim"/>
+    <circle cx="${cx}" cy="${cy}" r="${rings[5].toFixed(1)}" class="a-fill"/>
+    ${labels}
+  </g>
+  <g class="a-dart art-anim" style="--tx:${cx}px;--ty:${ty.toFixed(1)}px">
+    <path d="M0 0 L-46 -30" class="a-line a-thick"/>
+    <path d="M-46 -30 L-70 -50 M-58 -38 L-62 -60 M-58 -38 L-80 -38" class="a-line"/>
+    <path d="M0 0 L-8 -12 L-12 -6 Z" class="a-fill"/>
+  </g>
+  <circle cx="${cx}" cy="${ty.toFixed(1)}" r="10" class="a-line a-impact art-anim"/>
+  <text x="40" y="56" class="a-text">${esc(t('art.triple'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.score'))}</text>
+</svg>`;
+};
+
+export const art = { catapult, bastion, darts, classified };
