@@ -1,0 +1,13 @@
+{
+  "name": "Ballmania",
+  "short_name": "Ballmania",
+  "description": "Le tir de billes réinventé : six mondes, modes Arcade, explosions spectaculaires.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#07060f",
+  "theme_color": "#07060f",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

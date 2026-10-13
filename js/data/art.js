@@ -148,4 +148,46 @@ const darts = (id, t) => {
 </svg>`;
 };
 
-export const art = { catapult, bastion, darts, classified };
+const marbles = (id, t) => {
+  // Une chaîne de billes en spirale vers le trou ; un tir fait éclater un groupe de trois
+  const cx = 470, cy = 210;
+  const at = (k) => {
+    const a = k * 0.42 + 0.6;
+    const r = 170 - k * 6.2;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.82];
+  };
+  let track = '';
+  for (let k = 0; k <= 22; k += 0.25) {
+    const [x, y] = at(k);
+    track += `${k === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const burst = [4, 5, 6];
+  let balls = '';
+  for (let k = 0; k < 16; k++) {
+    const [x, y] = at(k);
+    const r = (15 - k * 0.45).toFixed(1);
+    const cls = burst.includes(k) ? 'a-fill a-burst art-anim' : k % 3 === 0 ? 'a-line a-soft-fill' : 'a-line';
+    balls += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" class="${cls}"/>`;
+  }
+  const [hx, hy] = at(22);
+  const [tx, ty] = at(5);
+  const shot = `M150 300 L${tx.toFixed(1)} ${ty.toFixed(1)}`;
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.marblesAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <path d="${track}" class="a-soft"/>
+  <circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="14" class="a-fill a-pulse art-anim"/>
+  ${balls}
+  <circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="16" class="a-line a-impact art-anim"/>
+  <path d="${shot}" class="a-soft a-dash-static"/>
+  <circle r="11" class="a-fill art-anim"><animateMotion dur="2.6s" repeatCount="indefinite" path="${shot}" keyPoints="0;1;1" keyTimes="0;0.3;1" calcMode="linear"/></circle>
+  <g class="a-shooter">
+    <circle cx="150" cy="300" r="30" class="a-line a-soft-fill"/>
+    <circle cx="150" cy="300" r="11" class="a-fill"/>
+  </g>
+  <text x="40" y="56" class="a-text">${esc(t('art.combo'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.chain'))}</text>
+</svg>`;
+};
+
+export const art = { catapult, bastion, darts, marbles, classified };

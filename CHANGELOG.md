@@ -2,6 +2,12 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.4.0] - 2026-10-13
+
+### Ajouté
+- Projet **Ballmania** dans le carrousel, en français et en anglais : démo jouable (deux mondes sur six, 24 niveaux) hébergée sur `/demos/ballmania/`, ouverte dans un nouvel onglet et non indexée, comme celle de Catapulte Mania.
+- Nouvelle illustration animée `marbles` : chaîne de billes en spirale vers le trou, un tir fait éclater un groupe de trois.
+
 ## [1.3.0] - 2026-10-10
 
 ### Corrigé

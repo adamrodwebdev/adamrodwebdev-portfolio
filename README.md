@@ -49,6 +49,11 @@ Pour la mettre à jour : reconstruisez la démo, remplacez ce fichier, puis pous
 
 Correctif appliqué à la version 4.1.1 : Vite avait laissé le texte `__VITE_PRELOAD__` dans le code (le jeu restait bloqué sur « Chargement… »). Il a été remplacé par `void 0` et l'empreinte `sha256` de la Content-Security-Policy recalculée. À corriger à la source dans `vite.config.js` du jeu.
 
+## Démo de Ballmania
+
+`demos/ballmania/` est la démo du jeu (deux mondes sur six, sans publicité), construite dans le dépôt du jeu avec `npm run build:demo`, qui produit `dist-demo/`.
+Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/ballmania/` par celui de `dist-demo/` (sans `robots.txt`), puis poussez. Les chemins sont relatifs : aucun réglage n'est nécessaire pour le sous-dossier.
+
 ## Traductions (français / anglais)
 
 Le site existe en français (`/`) et en anglais (`/en/`). Tous les textes sont dans **`js/i18n/messages.js`**.
