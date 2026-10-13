@@ -1,0 +1,1 @@
+var e={gravityScale:1,extraPreview:0,extraLockDelayMs:0,scoreBonus:0,rescueRows:0,startJokers:0,fireBonus:0,rhythmWindowMs:0,garbageDelayMs:0};export{e as t};

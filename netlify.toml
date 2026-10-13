@@ -34,7 +34,7 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# Démos jouables (Catapulte Mania, Ballmania) : non indexées (le jeu complet reste la page de référence)
+# Démos jouables (Catapulte Mania, Ballmania, Stackrift) : non indexées (le jeu complet reste la page de référence)
 [[headers]]
   for = "/demos/*"
   [headers.values]

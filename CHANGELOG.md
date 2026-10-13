@@ -2,6 +2,12 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.5.0] - 2026-10-13
+
+### Ajouté
+- Projet **Stackrift** dans le carrousel, en français et en anglais : démo jouable (cinq modes sur treize et le premier chapitre de la campagne) hébergée sur `/demos/stackrift/`, ouverte dans un nouvel onglet et non indexée, comme les autres démos.
+- Nouvelle illustration animée `stackrift` : une barre tombe dans un puits presque plein et fait éclater quatre lignes.
+
 ## [1.4.0] - 2026-10-13
 
 ### Ajouté
