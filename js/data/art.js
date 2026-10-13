@@ -190,4 +190,41 @@ const marbles = (id, t) => {
 </svg>`;
 };
 
-export const art = { catapult, bastion, darts, marbles, classified };
+const stackrift = (id, t) => {
+  // Un puits presque plein : une barre tombe dans le trou et fait éclater quatre lignes
+  const x0 = 300, y0 = 100, s = 20, gap = 5;
+  const cell = (c, r, cls) => `<rect x="${x0 + c * s + 1}" y="${y0 + r * s + 1}" width="${s - 2}" height="${s - 2}" class="${cls}"/>`;
+  let rows = '';
+  for (let r = 6; r < 10; r++) {
+    for (let c = 0; c < 8; c++) {
+      if (c === gap) continue;
+      const solid = (c * 3 + r) % 4 === 0;
+      rows += cell(c, r, `${solid ? 'a-fill' : 'a-line a-soft-fill'} a-burst art-anim`);
+    }
+  }
+  let bar = '';
+  let ghost = '';
+  for (let r = 6; r < 10; r++) {
+    bar += cell(gap, r, 'a-fill a-piece art-anim');
+    ghost += cell(gap, r, 'a-soft a-dash-static');
+  }
+  let next = '';
+  for (const [c, r] of [[0, 1], [1, 1], [2, 1], [1, 0]]) {
+    next += `<rect x="${540 + c * 16}" y="${134 + r * 16}" width="14" height="14" class="a-line a-soft-fill"/>`;
+  }
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.stackriftAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <path d="M384 0 372 70 392 130 368 200 394 262 374 326 386 400" class="a-soft a-dash-static"/>
+  <path d="M${x0} ${y0}V${y0 + 10 * s}H${x0 + 8 * s}V${y0}" class="a-line a-thick"/>
+  ${ghost}
+  ${rows}
+  <g class="a-drop art-anim">${bar}</g>
+  <rect x="516" y="112" width="96" height="76" class="a-soft"/>
+  ${next}
+  <text x="40" y="56" class="a-text">${esc(t('art.lines'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.modes'))}</text>
+</svg>`;
+};
+
+export const art = { catapult, bastion, darts, marbles, stackrift, classified };

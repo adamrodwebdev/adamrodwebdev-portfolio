@@ -54,6 +54,11 @@ Correctif appliqué à la version 4.1.1 : Vite avait laissé le texte `__VITE_PR
 `demos/ballmania/` est la démo du jeu (deux mondes sur six, sans publicité), construite dans le dépôt du jeu avec `npm run build:demo`, qui produit `dist-demo/`.
 Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/ballmania/` par celui de `dist-demo/` (sans `robots.txt`), puis poussez. Les chemins sont relatifs : aucun réglage n'est nécessaire pour le sous-dossier.
 
+## Démo de Stackrift
+
+`demos/stackrift/` est la démo du jeu (cinq modes sur treize et le premier chapitre de la campagne), construite dans le dépôt du jeu avec `npm run build:demo`, qui produit `dist-demo/`.
+Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/stackrift/` par `index.html`, `favicon.svg` et `assets/` de `dist-demo/`, puis poussez. Les chemins sont relatifs : aucun réglage n'est nécessaire pour le sous-dossier.
+
 ## Traductions (français / anglais)
 
 Le site existe en français (`/`) et en anglais (`/en/`). Tous les textes sont dans **`js/i18n/messages.js`**.

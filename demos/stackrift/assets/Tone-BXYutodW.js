@@ -1,0 +1,1 @@
+var e={Empty:0,I:1,O:2,T:3,S:4,Z:5,J:6,L:7,ChromaA:8,ChromaB:9,ChromaC:10,ChromaD:11,Garbage:12,Water:13,Fire:14},t=[e.ChromaA,e.ChromaB,e.ChromaC,e.ChromaD],n=e=>t[e.nextInt(t.length)];export{e as n,n as r,t};
