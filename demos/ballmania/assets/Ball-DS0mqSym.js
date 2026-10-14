@@ -1,0 +1,1 @@
+var e=class{id;toneValue;s;frozen=!1;constructor(e,t,n){this.id=e,this.toneValue=t,this.s=n}get tone(){return this.toneValue}recolour(e){this.toneValue=e}},t=class{nextId=1;create(t,n=0){return new e(this.nextId++,t,n)}};export{t};

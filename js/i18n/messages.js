@@ -141,7 +141,7 @@ export const messages = {
       },
       ballmania: {
         title: 'Ballmania',
-        description: 'Tir de billes en chaîne réinventé : six mondes à mécaniques propres (miroirs, aimant, alchimie des couleurs, lave, trou noir), Colosses, modes Arcade, destruction spectaculaire. Moteur maison en TypeScript, rendu Canvas et WebGL, son synthétisé, FR / EN / ID, Lighthouse 100.',
+        description: 'Tir de billes en chaîne réinventé : six mondes à mécaniques propres (miroirs, aimant, alchimie des couleurs, lave, trou noir), Colosses, modes Arcade, destruction spectaculaire. Moteur maison en TypeScript, rendu Canvas et WebGL, musique et sons générés en direct, FR / EN / ID, Lighthouse 95+.',
         tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
         link: 'Jouer à la démo (2 mondes)',
         staticText: 'Tir de billes en chaîne réinventé : six mondes, Colosses, modes Arcade et destruction spectaculaire.',
@@ -361,7 +361,7 @@ export const messages = {
       },
       ballmania: {
         title: 'Ballmania',
-        description: 'The marble shooter reinvented: six worlds with their own mechanics (mirrors, magnet, colour alchemy, lava, black hole), Colossus bosses, Arcade modes, spectacular destruction. Custom TypeScript engine, Canvas and WebGL rendering, synthesized sound, FR / EN / ID, Lighthouse 100.',
+        description: 'The marble shooter reinvented: six worlds with their own mechanics (mirrors, magnet, colour alchemy, lava, black hole), Colossus bosses, Arcade modes, spectacular destruction. Custom TypeScript engine, Canvas and WebGL rendering, music and sound generated live, FR / EN / ID, Lighthouse 95+.',
         tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
         link: 'Play the demo (2 worlds)',
         staticText: 'The marble shooter reinvented: six worlds, Colossus bosses, Arcade modes and spectacular destruction.',

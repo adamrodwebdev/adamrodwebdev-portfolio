@@ -1,1 +1,0 @@
-var e=[{id:`endless`,unlockedBy:`nebula`,world:`nebula`},{id:`puzzle`,unlockedBy:`neon`,world:`abyss`},{id:`rhythm`,unlockedBy:`abyss`,world:`neon`},{id:`duel`,unlockedBy:`jewel`,world:`volcano`}];function t(t){return e.find(e=>e.id===t)}export{t as n,e as t};
