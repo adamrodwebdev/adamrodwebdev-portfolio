@@ -34,12 +34,19 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# Démos jouables (Catapulte Mania, Ballmania, Stackrift) : non indexées (le jeu complet reste la page de référence)
+# Démos jouables (Catapulte Mania, Ballmania, Lumirift) : non indexées (le jeu complet reste la page de référence)
 [[headers]]
   for = "/demos/*"
   [headers.values]
     X-Robots-Tag = "noindex"
     X-Frame-Options = "SAMEORIGIN"
+
+# Stackrift s'appelle désormais Lumirift : les anciens liens de la démo y mènent.
+[[redirects]]
+  from = "/demos/stackrift/*"
+  to = "/demos/lumirift/:splat"
+  status = 301
+  force = true
 
 # Fichiers de travail (template, scripts) : jamais servis aux visiteurs
 [[redirects]]

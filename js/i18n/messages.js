@@ -147,13 +147,13 @@ export const messages = {
         staticText: 'Tir de billes en chaîne réinventé : six mondes, Colosses, modes Arcade et destruction spectaculaire.',
         staticLink: 'Jouer à la démo de Ballmania',
       },
-      stackrift: {
-        title: 'Stackrift',
-        description: 'Le jeu de blocs qui tombent réinventé : treize modes en quatre familles (sable et éléments, mosaïque, tour de verre en cylindre, duel contre une IA à cinq niveaux), campagne de trente niveaux et dix améliorations. Programmation orientée objet en TypeScript, rendu Canvas séparé des règles, son synthétisé, FR / EN / ID, Lighthouse 100.',
+      lumirift: {
+        title: 'Lumirift',
+        description: 'Le jeu de blocs qui tombent réinventé : treize modes en quatre familles (sable et éléments, mosaïque, tour de verre en cylindre, duel contre une IA à cinq niveaux), campagne de trente niveaux et dix améliorations. Identité « Rift » (blocs gemmes, faille de lumière), première partie guidée, musique générative qui suit le danger. TypeScript orienté objet, rendu Canvas séparé des règles, FR / EN / ID.',
         tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
         link: 'Jouer à la démo (5 modes)',
         staticText: 'Le jeu de blocs qui tombent réinventé : treize modes, une campagne de trente niveaux et un duel contre l’IA.',
-        staticLink: 'Jouer à la démo de Stackrift',
+        staticLink: 'Jouer à la démo de Lumirift',
       },
       'projet-03': {
         title: 'Projet classifié',
@@ -178,7 +178,7 @@ export const messages = {
       marblesAlt: 'Illustration : une chaîne de billes en spirale vers un trou, un tir fait éclater un groupe de trois',
       combo: 'COMBO ×3',
       chain: 'RÉACTION EN CHAÎNE',
-      stackriftAlt: 'Illustration : une barre tombe dans un puits presque plein et fait éclater quatre lignes',
+      lumiriftAlt: 'Illustration : une barre tombe dans un puits presque plein et fait éclater quatre lignes',
       lines: 'LIGNES ×4',
       modes: '13 MODES',
       triple: 'TRIPLE 20',
@@ -367,13 +367,13 @@ export const messages = {
         staticText: 'The marble shooter reinvented: six worlds, Colossus bosses, Arcade modes and spectacular destruction.',
         staticLink: 'Play the Ballmania demo',
       },
-      stackrift: {
-        title: 'Stackrift',
-        description: 'The falling-blocks game reinvented: thirteen modes in four families (sand and elements, mosaic, a glass cylinder tower, a duel against a five-level AI), a thirty-level campaign and ten upgrades. Object-oriented TypeScript, Canvas rendering kept apart from the rules, synthesized sound, FR / EN / ID, Lighthouse 100.',
+      lumirift: {
+        title: 'Lumirift',
+        description: 'The falling-blocks game reinvented: thirteen modes in four families (sand and elements, mosaic, a glass cylinder tower, a duel against a five-level AI), a thirty-level campaign and ten upgrades. A "Rift" identity (gem blocks, a crack of light), a guided first game, generative music that follows the danger. Object-oriented TypeScript, Canvas rendering kept apart from the rules, FR / EN / ID.',
         tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
         link: 'Play the demo (5 modes)',
         staticText: 'The falling-blocks game reinvented: thirteen modes, a thirty-level campaign and a duel against the AI.',
-        staticLink: 'Play the Stackrift demo',
+        staticLink: 'Play the Lumirift demo',
       },
       'projet-03': {
         title: 'Classified project',
@@ -398,7 +398,7 @@ export const messages = {
       marblesAlt: 'Illustration: a chain of marbles spiralling into a hole, a shot bursting a group of three',
       combo: 'COMBO ×3',
       chain: 'CHAIN REACTION',
-      stackriftAlt: 'Illustration: a bar drops into an almost full well and bursts four lines',
+      lumiriftAlt: 'Illustration: a bar drops into an almost full well and bursts four lines',
       lines: 'LINES ×4',
       modes: '13 MODES',
       triple: 'TREBLE 20',

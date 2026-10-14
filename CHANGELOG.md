@@ -2,6 +2,12 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.6.0] - 2026-10-14
+
+### Modifié
+- Stackrift s'appelle désormais **Lumirift** : fiche du carrousel, textes FR / EN et contenu statique renommés, démo mise à jour (version 1.5.0 du jeu : identité « Rift », première partie guidée, musique générative) sur `/demos/lumirift/`.
+- Les anciens liens `/demos/stackrift/…` redirigent (301) vers `/demos/lumirift/…`.
+
 ## [1.5.0] - 2026-10-13
 
 ### Ajouté
