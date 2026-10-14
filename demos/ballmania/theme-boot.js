@@ -8,7 +8,10 @@
   } catch {
     saved = {};
   }
-  var theme = saved.theme === 'light' || saved.theme === 'dark' ? saved.theme : 'system';
+  var theme =
+    saved.theme === 'light' || saved.theme === 'dark' || saved.theme === 'system'
+      ? saved.theme
+      : 'dark';
   if (theme === 'system') {
     theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
