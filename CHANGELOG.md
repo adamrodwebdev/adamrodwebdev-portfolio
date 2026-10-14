@@ -14,6 +14,11 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - Projet **Stackrift** dans le carrousel, en français et en anglais : démo jouable (cinq modes sur treize et le premier chapitre de la campagne) hébergée sur `/demos/stackrift/`, ouverte dans un nouvel onglet et non indexée, comme les autres démos.
 - Nouvelle illustration animée `stackrift` : une barre tombe dans un puits presque plein et fait éclater quatre lignes.
 
+## [1.4.2] - 2026-10-14
+
+### Modifié
+- Démo de Ballmania en version 1.3.0 : bombe offerte au premier tir et geste d'apprentissage au niveau 1-1.
+
 ## [1.4.1] - 2026-10-14
 
 ### Modifié
