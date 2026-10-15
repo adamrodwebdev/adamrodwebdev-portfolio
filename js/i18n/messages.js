@@ -112,6 +112,8 @@ export const messages = {
       next: 'Projet suivant',
       show: 'Afficher {title}',
       discover: 'Découvrir {title}',
+      more: 'Lire la suite',
+      less: 'Réduire',
       status: { live: 'En ligne', dev: 'En développement', soon: 'À venir' },
     },
     projects: {
@@ -332,6 +334,8 @@ export const messages = {
       next: 'Next project',
       show: 'Show {title}',
       discover: 'Discover {title}',
+      more: 'Read more',
+      less: 'Show less',
       status: { live: 'Live', dev: 'In development', soon: 'Coming soon' },
     },
     projects: {

@@ -2,6 +2,18 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.6.2] - 2026-10-15
+
+### Corrigé
+- Carrousel de projets sur téléphone : les flèches et le compteur sortaient de l'écran (sept puces trop larges) ; ils sont remplacés sous 768 px par des segments de progression qui montrent aussi la lecture automatique.
+- Les illustrations n'étaient plus écrasées par les longues descriptions (16 px de haut pour Lumirift sur téléphone) : le carrousel prend la hauteur de sa plus haute carte et, jusqu'à 860 px, chaque illustration s'affiche entière.
+- Glisser au doigt : la carte suit le doigt au pixel près, le geste n'est plus annulé dès le premier mouvement, un défilement vertical ne change plus de projet par erreur.
+
+### Modifié
+- Sur téléphone, piste plate : les cartes voisines dépassent sur les bords et un toucher les amène au centre ; plus de rotation 3D ni de filtres coûteux pendant le glisser.
+- Jusqu'à 860 px, descriptions repliées à cinq lignes avec « Lire la suite » et lien d'action aligné en bas de carte.
+- La lecture automatique s'arrête dès que le visiteur glisse, touche ou utilise les commandes.
+
 ## [1.6.1] - 2026-10-15
 
 ### Modifié
