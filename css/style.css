@@ -377,20 +377,24 @@ body::before {
 .projects-static h3 { font-size: var(--step-2); }
 
 .swiper { position: relative; outline: none; }
+/* Les diapositives sont empilées dans une seule cellule de grille : la hauteur du carrousel
+   suit la plus haute d'entre elles, sans jamais écraser l'illustration. */
 .swiper__viewport {
-  position: relative; height: clamp(500px, 62vw, 620px); perspective: 1600px; touch-action: pan-y;
+  position: relative; display: grid; grid-template-areas: "stack"; min-height: clamp(500px, 62vw, 620px);
+  perspective: 1600px; touch-action: pan-y;
   cursor: grab; user-select: none; -webkit-user-select: none;
 }
 .swiper__viewport.is-dragging { cursor: grabbing; }
 .slide {
-  position: absolute; top: 0; left: 50%; width: min(760px, 84vw); height: 100%;
-  margin-left: calc(min(760px, 84vw) / -2);
+  --visual-min: 26cqi;
+  position: relative; grid-area: stack; justify-self: center; width: min(760px, 84vw); min-width: 0;
+  container-type: inline-size;
   transform-style: preserve-3d; will-change: transform, opacity;
   transition: transform 0.85s var(--ease-out), opacity 0.6s var(--ease-out), filter 0.6s;
 }
 .swiper__viewport.is-dragging .slide { transition: none; }
 .slide__card {
-  position: relative; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  position: relative; height: 100%; display: grid; grid-template-rows: minmax(var(--visual-min), 1fr) auto;
   background: var(--line);
   clip-path: polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px);
   isolation: isolate;
@@ -401,6 +405,7 @@ body::before {
 }
 .slide.is-active .slide__card { background: linear-gradient(140deg, var(--gold-hi), var(--line) 40%, var(--line) 60%, var(--gold)); }
 .slide__visual { position: relative; overflow: hidden; margin: 1px 1px 0; min-height: 0; background: var(--bg); }
+.slide__art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .slide__visual svg { width: 100%; height: 100%; }
 .slide__visual::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -426,6 +431,13 @@ body::before {
   transition: border-color 0.3s, gap 0.3s var(--ease-out);
 }
 .slide__link:hover { border-color: var(--gold); gap: 14px; }
+.slide__more {
+  grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-block: -10px -4px; padding: 0;
+  background: none; border: 0; cursor: pointer; color: var(--gold);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.slide__more svg { width: 16px; height: 16px; transition: transform 0.4s var(--ease-out); }
+.slide__more[aria-expanded="true"] svg { transform: rotate(180deg); }
 .redacted { background: var(--fg); color: transparent; user-select: none; animation: redact 3s steps(1) infinite; }
 
 .swiper__controls { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 36px; padding-inline: var(--gutter); }
@@ -438,11 +450,18 @@ body::before {
   transition: background-color 0.3s, transform 0.5s var(--ease-out);
 }
 .swiper__bullet[aria-current="true"]::before { background: var(--gold); transform: rotate(225deg) scale(1.2); }
+.swiper__meter { display: grid; justify-items: center; gap: 6px; }
 .swiper__counter { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.08em; min-width: 72px; text-align: center; }
 .swiper__counter b { color: var(--gold); font-size: 1.4rem; }
 .swiper__timer { position: absolute; inset: auto 0 -1px 0; height: 2px; background: var(--gold); transform-origin: left; transform: scaleX(0); }
 .swiper__timer.is-running { animation: timer var(--autoplay, 7s) linear forwards; }
-.swiper__timer.is-paused { animation-play-state: paused; }
+.swiper__timer.is-paused, .swiper__segment i.is-paused { animation-play-state: paused; }
+/* Segments de progression : remplacent les puces sur téléphone */
+.swiper__segments { display: none; }
+.swiper__segment { position: relative; flex: 1; height: 3px; background: var(--line); overflow: hidden; transition: background-color 0.4s; }
+.swiper__segment.is-active { background: var(--gold); }
+.swiper__segment.is-timed { background: var(--line); }
+.swiper__segment i { position: absolute; inset: 0; background: var(--gold); transform-origin: left; transform: scaleX(0); animation: timer var(--autoplay, 7s) linear forwards; }
 
 /* ---------- Méthode ---------- */
 .protocol { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; counter-reset: step; }
@@ -651,8 +670,24 @@ body::before {
   .hero__inner { grid-template-columns: minmax(0, 1fr); }
   .hero__emblem { width: min(340px, 86%); justify-self: start; margin-top: 16px; }
   .contact { grid-template-columns: minmax(0, 1fr); }
-  .slide__body { grid-template-columns: minmax(0, 1fr); }
-  .slide__link { grid-column: 1; grid-row: auto; justify-self: start; }
+  /* Carte du carrousel : illustration entière, texte replié, bouton d'action aligné en bas */
+  .slide { --visual-min: calc(100cqi * 400 / 760); }
+  .slide__card { grid-template-rows: var(--visual-min) 1fr; }
+  .slide__body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .slide__desc {
+    align-self: stretch;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5; overflow: hidden;
+  }
+  .slide.is-expanded .slide__desc { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
+  .slide__link { align-self: flex-start; margin-top: auto; min-height: 44px; }
+}
+@media (max-width: 767px) {
+  /* Commandes du carrousel : les puces ne tiennent plus, segments de progression à la place */
+  .swiper__controls { justify-content: space-between; gap: 12px; }
+  .swiper__bullets, .swiper__timer { display: none; }
+  .swiper__meter { flex: 1; min-width: 0; }
+  .swiper__counter { min-width: 0; line-height: 1.2; }
+  .swiper__segments { display: flex; width: min(100%, 220px); gap: 6px; }
 }
 @media (max-width: 600px) {
   :root { --header-h: 64px; }
@@ -661,8 +696,16 @@ body::before {
   .hero { min-height: auto; padding-bottom: 120px; }
   .hero__line--outline { -webkit-text-stroke-width: 1.5px; }
   .hud-panel { right: 0; }
-  .swiper__viewport { height: 560px; }
-  .slide__body { padding: 18px 20px 22px; }
+  /* Carrousel : piste plate, cartes presque pleine largeur, textes resserrés */
+  .swiper__viewport { min-height: 0; }
+  .slide { width: calc(100% - 2 * var(--gutter) - 24px); }
+  .slide__body { gap: 10px; padding: 16px 18px 18px; }
+  .slide__title { font-size: clamp(1.75rem, 1.3rem + 2.4vw, 2rem); }
+  .slide__desc { font-size: 0.96rem; line-height: 1.55; }
+  .slide__tags { gap: 6px; }
+  .slide__tags li { font-size: 0.8rem; padding: 2px 8px; }
+  .slide__link { padding: 8px 0; font-size: clamp(0.85rem, 0.55rem + 1.6vw, 1rem); }
+  .swiper__controls { margin-top: 20px; }
   .submit-btn { width: 100%; min-width: 0; }
   .brand__name { font-size: 1.15rem; }
   .player.is-open .player__info { max-width: 170px; }
