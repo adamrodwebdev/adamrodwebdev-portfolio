@@ -2,6 +2,11 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.6.1] - 2026-10-15
+
+### Modifié
+- Démo de Ballmania en version 1.4.2 : bouton de coupure du son sur l'écran titre et en jeu, écran titre sans défilement sur les petits téléphones en portrait.
+
 ## [1.6.0] - 2026-10-14
 
 ### Modifié
