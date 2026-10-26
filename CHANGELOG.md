@@ -2,6 +2,15 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.7.0] - 2026-10-26
+
+### Ajouté
+- Adresse e-mail professionnelle **contact@adamrodwebdev.com** affichée dans la section contact, en français et en anglais, avec un lien `mailto:`.
+- Cette adresse figure aussi dans les mentions légales (FR / EN), comme l'exige la loi pour l'éditeur d'un site.
+
+### Modifié
+- Le script de génération des pages lit l'adresse dans `js/config.js` : une seule source pour le site et le formulaire.
+
 ## [1.6.2] - 2026-10-15
 
 ### Corrigé

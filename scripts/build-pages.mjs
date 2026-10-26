@@ -11,6 +11,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { messages } from '../js/i18n/messages.js';
+import { config } from '../js/config.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://adamrodwebdev.com';
@@ -53,6 +54,7 @@ for (const [locale, page] of Object.entries(pages)) {
     typeOptions: m.form.types.map((o) => `<option>${escape(o)}</option>`).join(''),
     budgetOptions: m.form.budgets.map((o) => `<option>${escape(o)}</option>`).join(''),
     sendLabel: escape(m.form.steps[0]),
+    contactEmail: escape(config.contactEmail),
   };
 
   const html = template.replace(/\[\[(@?)([\w.-]+)\]\]/g, (_, at, key) => {
