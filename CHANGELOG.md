@@ -2,6 +2,12 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.7.1] - 2026-10-26
+
+### Corrigé
+- Mentions légales complétées (FR / EN) selon les obligations d'un micro-entrepreneur : éditeur Kevin Rousselet, entrepreneur individuel (EI), nom commercial AdamRodWebTech, adresse, téléphone, SIREN et SIRET (RNE), TVA non applicable (article 293 B du CGI), directeur de la publication.
+- Hébergeur : coordonnées officielles de Netlify, Inc. (101 2nd Street, San Francisco), l'ancienne adresse n'étant plus valable.
+
 ## [1.7.0] - 2026-10-26
 
 ### Ajouté
