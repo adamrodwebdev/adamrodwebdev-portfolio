@@ -497,7 +497,14 @@ body::before {
 .contact__facts { margin: 40px 0 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
 .contact__facts div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
 .contact__facts dt { color: var(--muted); }
-.contact__facts dd { margin: 0; font-weight: 600; text-align: right; }
+.contact__facts dd { margin: 0; min-width: 0; font-weight: 600; text-align: right; }
+/* Lien e-mail : zone tactile agrandie sans décaler la ligne */
+.contact__mail {
+  display: inline-block; padding-block: 10px; margin-block: -10px; overflow-wrap: anywhere;
+  color: var(--gold); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
+  transition: text-decoration-thickness 0.2s, color 0.3s;
+}
+.contact__mail:hover { color: var(--gold-hi); text-decoration-thickness: 2px; }
 .contact__form-wrap { position: relative; min-width: 0; }
 
 .cform {
