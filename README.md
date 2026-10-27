@@ -11,6 +11,22 @@ python3 -m http.server 8080      # puis http://localhost:8080
 # ou : npx serve .
 ```
 
+## Branches et mise en ligne
+
+Netlify publie automatiquement chaque push sur `main`, et chaque mise en production coûte 15 crédits. Pour ne payer que les versions publiées :
+
+- **`dev`** : branche de travail. On y committe et on y pousse librement : Netlify ne la construit pas (seule la branche de production est déployée).
+- **`main`** : branche publiée. On n'y fusionne `dev` que pour mettre une version en ligne :
+
+```bash
+git switch main
+git merge --ff-only dev
+git push origin main      # déclenche un seul déploiement Netlify
+git switch dev
+```
+
+Si les builds ont été arrêtés dans Netlify, les pushes reçus pendant l'arrêt ne sont pas rejoués : relancez la publication avec **Deploys → Trigger deploy → Deploy project**.
+
 ## Structure
 
 ```
