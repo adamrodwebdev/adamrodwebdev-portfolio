@@ -140,8 +140,9 @@
     /* Les cartes lisent leur propre largeur : côte à côte quand elles ont la place. */
     .lr-cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
     .lr-card { container: lr-card / inline-size; }
+    /* Les lignes gardent leur hauteur : les titres des cartes d'une même rangée restent alignés. */
     .lr-card__body {
-      display: grid; height: 100%; overflow: hidden;
+      display: grid; align-content: start; height: 100%; overflow: hidden;
       background: var(--surface); border: 1px solid var(--line-soft); border-radius: 1rem;
     }
     .lr-card img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
@@ -325,7 +326,7 @@
             <li>[[page.maker.proofs.bots]]</li>
           </ul>
           <ul class="lr-links" role="list">
-            <li><a href="[[@youtube]]">[[page.maker.links.devlogs]]</a></li>
+            <li><a href="[[@youtube]]">[[page.maker.links.youtube]]</a></li>
             <li><a href="[[@github]]">[[page.maker.links.github]]</a></li>
             <li><a href="[[@tiktok]]">[[page.maker.links.tiktok]]</a></li>
             <li><a href="[[@instagram]]">[[page.maker.links.instagram]]</a></li>
