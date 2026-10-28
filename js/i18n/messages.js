@@ -152,11 +152,11 @@ export const messages = {
       },
       lumirift: {
         title: 'Lumirift',
-        description: 'Le jeu de blocs qui tombent réinventé : treize modes en quatre familles (sable et éléments, mosaïque, tour de verre en cylindre, duel contre une IA à cinq niveaux), campagne de trente niveaux et dix améliorations. Identité « Rift » (blocs gemmes, faille de lumière), première partie guidée, musique générative qui suit le danger. TypeScript orienté objet, rendu Canvas séparé des règles, FR / EN / ID.',
+        description: 'Un puzzle de sable où les blocs contre-attaquent : les pièces s’effritent en sable qui brûle, électrise et pousse, et quatre Gardiens se dressent. Quatorze modes, une campagne de 69 niveaux, une course contre la montre, des saisons et un cadeau chaque jour, en quatre langues. TypeScript orienté objet, rendu Canvas séparé des règles, chaque niveau joué d’abord par des bots.',
         tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
-        link: 'Jouer à la démo (5 modes)',
-        staticText: 'Le jeu de blocs qui tombent réinventé : treize modes, une campagne de trente niveaux et un duel contre l’IA.',
-        staticLink: 'Jouer à la démo de Lumirift',
+        link: 'Jouer à Lumirift',
+        staticText: 'Un puzzle de sable où les blocs contre-attaquent : quatorze modes, une campagne de 69 niveaux et quatre Gardiens.',
+        staticLink: 'Jouer gratuitement à Lumirift',
       },
       'projet-03': {
         title: 'Projet classifié',
@@ -183,7 +183,7 @@ export const messages = {
       chain: 'RÉACTION EN CHAÎNE',
       lumiriftAlt: 'Illustration : une barre tombe dans un puits presque plein et fait éclater quatre lignes',
       lines: 'LIGNES ×4',
-      modes: '13 MODES',
+      modes: '14 MODES',
       triple: 'TRIPLE 20',
       score: 'SCORE 180',
       classifiedAlt: 'Illustration : dossier verrouillé en cours de déchiffrement',
@@ -375,11 +375,11 @@ export const messages = {
       },
       lumirift: {
         title: 'Lumirift',
-        description: 'The falling-blocks game reinvented: thirteen modes in four families (sand and elements, mosaic, a glass cylinder tower, a duel against a five-level AI), a thirty-level campaign and ten upgrades. A "Rift" identity (gem blocks, a crack of light), a guided first game, generative music that follows the danger. Object-oriented TypeScript, Canvas rendering kept apart from the rules, FR / EN / ID.',
+        description: 'A falling sand puzzle where the blocks fight back: pieces crumble into sand that burns, shocks and grows, and four Guardians rise. Fourteen modes, a 69-level campaign, a race against the clock, seasons and a daily gift, in four languages. Object-oriented TypeScript, Canvas rendering kept apart from the rules, every level played by bots first.',
         tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
-        link: 'Play the demo (5 modes)',
-        staticText: 'The falling-blocks game reinvented: thirteen modes, a thirty-level campaign and a duel against the AI.',
-        staticLink: 'Play the Lumirift demo',
+        link: 'Play Lumirift',
+        staticText: 'A falling sand puzzle where the blocks fight back: fourteen modes, a 69-level campaign and four Guardians.',
+        staticLink: 'Play Lumirift free',
       },
       'projet-03': {
         title: 'Classified project',
@@ -406,7 +406,7 @@ export const messages = {
       chain: 'CHAIN REACTION',
       lumiriftAlt: 'Illustration: a bar drops into an almost full well and bursts four lines',
       lines: 'LINES ×4',
-      modes: '13 MODES',
+      modes: '14 MODES',
       triple: 'TREBLE 20',
       score: 'SCORE 180',
       classifiedAlt: 'Illustration: a locked file being decrypted',
@@ -460,3 +460,73 @@ export const messages = {
 };
 
 export const SUPPORTED = ['fr', 'en'];
+
+/**
+ * La page du jeu, /lumirift/ (version 1.8.0), en anglais seulement : scripts/build-pages.mjs la
+ * génère à partir de templates/lumirift.html, avec les textes de l'en-tête et du pied de page
+ * anglais ci-dessus. Hors de vue-i18n (la page n'a pas d'îlot Vue) : aucune clé à doubler en
+ * français. Pas de guillemet droit ni d'esperluette dans les textes repris par le JSON-LD.
+ */
+export const lumiriftPage = {
+  meta: {
+    title: 'Lumirift Blocks: free falling sand puzzle in your browser',
+    description:
+      'Play Lumirift Blocks free in your browser, no download: blocks crumble into sand that burns, shocks and grows, and four Guardian bosses fight back.',
+    ogTitle: 'Lumirift Blocks: the falling sand puzzle where blocks fight back',
+    ogImageAlt: 'Lumirift Blocks: the Eye of the Tower glares over a glass tower of gem blocks',
+  },
+  stage: {
+    eyebrow: 'A free browser game by AdamRodWebDev',
+    promise:
+      'A falling sand puzzle where the blocks fight back. Pieces crumble into sand that burns, shocks and grows, and four Guardians rise to stop you.',
+    facts: 'No download · phone and desktop',
+    languages: 'English, French, Indonesian, Russian',
+  },
+  play: { label: 'Play free', where: 'on Playgama' },
+  clip: {
+    alt: 'Fire lands on a pool of oil and the whole pool blazes in the sand well',
+    play: 'Play the clip',
+    pause: 'Pause the clip',
+  },
+  features: {
+    title: 'What makes it different',
+    sand: {
+      title: 'Sand that reacts',
+      text: 'Fire sets oil ablaze, lightning shocks water, seeds grow into vines, acid eats and ice freezes. Seven elements, one well.',
+      alt: 'Lightning strikes a pool of water and shocks the sand around it',
+    },
+    guardians: {
+      title: 'Four Guardians',
+      text: 'The Dune Wyrm, the Ceramic Golem, the Eye of the Tower and the Heart of the Rift, and a new one to beat every week.',
+      alt: 'The Dune Wyrm bursts out of the sand and a bolt strikes its head',
+    },
+    modes: {
+      title: '14 ways to play',
+      text: 'A 69-level campaign, a race against the clock, seasons, and a gift every day.',
+      alt: 'Rubble rows burst with the word RIFT over the Heart of the Rift',
+    },
+  },
+  maker: {
+    title: 'Made in public',
+    line: 'Built by AdamRodWebDev, a web developer in France. Every bug, fix and trick goes out as a devlog.',
+    proofs: {
+      size: 'Starts in under 300 KB',
+      lighthouse: 'Lighthouse 100',
+      bots: 'Every level played by bots first',
+    },
+    links: {
+      devlogs: 'Devlogs',
+      github: 'Code on GitHub',
+      tiktok: 'TikTok',
+      instagram: 'Instagram',
+      hire: 'Hire me',
+    },
+    credits: 'Designed and directed by AdamRodWebDev, built with AI coding assistants.',
+  },
+  ld: {
+    description:
+      'A free falling sand puzzle in your browser: blocks crumble into sand that burns, shocks and grows, and four Guardian bosses fight back.',
+    trailerName: 'Lumirift Blocks: fire meets oil',
+    trailerDescription: 'Fire lands on a pool of oil and the whole pool blazes.',
+  },
+};
