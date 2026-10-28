@@ -1,0 +1,445 @@
+<!doctype html>
+<!--
+  FICHIER GÉNÉRÉ — ne pas modifier directement.
+  Source : templates/lumirift.html + js/i18n/messages.js (lumiriftPage, et l'en-tête anglais)
+  Régénérer : node scripts/build-pages.mjs
+-->
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>[[page.meta.title]]</title>
+  <meta name="description" content="[[page.meta.description]]">
+  <meta name="author" content="AdamRodWebDev">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="[[@url]]">
+
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="AdamRodWebDev">
+  <meta property="og:title" content="[[page.meta.ogTitle]]">
+  <meta property="og:description" content="[[page.meta.description]]">
+  <meta property="og:url" content="[[@url]]">
+  <meta property="og:image" content="[[@url]]og-lumirift-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="[[page.meta.ogImageAlt]]">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="[[page.meta.ogTitle]]">
+  <meta name="twitter:description" content="[[page.meta.description]]">
+  <meta name="twitter:image" content="[[@url]]og-lumirift-1200x630.png">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('arwd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Les polices du site, sans bloquer le premier affichage ; Unbounded réduite aux lettres du titre. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="[[@fonts]]" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" as="style" href="[[@titleFont]]" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="[[@fonts]]"><link rel="stylesheet" href="[[@titleFont]]"></noscript>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* La page du jeu : ses parties propres. En-tête, pied de page, jetons et thèmes : style.css. */
+    :root {
+      /* La scène du jeu, la même dans les deux thèmes : le ciel violet de la faille. */
+      --lr-sky: radial-gradient(80% 70% at 70% 30%, #7d3ae0 0%, #4a1fa8 38%, #22105e 72%, #120838 100%);
+      --lr-fg: #fffaf0;
+      --lr-muted: #ddd2fb;
+      --lr-gold: #f5cf6e;
+      --lr-gold-low: #e0b04a;
+      --lr-gold-deep: #9a7420;
+      --lr-ink: #000000;
+      --lr-well: #0d0a26;
+      --lr-veil: rgb(13 10 38 / 0.78);
+      --lr-edge: rgb(255 255 255 / 0.14);
+      --lr-shade: rgb(10 0 40 / 0.9);
+      --lr-glow: rgb(255 190 80 / 0.55);
+      --lr-lumi-shadow: #2a0f5c;
+      --lr-lumi-haze: rgb(40 10 90 / 0.7);
+      --lr-rift: linear-gradient(180deg, #fff3c8 10%, #ffb340 55%, #ff7a2a);
+      --lr-rift-drop: #5a1f0a;
+      --lr-blocks: #ffe9c7;
+    }
+
+    /* Sans îlot Vue, l'en-tête reste dans le flux : jamais transparent au-dessus du contenu. */
+    .lr .site-header { position: relative; inset: auto; }
+    /* Des cibles de 44 px au doigt, en-tête et pied de page compris. */
+    .lr .brand { min-height: 2.75rem; }
+    .lr .nav__links a, .lr .footer__links a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+    .lr-stage { background: var(--lr-sky); color: var(--lr-fg); color-scheme: dark; overflow: hidden; }
+    .lr-stage__inner { display: grid; gap: 2rem; align-items: center; padding-block: clamp(2rem, 1.25rem + 4vw, 4.5rem); }
+    .lr-eyebrow { font: 600 0.95rem var(--font-display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--lr-muted); }
+    .lr-lockup {
+      margin-top: 0.5rem;
+      font: 900 clamp(3rem, 2rem + 6vw, 6rem) / 0.9 'Unbounded', var(--font-display);
+      letter-spacing: -0.035em; text-transform: uppercase; color: var(--lr-fg);
+      text-shadow: 0 0.05em 0 var(--lr-lumi-shadow), 0 0.06em 0.3em var(--lr-lumi-haze);
+    }
+    .lr-lockup span { display: block; }
+    .lr-lockup__rift {
+      width: fit-content; background: var(--lr-rift); -webkit-background-clip: text; background-clip: text;
+      color: transparent; text-shadow: none; filter: drop-shadow(0 0.045em 0 var(--lr-rift-drop));
+    }
+    .lr-lockup__blocks { margin-top: 0.25em; font-size: 0.26em; line-height: 1; letter-spacing: 0.55em; color: var(--lr-blocks); }
+    .lr-promise { margin-top: 1.25rem; max-width: 34ch; font-size: clamp(1.125rem, 1rem + 0.6vw, 1.375rem); }
+    .lr-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 1.75rem; }
+    .lr-facts { color: var(--lr-muted); font-size: 0.95rem; }
+
+    .lr-play {
+      display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 0.6rem;
+      max-width: 100%; min-height: 3.5rem; padding: 0.25rem clamp(1.25rem, 1rem + 2vw, 1.75rem); border-radius: 999px;
+      background: linear-gradient(180deg, var(--lr-gold), var(--lr-gold-low)); color: var(--lr-ink); text-decoration: none;
+      font: 700 clamp(1.15rem, 1rem + 0.6vw, 1.35rem) var(--font-display); letter-spacing: 0.06em; text-transform: uppercase;
+      box-shadow: 0 0.3rem 0 var(--lr-gold-deep), 0 1rem 2.5rem -1rem var(--lr-glow);
+      transition: transform 0.25s var(--ease-out);
+    }
+    .lr-play:hover { transform: translateY(-2px); }
+    .lr-play:active { transform: translateY(1px); }
+    .lr-play svg { width: 1.1rem; height: 1.1rem; }
+    .lr-play small { font: 600 0.85rem var(--font-body); letter-spacing: 0; text-transform: none; }
+
+    /* Le clip : l'affiche d'abord, la vidéo après le chargement (voir le script en bas de page). */
+    .lr-clip {
+      position: relative; justify-self: center; width: min(100%, 20rem); max-width: 100%; aspect-ratio: 9 / 16; margin: 0;
+      border-radius: 1.25rem; overflow: hidden; background: var(--lr-well);
+      box-shadow: 0 0 0 1px var(--lr-edge), 0 2rem 4rem -1.5rem var(--lr-shade);
+    }
+    .lr-clip img, .lr-clip video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .lr-clip video { opacity: 0; transition: opacity 0.3s; }
+    .lr-clip.is-playing video { opacity: 1; }
+    .lr-clip__toggle {
+      position: absolute; right: 0.75rem; bottom: 0.75rem; display: grid; place-items: center;
+      width: 2.75rem; height: 2.75rem; border: 1px solid var(--lr-edge); border-radius: 50%;
+      background: var(--lr-veil); color: var(--lr-fg); cursor: pointer;
+    }
+    .lr-clip__toggle svg { width: 1rem; height: 1rem; }
+    .lr-clip__toggle .is-pause, .lr-clip__toggle.is-playing .is-play { display: none; }
+    .lr-clip__toggle.is-playing .is-pause { display: block; }
+
+    .lr-section { padding-block: clamp(2.5rem, 1.5rem + 5vw, 5rem); }
+    .lr-h2 { margin-bottom: 1.5rem; font-size: var(--step-3); text-transform: uppercase; }
+
+    /* Les cartes lisent leur propre largeur : côte à côte quand elles ont la place. */
+    .lr-cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+    .lr-card { container: lr-card / inline-size; }
+    .lr-card__body {
+      display: grid; height: 100%; overflow: hidden;
+      background: var(--surface); border: 1px solid var(--line-soft); border-radius: 1rem;
+    }
+    .lr-card img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+    .lr-card__text { padding: 1rem 1.25rem 1.25rem; }
+    .lr-card h3 { font-size: var(--step-2); color: var(--gold); }
+    .lr-card p { margin-top: 0.4rem; color: var(--muted); }
+    @container lr-card (width >= 34rem) {
+      .lr-card__body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+    }
+    .lr-again { display: flex; justify-content: center; margin-top: 2rem; }
+
+    .lr-maker { border-top: 1px solid var(--line-soft); }
+    .lr-maker__inner { display: grid; gap: 1.5rem; }
+    .lr-avatar { width: 5.5rem; height: 5.5rem; border-radius: 50%; }
+    .lr-maker p { max-width: 62ch; }
+    .lr-proofs { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-block: 1rem 1.25rem; font: 700 1.15rem var(--font-display); letter-spacing: 0.04em; }
+    .lr-proofs li::before { content: "◆ " / ""; color: var(--gold); font-size: 0.8em; }
+    .lr-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .lr-links a {
+      display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 1.1rem;
+      border: 1px solid var(--line); border-radius: 0.5rem; text-decoration: none;
+      font: 600 1rem var(--font-display); letter-spacing: 0.06em; text-transform: uppercase;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .lr-links a:hover { color: var(--gold); border-color: var(--gold); }
+    .lr-credits { color: var(--muted); font-size: var(--step--1); }
+
+    @media (width >= 48rem) {
+      .lr-maker__inner { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+    }
+    @media (width >= 56rem) {
+      .lr-stage__inner { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "VideoGame",
+        "@id": "[[@url]]#game",
+        "name": "Lumirift Blocks",
+        "url": "[[@url]]",
+        "description": "[[page.ld.description]]",
+        "image": "[[@url]]og-lumirift-1200x630.png",
+        "genre": ["Puzzle", "Falling sand", "Arcade"],
+        "gamePlatform": "Web browser",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any",
+        "playMode": "SinglePlayer",
+        "inLanguage": ["en", "fr", "id", "ru"],
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "url": "[[@play]]" },
+        "author": { "@id": "[[@origin]]/#entreprise" },
+        "publisher": { "@id": "[[@origin]]/#entreprise" },
+        "trailer": {
+          "@type": "VideoObject",
+          "name": "[[page.ld.trailerName]]",
+          "description": "[[page.ld.trailerDescription]]",
+          "thumbnailUrl": "[[@url]]clip-poster.jpg",
+          "contentUrl": "[[@url]]clip.mp4",
+          "uploadDate": "[[@clipDate]]",
+          "duration": "[[@clipDuration]]"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "url": "[[@url]]",
+        "name": "[[page.meta.title]]",
+        "inLanguage": "en",
+        "isPartOf": { "@id": "[[@origin]]/#site" },
+        "mainEntity": { "@id": "[[@url]]#game" }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="lr">
+  <a class="skip-link" href="#contenu">[[a11y.skip]]</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="[[a11y.mainNav]]">
+      <a class="brand" href="/en/" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebDev</b></span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="/en/#services">[[nav.services]]</a></li>
+        <li><a href="/en/#projets">[[nav.projects]]</a></li>
+        <li><a href="/en/#methode">[[nav.method]]</a></li>
+        <li><a href="/en/#contact">[[nav.contact]]</a></li>
+      </ul>
+      <div class="nav__tools">
+        <button class="icon-btn is-dark" type="button" data-theme-toggle aria-pressed="true" aria-label="[[nav.themeLight]]"
+          data-to-light="[[nav.themeLight]]" data-to-dark="[[nav.themeDark]]">
+          <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="moon-mask"><rect width="24" height="24" fill="#fff"/><circle class="theme-icon__mask-circle" cx="17" cy="7" r="7" fill="#000"/></mask>
+            <circle class="theme-icon__core" cx="12" cy="12" r="8" fill="currentColor" mask="url(#moon-mask)"/>
+            <g class="theme-icon__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="lr-stage" aria-labelledby="lr-title">
+      <div class="container lr-stage__inner">
+        <div>
+          <p class="lr-eyebrow">[[page.stage.eyebrow]]</p>
+          <h1 id="lr-title" class="lr-lockup" aria-label="Lumirift Blocks"><span>Lumi</span><span class="lr-lockup__rift">rift</span> <span class="lr-lockup__blocks">Blocks</span></h1>
+          <p class="lr-promise">[[page.stage.promise]]</p>
+          <div class="lr-cta">
+            <a class="lr-play" href="[[@play]]"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13L14 8z" fill="currentColor"/></svg>[[page.play.label]] <small>[[page.play.where]]</small></a>
+            <p class="lr-facts">[[page.stage.facts]]<br>[[page.stage.languages]]</p>
+          </div>
+        </div>
+        <figure class="lr-clip" data-clip data-src="/lumirift/clip.mp4" data-start="[[@posterTime]]">
+          <picture>
+            <source type="image/avif" srcset="/lumirift/clip-poster-360.avif 360w, /lumirift/clip-poster-720.avif 720w" sizes="min(20rem, calc(100vw - 2rem))">
+            <img src="/lumirift/clip-poster-720.webp" srcset="/lumirift/clip-poster-360.webp 360w, /lumirift/clip-poster-720.webp 720w" sizes="min(20rem, calc(100vw - 2rem))"
+              width="720" height="1280" alt="[[page.clip.alt]]" fetchpriority="high">
+          </picture>
+          <button class="lr-clip__toggle" type="button" hidden data-clip-toggle aria-pressed="false"
+            aria-label="[[page.clip.play]]" data-play="[[page.clip.play]]" data-pause="[[page.clip.pause]]">
+            <svg class="is-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13L14 8z" fill="currentColor"/></svg>
+            <svg class="is-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h3.5v12H3zM9.5 2H13v12H9.5z" fill="currentColor"/></svg>
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <section class="lr-section" aria-labelledby="lr-features-title">
+      <div class="container">
+        <h2 id="lr-features-title" class="lr-h2">[[page.features.title]]</h2>
+        <ul class="lr-cards" role="list">
+          <li class="lr-card"><div class="lr-card__body">
+            <picture>
+              <source type="image/avif" srcset="/lumirift/card-sand-480.avif 480w, /lumirift/card-sand-800.avif 800w" sizes="[[@cardSizes]]">
+              <img src="/lumirift/card-sand-800.webp" srcset="/lumirift/card-sand-480.webp 480w, /lumirift/card-sand-800.webp 800w" sizes="[[@cardSizes]]"
+                width="800" height="600" alt="[[page.features.sand.alt]]" loading="lazy" decoding="async">
+            </picture>
+            <div class="lr-card__text"><h3>[[page.features.sand.title]]</h3><p>[[page.features.sand.text]]</p></div>
+          </div></li>
+          <li class="lr-card"><div class="lr-card__body">
+            <picture>
+              <source type="image/avif" srcset="/lumirift/card-guardians-480.avif 480w, /lumirift/card-guardians-800.avif 800w" sizes="[[@cardSizes]]">
+              <img src="/lumirift/card-guardians-800.webp" srcset="/lumirift/card-guardians-480.webp 480w, /lumirift/card-guardians-800.webp 800w" sizes="[[@cardSizes]]"
+                width="800" height="600" alt="[[page.features.guardians.alt]]" loading="lazy" decoding="async">
+            </picture>
+            <div class="lr-card__text"><h3>[[page.features.guardians.title]]</h3><p>[[page.features.guardians.text]]</p></div>
+          </div></li>
+          <li class="lr-card"><div class="lr-card__body">
+            <picture>
+              <source type="image/avif" srcset="/lumirift/card-modes-480.avif 480w, /lumirift/card-modes-800.avif 800w" sizes="[[@cardSizes]]">
+              <img src="/lumirift/card-modes-800.webp" srcset="/lumirift/card-modes-480.webp 480w, /lumirift/card-modes-800.webp 800w" sizes="[[@cardSizes]]"
+                width="800" height="600" alt="[[page.features.modes.alt]]" loading="lazy" decoding="async">
+            </picture>
+            <div class="lr-card__text"><h3>[[page.features.modes.title]]</h3><p>[[page.features.modes.text]]</p></div>
+          </div></li>
+        </ul>
+        <p class="lr-again"><a class="lr-play" href="[[@play]]"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13L14 8z" fill="currentColor"/></svg>[[page.play.label]] <small>[[page.play.where]]</small></a></p>
+      </div>
+    </section>
+
+    <section class="lr-section lr-maker" aria-labelledby="lr-maker-title">
+      <div class="container lr-maker__inner">
+        <picture>
+          <source type="image/avif" srcset="/lumirift/avatar-176.avif">
+          <img class="lr-avatar" src="/lumirift/avatar-176.webp" width="88" height="88" alt="" loading="lazy" decoding="async">
+        </picture>
+        <div>
+          <h2 id="lr-maker-title" class="lr-h2">[[page.maker.title]]</h2>
+          <p>[[page.maker.line]]</p>
+          <ul class="lr-proofs" role="list">
+            <li>[[page.maker.proofs.size]]</li>
+            <li>[[page.maker.proofs.lighthouse]]</li>
+            <li>[[page.maker.proofs.bots]]</li>
+          </ul>
+          <ul class="lr-links" role="list">
+            <li><a href="[[@youtube]]">[[page.maker.links.devlogs]]</a></li>
+            <li><a href="[[@github]]">[[page.maker.links.github]]</a></li>
+            <li><a href="[[@tiktok]]">[[page.maker.links.tiktok]]</a></li>
+            <li><a href="[[@instagram]]">[[page.maker.links.instagram]]</a></li>
+            <li><a href="/en/#contact">[[page.maker.links.hire]]</a></li>
+          </ul>
+          <p class="lr-credits">[[page.maker.credits]]</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer">
+      <a class="brand" href="/en/" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebDev</b></span>
+      </a>
+      <nav aria-label="[[a11y.footerNav]]">
+        <ul class="footer__links">
+          <li><a href="/en/#services">[[nav.services]]</a></li>
+          <li><a href="/en/#projets">[[nav.projects]]</a></li>
+          <li><a href="/en/#methode">[[nav.method]]</a></li>
+          <li><a href="/en/#contact">[[nav.contact]]</a></li>
+          <li><a href="/en/legal-notice.html">[[nav.legal]]</a></li>
+          <li><a href="/" hreflang="fr" lang="fr">Français</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 AdamRodWebDev. [[footer.copy]]</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var root = document.documentElement;
+
+      // Le bouton de thème de l'accueil (useTheme), sans Vue.
+      var themeButton = document.querySelector('[data-theme-toggle]');
+      var light = window.matchMedia('(prefers-color-scheme: light)');
+      var isDark = function () {
+        var forced = root.getAttribute('data-theme');
+        return forced ? forced === 'dark' : !light.matches;
+      };
+      var paintTheme = function () {
+        var dark = isDark();
+        themeButton.classList.toggle('is-dark', dark);
+        themeButton.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        themeButton.setAttribute('aria-label', dark ? themeButton.dataset.toLight : themeButton.dataset.toDark);
+        var mask = themeButton.querySelector('.theme-icon__mask-circle');
+        mask.setAttribute('cx', dark ? '17' : '30');
+        mask.setAttribute('cy', dark ? '7' : '-6');
+        themeButton.querySelector('.theme-icon__core').setAttribute('r', dark ? '8' : '5');
+      };
+      themeButton.addEventListener('click', function () {
+        var dark = !isDark();
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        try { localStorage.setItem('arwd-theme', dark ? 'dark' : 'light'); } catch (e) {}
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+          meta.setAttribute('content', dark ? '#000000' : '#FBFAF7');
+        });
+        paintTheme();
+      });
+      if (light.addEventListener) light.addEventListener('change', paintTheme);
+      paintTheme();
+
+      // Le clip : après le chargement de la page et un moment de calme, jamais avec le mouvement
+      // réduit ni l'économie de données (l'affiche reste, avec un bouton pour le lancer).
+      var figure = document.querySelector('[data-clip]');
+      var toggle = figure.querySelector('[data-clip-toggle]');
+      var video = null;
+      var label = function (playing) {
+        toggle.classList.toggle('is-playing', playing);
+        toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
+        toggle.setAttribute('aria-label', playing ? toggle.dataset.pause : toggle.dataset.play);
+      };
+      var play = function () {
+        video.play().then(function () {
+          figure.classList.add('is-playing');
+          label(true);
+        }, function () { label(false); });
+      };
+      var start = function () {
+        if (video) return;
+        video = document.createElement('video');
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('aria-hidden', 'true');
+        video.preload = 'auto';
+        video.addEventListener('loadedmetadata', function () {
+          // Depuis l'image de l'affiche : le clip ne saute pas en démarrant.
+          video.currentTime = Number(figure.dataset.start);
+          play();
+        }, { once: true });
+        video.src = figure.dataset.src;
+        figure.insertBefore(video, toggle);
+      };
+      toggle.hidden = false;
+      label(false);
+      toggle.addEventListener('click', function () {
+        if (!video) start();
+        else if (video.paused) play();
+        else { video.pause(); label(false); }
+      });
+      var connection = navigator.connection;
+      var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches || (connection && connection.saveData);
+      if (!calm) {
+        window.addEventListener('load', function () {
+          if (window.requestIdleCallback) window.requestIdleCallback(start, { timeout: 3000 });
+          else window.setTimeout(start, 1200);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

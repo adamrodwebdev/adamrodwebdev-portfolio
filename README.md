@@ -41,6 +41,8 @@ js/data/art.js          Illustrations SVG animées des projets
 js/fx/                  Effets (révélations, curseur, éclats, particules)
 js/audio/ascension.js   Bande-son originale synthétisée (Web Audio API)
 assets/                 Favicons, icônes PWA, image Open Graph
+templates/              Gabarits des pages générées (accueil, page de Lumirift)
+lumirift/               Page du jeu Lumirift (générée) et ses médias
 404.html, merci.html, mentions-legales.html
 robots.txt, sitemap.xml, manifest.webmanifest, netlify.toml
 ```
@@ -74,6 +76,16 @@ Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/
 
 `demos/lumirift/` est la démo du jeu, anciennement Stackrift (`/demos/stackrift/` redirige) : cinq modes sur treize et le premier chapitre de la campagne, construite dans le dépôt du jeu avec `npm run build:demo`, qui produit `dist-demo/`.
 Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/lumirift/` par `index.html`, `favicon.svg` et `assets/` de `dist-demo/`, puis poussez. Les chemins sont relatifs : aucun réglage n'est nécessaire pour le sous-dossier.
+
+## Page de Lumirift (`/lumirift/`)
+
+La page du jeu, en anglais, est l'adresse que donnent les réseaux sociaux (adamrodwebdev.com/lumirift). Elle est **générée** comme l'accueil : gabarit `templates/lumirift.html`, textes dans `js/i18n/messages.js` (export `lumiriftPage`, hors de vue-i18n), réglages (lien Playgama, profils, clip) dans `scripts/build-pages.mjs`. Elle n'a pas d'îlot Vue : un petit script en bas de page gère le bouton de thème et le clip.
+
+Ses médias sont dans `lumirift/` :
+- `clip.mp4` : le clip du lundi de la fabrique de clips du jeu (`npm run clips` dans le dépôt de Lumirift), réduit à 720 × 1280, sans son, moins de 2 Mo ; `clip-poster-*` son image à 0,47 s (AVIF, WebP, JPEG pour les données structurées) ;
+- `card-*` : les images des trois cartes, recadrées en 4:3 (480 et 800 px) ; `avatar-176` ; `og-lumirift-1200x630.png`, la carte de partage.
+
+Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. La page ne mène jamais à la démo, dont les parties ne comptent pas sur Playgama.
 
 ## Traductions (français / anglais)
 

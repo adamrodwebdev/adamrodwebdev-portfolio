@@ -15,7 +15,7 @@ export const projects = [
   { id: 'bastion', status: 'live', url: 'https://bastion-tower-defense.netlify.app', art: 'bastion' },
   { id: 'skull-darts-71', status: 'live', url: 'https://skulldarts71.fr', art: 'darts' },
   { id: 'ballmania', status: 'live', url: '/demos/ballmania/', newTab: true, art: 'marbles' },
-  { id: 'lumirift', status: 'live', url: '/demos/lumirift/', newTab: true, art: 'lumirift' },
+  { id: 'lumirift', status: 'live', url: '/lumirift/', art: 'lumirift' },
   { id: 'projet-03', status: 'dev', url: '', art: 'classified' },
   { id: 'projet-04', status: 'soon', url: '#contact', art: 'classified' },
 ];
