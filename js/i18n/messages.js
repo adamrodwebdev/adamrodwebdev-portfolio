@@ -508,14 +508,14 @@ export const lumiriftPage = {
   },
   maker: {
     title: 'Made in public',
-    line: 'Built by AdamRodWebDev, a web developer in France. Every bug, fix and trick goes out as a devlog.',
+    line: 'Built by AdamRodWebDev, a web developer in France. The bugs, fixes and tricks behind it go out every week.',
     proofs: {
       size: 'Starts in under 300 KB',
       lighthouse: 'Lighthouse 100',
       bots: 'Every level played by bots first',
     },
     links: {
-      devlogs: 'Devlogs',
+      youtube: 'YouTube',
       github: 'Code on GitHub',
       tiktok: 'TikTok',
       instagram: 'Instagram',
