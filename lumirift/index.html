@@ -2,6 +2,7 @@
 <!--
   FICHIER GÉNÉRÉ — ne pas modifier directement.
   Source : templates/lumirift.html + js/i18n/messages.js (lumiriftPage, et l'en-tête anglais)
+  + les règles de css/style.css que la page applique (copiées dans la page)
   Régénérer : node scripts/build-pages.mjs
 -->
 <html lang="en" dir="ltr">
@@ -47,14 +48,48 @@
     })();
   </script>
 
-  <!-- Les polices du site, sans bloquer le premier affichage ; Unbounded réduite aux lettres du titre. -->
+  <!-- Les polices du site, demandées une fois le premier affichage signalé (scripts/after-first-paint.mjs) ;
+       Unbounded réduite aux lettres du titre. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&text=LUMIRFTBOCKS&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@900&text=LUMIRFTBOCKS&display=swap"></noscript>
+  <script>(function afterFirstPaint(stylesheets, modules, entry) {
+  var started = false;
+  var link = function (rel, href) {
+    var element = document.createElement('link');
+    element.rel = rel;
+    element.href = href;
+    if (rel === 'modulepreload') element.crossOrigin = '';
+    document.head.appendChild(element);
+  };
+  var start = function () {
+    if (started) return;
+    started = true;
+    stylesheets.forEach(function (href) { link('stylesheet', href); });
+    if (!entry) return;
+    modules.forEach(function (href) { link('modulepreload', href); });
+    var script = document.createElement('script');
+    script.type = 'module';
+    script.src = entry;
+    document.head.appendChild(script);
+  };
+  var types = window.PerformanceObserver && PerformanceObserver.supportedEntryTypes;
+  if (document.visibilityState === 'hidden') {
+    start();
+  } else if (types && types.indexOf('paint') !== -1) {
+    new PerformanceObserver(function (list, observer) {
+      if (!list.getEntriesByName('first-contentful-paint').length) return;
+      observer.disconnect();
+      start();
+    }).observe({ type: 'paint', buffered: true });
+    setTimeout(start, 1000);
+  } else {
+    requestAnimationFrame(function () { setTimeout(start, 0); });
+  }
+})(["https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap","https://fonts.googleapis.com/css2?family=Unbounded:wght@900&text=LUMIRFTBOCKS&display=swap"], [], "");</script>
 
-  <link rel="stylesheet" href="/css/style.css">
+  <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->
+  <style>:root{--bg:#000000;--surface:#0e0c08;--surface-2:#17140d;--fg:#f6f4ef;--muted:#a8a193;--gold:#e0b04a;--gold-hi:#f5cf6e;--gold-deep:#9a7420;--on-gold:#000000;--line:rgba(224,176,74,0.28);--line-soft:rgba(224,176,74,0.12);--glow:rgba(224,176,74,0.35);--danger:#ff6b5e;--shadow:0 30px 80px -30px rgba(0,0,0,0.9);--font-display:"Rajdhani","Bahnschrift","DIN Alternate","Arial Narrow",system-ui,sans-serif;--font-body:"Barlow","Segoe UI",system-ui,-apple-system,sans-serif;--step--1:clamp(0.83rem,0.8rem + 0.15vw,0.92rem);--step-0:clamp(1rem,0.96rem + 0.2vw,1.12rem);--step-1:clamp(1.2rem,1.1rem + 0.5vw,1.45rem);--step-2:clamp(1.5rem,1.3rem + 1vw,2.1rem);--step-3:clamp(2rem,1.6rem + 2vw,3.2rem);--step-4:clamp(3.2rem,2rem + 7vw,8.5rem);--cut:14px;--gutter:clamp(16px,4vw,48px);--header-h:72px;--ease-out:cubic-bezier(0.16,1,0.3,1);--ease-in-out:cubic-bezier(0.65,0,0.35,1);color-scheme:dark}@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fbfaf7;--surface:#f2efe7;--surface-2:#e9e4d7;--fg:#0a0a0a;--muted:#57514a;--gold:#85620f;--gold-hi:#c9972c;--gold-deep:#6b4e0a;--on-gold:#000000;--line:rgba(133,98,15,0.3);--line-soft:rgba(133,98,15,0.12);--glow:rgba(201,151,44,0.3);--danger:#b3261e;--shadow:0 30px 80px -40px rgba(60,45,10,0.45);color-scheme:light}}:root[data-theme="light"]{--bg:#fbfaf7;--surface:#f2efe7;--surface-2:#e9e4d7;--fg:#0a0a0a;--muted:#57514a;--gold:#85620f;--gold-hi:#c9972c;--gold-deep:#6b4e0a;--on-gold:#000000;--line:rgba(133,98,15,0.3);--line-soft:rgba(133,98,15,0.12);--glow:rgba(201,151,44,0.3);--danger:#b3261e;--shadow:0 30px 80px -40px rgba(60,45,10,0.45);color-scheme:light}*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 16px);-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:var(--step-0);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background-color 0.5s var(--ease-out),color 0.5s var(--ease-out)}img,svg,canvas{display:block;max-width:100%}a{color:inherit}button,input,select,textarea{font:inherit;color:inherit}h1,h2,h3{font-family:var(--font-display);line-height:1.05;margin:0;text-wrap:balance;font-weight:700}p{margin:0;text-wrap:pretty}ul,ol{margin:0;padding:0;list-style:none}::selection{background:var(--gold);color:var(--on-gold)}:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px}[hidden]{display:none !important}[v-cloak]{display:none}.container{width:min(1240px,100%);margin-inline:auto;padding-inline:var(--gutter)}.skip-link{position:fixed;left:16px;top:-60px;z-index:1000;background:var(--gold);color:var(--on-gold);padding:10px 16px;font-weight:600;text-decoration:none;transition:top 0.3s var(--ease-out)}.skip-link:focus{top:calc(env(safe-area-inset-top,0px) + 12px)}body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 75%);opacity:0.6}.site-header{position:fixed;inset:0 0 auto 0;z-index:100;padding-top:env(safe-area-inset-top,0px);transition:background-color 0.4s,backdrop-filter 0.4s,box-shadow 0.4s}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:var(--header-h)}.brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--fg)}.brand__mark{width:38px;height:38px;color:var(--gold);transition:transform 0.6s var(--ease-out)}.brand:hover .brand__mark{transform:rotate(60deg)}.brand__name{font-family:var(--font-display);font-weight:600;font-size:1.3rem;letter-spacing:0.04em}.brand__name b{color:var(--gold);font-weight:700}.nav__links{display:flex;gap:clamp(12px,2.4vw,36px)}.nav__links a{position:relative;text-decoration:none;font-family:var(--font-display);font-weight:600;font-size:1.05rem;letter-spacing:0.06em;text-transform:uppercase;padding:8px 2px;color:var(--fg)}.nav__links a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform 0.45s var(--ease-out)}.nav__links a:hover::after{transform:scaleX(1);transform-origin:left}.nav__tools{display:flex;align-items:center;gap:8px}.icon-btn{position:relative;width:46px;height:46px;display:grid;place-items:center;background:transparent;border:1px solid var(--line);color:var(--fg);cursor:pointer;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);transition:border-color 0.3s,color 0.3s,background-color 0.3s}.icon-btn:hover{color:var(--gold);background:var(--surface-2)}.icon-btn svg{width:22px;height:22px}.theme-icon{overflow:visible}.theme-icon__core{transition:r 0.6s var(--ease-out),transform 0.6s var(--ease-out);transform-origin:center}.theme-icon__mask-circle{transition:cx 0.6s var(--ease-out),cy 0.6s var(--ease-out)}.theme-icon__rays{transition:transform 0.6s var(--ease-out),opacity 0.4s;transform-origin:center}.is-dark .theme-icon__rays{transform:rotate(-90deg) scale(0.4);opacity:0}.site-footer{border-top:1px solid var(--line);padding-block:48px calc(48px + env(safe-area-inset-bottom,0px))}.footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px}.footer__links{display:flex;flex-wrap:wrap;gap:8px 24px}.footer__links a{text-decoration:none;color:var(--muted);padding:6px 0;transition:color 0.3s}.footer__links a:hover{color:var(--gold)}.footer__copy{color:var(--muted);font-size:var(--step--1);width:100%}::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}::view-transition-new(root){z-index:2}@media (max-width:860px){.nav__links{display:none}}@media (max-width:600px){:root{--header-h:64px}.brand__name{font-size:1.15rem}}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important}}</style>
   <style>
     /* La page du jeu : ses parties propres. En-tête, pied de page, jetons et thèmes : style.css. */
     :root {
@@ -205,7 +240,7 @@
           "description": "Fire lands on a pool of oil and the whole pool blazes.",
           "thumbnailUrl": "https://adamrodwebdev.com/lumirift/clip-poster.jpg",
           "contentUrl": "https://adamrodwebdev.com/lumirift/clip.mp4",
-          "uploadDate": "2026-10-29",
+          "uploadDate": "2026-10-29T10:08:00+01:00",
           "duration": "PT7S"
         }
       },

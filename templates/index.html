@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   FICHIER GÉNÉRÉ — ne pas modifier directement.
-  Source : templates/index.html + js/i18n/messages.js
+  Source : templates/index.html + js/i18n/messages.js + css/style.css (copiée dans la page)
   Régénérer : node scripts/build-pages.mjs
 -->
 <html lang="[[@lang]]" dir="ltr">
@@ -52,15 +52,12 @@
     })();
   </script>
 
+  <!-- Polices, puis Vue 3, vue-i18n (dernières versions stables) et les îlots : demandés une fois le premier
+       affichage signalé (scripts/after-first-paint.mjs), tous les modules préchargés d'un coup. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap"></noscript>
-
-  <link rel="stylesheet" href="/css/style.css">
-
-  <!-- Vue 3 et vue-i18n (dernières versions stables) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <noscript><link rel="stylesheet" href="[[@fonts]]"></noscript>
   <script type="importmap">
     {
       "imports": {
@@ -69,21 +66,10 @@
       }
     }
   </script>
-  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js" crossorigin>
-  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vue-i18n@11/dist/vue-i18n.esm-browser.prod.js" crossorigin>
-  <link rel="modulepreload" href="/js/main.js">
-  <link rel="modulepreload" href="/js/i18n/index.js">
-  <link rel="modulepreload" href="/js/i18n/messages.js">
-  <link rel="modulepreload" href="/js/components/NavBar.js">
-  <link rel="modulepreload" href="/js/components/ProjectSwiper.js">
-  <link rel="modulepreload" href="/js/components/ContactForm.js">
-  <link rel="modulepreload" href="/js/components/MusicPlayer.js">
-  <link rel="modulepreload" href="/js/composables/useTheme.js">
-  <link rel="modulepreload" href="/js/data/projects.js">
-  <link rel="modulepreload" href="/js/data/art.js">
-  <link rel="modulepreload" href="/js/fx/effects.js">
-  <link rel="modulepreload" href="/js/fx/particles.js">
-  <link rel="modulepreload" href="/js/config.js">
+  <script>[[@afterFirstPaint]]</script>
+
+  <!-- La feuille du site (css/style.css), copiée ici à la génération : rien ne retient le premier affichage. -->
+  <style>[[@css]]</style>
 
   <script type="application/ld+json">
   {
@@ -365,7 +351,5 @@
 
   <div id="music-app"></div>
   <div class="cursor" aria-hidden="true"><span class="cursor__ring"></span><span class="cursor__dot"></span></div>
-
-  <script type="module" src="/js/main.js"></script>
 </body>
 </html>

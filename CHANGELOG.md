@@ -2,6 +2,22 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.8.1] - 2026-10-29
+
+### Modifié
+- **Plus rien ne retient le premier affichage** : la feuille `css/style.css` est copiée, minifiée, dans chaque page générée (`scripts/css.mjs`) ; la page de Lumirift n'en garde que les règles que son HTML applique (6 Ko au lieu de 41), et son document tient dans le premier aller-retour réseau.
+- Les polices (Google Fonts) et, sur l'accueil, Vue, vue-i18n et les îlots ne sont demandés qu'une fois le premier affichage signalé (`scripts/after-first-paint.mjs`) : ils ne lui font plus concurrence. Les modules de l'accueil restent préchargés d'un coup ; leur liste est lue dans le code au lieu d'être tenue à la main.
+- Accueil : le statut, le paragraphe et les boutons du hero sont là dès la première image (ils apparaissaient en fondu entre 0,1 et 1,6 s) ; le titre se découpe et l'emblème se dessine toujours. Le paragraphe est le plus grand élément du premier écran : en fondu, Chrome le comptait parfois tard, une fois polices et Vue arrivées (une fois sur deux à quatre selon les essais, LCP simulé de 1,1 à 2,4 s).
+- Accueil : les îlots Vue (en-tête, lecteur, carrousel, formulaire) se montent chacun dans sa propre tâche, après les effets ; le carrousel et l'en-tête lisent leurs mesures après la mise en page du navigateur, plus pendant le montage.
+
+### Corrigé
+- Si le CDN de Vue ne répondait pas (réseau filtré, bloqueur), les sections de l'accueil restaient invisibles : les effets ne dépendent plus de Vue (`js/main.js` lance les effets, `js/islands.js` monte les îlots).
+- Données structurées du clip de `/lumirift/` : `uploadDate` donne l'heure et le fuseau (`2026-10-29T10:08:00+01:00`), comme le demande le test des résultats enrichis de Google.
+
+### Qualité
+- Lighthouse 100 dans les quatre catégories sur mobile, trois passages après un passage de préchauffage, sur un serveur local qui compresse comme Netlify : accueil (pire passage : FCP 0,9 s, LCP 1,1 s, TBT 24 ms, CLS 0,023, SI 1,0 s), `/lumirift/` (FCP 0,7 s, LCP 1,4 s, TBT 44 ms, CLS 0,020, SI 0,8 s), `/en/` en deux passages ; 100 sur ordinateur. Avant, sur le même serveur : accueil 96 (FCP 2,1 s, TBT 120 ms), `/lumirift/` 99 (FCP 1,6 s), comme en ligne.
+- Mêmes styles calculés avant et après la copie de la feuille, sur chaque élément des trois pages (clair et sombre, 360 et 1280 px) ; aucun défilement horizontal de 320 à 2560 px ; aucune erreur dans la console.
+
 ## [1.8.0] - 2026-10-28
 
 ### Ajouté
