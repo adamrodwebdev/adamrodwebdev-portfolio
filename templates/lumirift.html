@@ -48,11 +48,9 @@
     })();
   </script>
 
-  <!-- Les polices du site, demandées une fois le premier affichage signalé (scripts/after-first-paint.mjs) ;
-       Unbounded réduite aux lettres du titre. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <noscript><link rel="stylesheet" href="[[@fonts]]"><link rel="stylesheet" href="[[@titleFont]]"></noscript>
+  <!-- Les polices du site, servies par lui (1.9.0) et demandées une fois le premier affichage signalé
+       (scripts/after-first-paint.mjs) ; Unbounded réduite aux lettres du titre. -->
+  <noscript><link rel="stylesheet" href="[[@fonts]]"></noscript>
   <script>[[@afterFirstPaint]]</script>
 
   <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->

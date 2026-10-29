@@ -2,7 +2,7 @@
 <!--
   FICHIER GÉNÉRÉ — ne pas modifier directement.
   Source : templates/index.html + js/i18n/messages.js + css/style.css (copiée dans la page)
-  Régénérer : node scripts/build-pages.mjs
+  Régénérer : npm run build (écrit dist/)
 -->
 <html lang="[[@lang]]" dir="ltr">
 <head>
@@ -52,20 +52,10 @@
     })();
   </script>
 
-  <!-- Polices, puis Vue 3, vue-i18n (dernières versions stables) et les îlots : demandés une fois le premier
+  <!-- Polices, puis Vue 3, vue-i18n et les îlots, tous servis par le site (1.9.0) : demandés une fois le premier
        affichage signalé (scripts/after-first-paint.mjs), tous les modules préchargés d'un coup. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <noscript><link rel="stylesheet" href="[[@fonts]]"></noscript>
-  <script type="importmap">
-    {
-      "imports": {
-        "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js",
-        "vue-i18n": "https://cdn.jsdelivr.net/npm/vue-i18n@11/dist/vue-i18n.esm-browser.prod.js"
-      }
-    }
-  </script>
+  <script type="importmap">[[@importMap]]</script>
   <script>[[@afterFirstPaint]]</script>
 
   <!-- La feuille du site (css/style.css), copiée ici à la génération : rien ne retient le premier affichage. -->
@@ -188,37 +178,37 @@
         </header>
 
         <ul class="aug-grid" role="list">
-          <li class="aug reveal tilt" style="--i:0">
+          <li class="aug reveal tilt">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 10h36v24H6zM18 40h12M24 34v6"/><path d="M12 18h14M12 24h20"/></svg>
             <h3 class="aug__title">[[services.showcase.title]]</h3>
             <p class="aug__text">[[services.showcase.text]]</p>
             <p class="aug__meta">[[services.showcase.meta]]</p>
           </li>
-          <li class="aug reveal tilt" style="--i:1">
+          <li class="aug reveal tilt">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 8h10l10 17 10-17h10L24 42Z"/><path d="M14 8l10 17 10-17"/></svg>
             <h3 class="aug__title">[[services.apps.title]]</h3>
             <p class="aug__text">[[services.apps.text]]</p>
             <p class="aug__meta">[[services.apps.meta]]</p>
           </li>
-          <li class="aug reveal tilt" style="--i:2">
+          <li class="aug reveal tilt">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a18 18 0 1 1 32 0"/><path d="M24 34l9-13"/><circle cx="24" cy="34" r="3"/></svg>
             <h3 class="aug__title">[[services.perf.title]]</h3>
             <p class="aug__text">[[services.perf.text]]</p>
             <p class="aug__meta">[[services.perf.meta]]</p>
           </li>
-          <li class="aug reveal tilt" style="--i:3">
+          <li class="aug reveal tilt">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="12"/><path d="M29 29l13 13M14 20h12M20 14v12"/></svg>
             <h3 class="aug__title">[[services.seo.title]]</h3>
             <p class="aug__text">[[services.seo.text]]</p>
             <p class="aug__meta">[[services.seo.meta]]</p>
           </li>
-          <li class="aug reveal tilt" style="--i:4">
+          <li class="aug reveal tilt">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M8 17l16 4 16-4M24 21v8l-7 13M24 29l7 13"/></svg>
             <h3 class="aug__title">[[services.a11y.title]]</h3>
             <p class="aug__text">[[services.a11y.text]]</p>
             <p class="aug__meta">[[services.a11y.meta]]</p>
           </li>
-          <li class="aug reveal tilt" style="--i:5">
+          <li class="aug reveal tilt">
             <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 38c8-20 14-28 18-28s6 12 10 12 6-6 8-8"/><path d="M6 38h36"/></svg>
             <h3 class="aug__title">[[services.motion.title]]</h3>
             <p class="aug__text">[[services.motion.text]]</p>
@@ -238,10 +228,10 @@
       </div>
       <div id="projects-app" class="projects-app">
         <ul class="projects-static container" role="list">
-          <li><h3>Catapulte Mania</h3><p>[[projects.catapulte-mania.staticText]] <a href="/demos/catapulte-mania/">[[projects.catapulte-mania.staticLink]]</a></p></li>
-          <li><h3>Bastion</h3><p>[[projects.bastion.staticText]] <a href="https://bastion-tower-defense.netlify.app">[[projects.bastion.staticLink]]</a></p></li>
+          <li><h3>Catapulte Mania</h3><p>[[projects.catapulte-mania.staticText]] <a href="[[@playCatapulte]]">[[projects.catapulte-mania.staticLink]]</a></p></li>
+          <li><h3>Bastion</h3><p>[[projects.bastion.staticText]] <a href="[[@playBastion]]">[[projects.bastion.staticLink]]</a></p></li>
           <li><h3>Skull Darts 71</h3><p>[[projects.skull-darts-71.staticText]] <a href="https://skulldarts71.fr">[[projects.skull-darts-71.staticLink]]</a></p></li>
-          <li><h3>Ballmania</h3><p>[[projects.ballmania.staticText]] <a href="/demos/ballmania/">[[projects.ballmania.staticLink]]</a></p></li>
+          <li><h3>Ballmania</h3><p>[[projects.ballmania.staticText]] [[projects.ballmania.staticSoon]]</p></li>
           <li><h3>Lumirift</h3><p>[[projects.lumirift.staticText]] <a href="/lumirift/">[[projects.lumirift.staticLink]]</a></p></li>
           <li><h3>[[projectsSection.upcomingTitle]]</h3><p>[[projectsSection.upcomingText]]</p></li>
         </ul>
@@ -257,22 +247,22 @@
         </header>
 
         <ol class="protocol" role="list">
-          <li class="protocol__step reveal" style="--i:0">
+          <li class="protocol__step reveal">
             <span class="protocol__num" aria-hidden="true">01</span>
             <h3>[[method.s1.title]]</h3>
             <p>[[method.s1.text]]</p>
           </li>
-          <li class="protocol__step reveal" style="--i:1">
+          <li class="protocol__step reveal">
             <span class="protocol__num" aria-hidden="true">02</span>
             <h3>[[method.s2.title]]</h3>
             <p>[[method.s2.text]]</p>
           </li>
-          <li class="protocol__step reveal" style="--i:2">
+          <li class="protocol__step reveal">
             <span class="protocol__num" aria-hidden="true">03</span>
             <h3>[[method.s3.title]]</h3>
             <p>[[method.s3.text]]</p>
           </li>
-          <li class="protocol__step reveal" style="--i:3">
+          <li class="protocol__step reveal">
             <span class="protocol__num" aria-hidden="true">04</span>
             <h3>[[method.s4.title]]</h3>
             <p>[[method.s4.text]]</p>
@@ -308,7 +298,7 @@
           </dl>
         </div>
 
-        <div id="contact-app" class="contact__form-wrap reveal" style="--i:1">
+        <div id="contact-app" class="contact__form-wrap reveal">
           <!-- Formulaire de secours (sans JavaScript), détecté aussi par Netlify Forms -->
           <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="[[@thanks]]">
             <input type="hidden" name="form-name" value="contact">
@@ -321,7 +311,7 @@
             <p class="field"><label for="f-budget">[[form.budgetShort]]</label>
               <select id="f-budget" name="budget">[[@budgetOptions]]</select></p>
             <p class="field"><label for="f-message">[[form.messageShort]]</label><textarea id="f-message" name="message" rows="5" required></textarea></p>
-            <p class="field field--check"><input id="f-rgpd" name="rgpd" type="checkbox" required><label for="f-rgpd">[[form.consentShort]]</label></p>
+            <p class="field field--check"><input id="f-rgpd" name="rgpd" type="checkbox" value="oui" required><label for="f-rgpd">[[form.consentShort]]</label></p>
             <button class="btn btn--gold" type="submit"><span>[[@sendLabel]]</span></button>
           </form>
         </div>

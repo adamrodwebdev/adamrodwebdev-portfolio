@@ -1,1 +1,0 @@
-var e=class{listeners=new Map;on(e,t){let n=this.listeners.get(e);return n||(n=new Set,this.listeners.set(e,n)),n.add(t),()=>this.off(e,t)}off(e,t){this.listeners.get(e)?.delete(t)}emit(e,t){let n=this.listeners.get(e);if(n)for(let e of n)e(t)}clear(){this.listeners.clear()}};export{e as t};
