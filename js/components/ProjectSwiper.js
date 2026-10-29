@@ -174,7 +174,8 @@ export default {
     // --- Description repliée sur téléphone : « Lire la suite » seulement si le texte dépasse
     const measure = () => {
       if (expanded.value || !root.value) return;
-      clamped.value = [...root.value.querySelectorAll('.slide__desc')].map((el) => el.scrollHeight > el.clientHeight + 1);
+      const next = [...root.value.querySelectorAll('.slide__desc')].map((el) => el.scrollHeight > el.clientHeight + 1);
+      if (next.some((v, i) => v !== clamped.value[i])) clamped.value = next;
     };
     const toggle = take(() => { expanded.value = !expanded.value; });
     watch(index, () => { expanded.value = false; });
@@ -190,25 +191,26 @@ export default {
     };
     watch([index, visible], () => nextTick(syncSvg));
 
-    let io, frame = 0;
+    let io, ro, frame = 0;
     const onVis = () => { if (document.hidden) visible.value = false; };
-    const onResize = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(measure); };
+    // Les hauteurs se lisent à l'image suivante, la mise en page faite : jamais pendant le montage
+    // (une lecture forcée y allongeait la tâche de démarrage).
+    const remeasure = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(measure); };
     const onPhone = (e) => { phone.value = e.matches; nextTick(measure); };
     onMounted(() => {
       io = new IntersectionObserver(([en]) => { visible.value = en.isIntersecting && !document.hidden; }, { threshold: 0.35 });
       io.observe(root.value);
+      ro = new ResizeObserver(remeasure);
+      ro.observe(root.value);
       document.addEventListener('visibilitychange', onVis);
-      window.addEventListener('resize', onResize, { passive: true });
       phoneQuery.addEventListener('change', onPhone);
-      document.fonts?.ready.then(measure);
-      measure();
+      document.fonts?.ready.then(remeasure);
       syncSvg();
       schedule();
     });
     onBeforeUnmount(() => {
-      io?.disconnect(); clearTimeout(timer); cancelAnimationFrame(frame);
+      io?.disconnect(); ro?.disconnect(); clearTimeout(timer); cancelAnimationFrame(frame);
       document.removeEventListener('visibilitychange', onVis);
-      window.removeEventListener('resize', onResize);
       phoneQuery.removeEventListener('change', onPhone);
     });
 

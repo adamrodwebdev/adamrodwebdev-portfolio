@@ -11,6 +11,12 @@ python3 -m http.server 8080      # puis http://localhost:8080
 # ou : npx serve .
 ```
 
+`index.html`, `en/index.html` et `lumirift/index.html` sont **générées**, et la feuille `css/style.css` y est copiée : après avoir modifié un gabarit, une traduction ou la feuille de style, régénérez-les avant de regarder le résultat (Netlify le fait à chaque déploiement) :
+
+```bash
+node scripts/build-pages.mjs
+```
+
 ## Branches et mise en ligne
 
 Netlify publie automatiquement chaque push sur `main`, et chaque mise en production coûte 15 crédits. Pour ne payer que les versions publiées :
@@ -30,9 +36,10 @@ Si les builds ont été arrêtés dans Netlify, les pushes reçus pendant l'arr�
 ## Structure
 
 ```
-index.html              Page principale (contenu statique pour le SEO + îlots Vue)
-css/style.css           Styles, jetons de couleur, thèmes, animations
-js/main.js              Monte les composants Vue et lance les effets
+index.html              Page principale, générée (contenu statique pour le SEO + îlots Vue)
+css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
+js/main.js              Lance les effets, puis importe les îlots Vue
+js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
 js/config.js            Mode d'envoi du formulaire, e-mail de contact
 js/components/          NavBar, ProjectSwiper, ContactForm, MusicPlayer
 js/composables/         useTheme (mode sombre + View Transitions)
@@ -42,6 +49,9 @@ js/fx/                  Effets (révélations, curseur, éclats, particules)
 js/audio/ascension.js   Bande-son originale synthétisée (Web Audio API)
 assets/                 Favicons, icônes PWA, image Open Graph
 templates/              Gabarits des pages générées (accueil, page de Lumirift)
+scripts/build-pages.mjs Génération des pages (textes, feuille de style copiée, chargement différé)
+scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
+scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé
 lumirift/               Page du jeu Lumirift (générée) et ses médias
 404.html, merci.html, mentions-legales.html
 robots.txt, sitemap.xml, manifest.webmanifest, netlify.toml
@@ -79,7 +89,7 @@ Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/
 
 ## Page de Lumirift (`/lumirift/`)
 
-La page du jeu, en anglais, est l'adresse que donnent les réseaux sociaux (adamrodwebdev.com/lumirift). Elle est **générée** comme l'accueil : gabarit `templates/lumirift.html`, textes dans `js/i18n/messages.js` (export `lumiriftPage`, hors de vue-i18n), réglages (lien Playgama, profils, clip) dans `scripts/build-pages.mjs`. Elle n'a pas d'îlot Vue : un petit script en bas de page gère le bouton de thème et le clip.
+La page du jeu, en anglais, est l'adresse que donnent les réseaux sociaux (adamrodwebdev.com/lumirift). Elle est **générée** comme l'accueil : gabarit `templates/lumirift.html`, textes dans `js/i18n/messages.js` (export `lumiriftPage`, hors de vue-i18n), réglages (lien Playgama, profils, clip) dans `scripts/build-pages.mjs`. Elle n'a pas d'îlot Vue : un petit script en bas de page gère le bouton de thème et le clip. De `css/style.css`, elle ne garde que les règles que son HTML applique (6 Ko au lieu de 41) ; si son script ajoute une classe à un élément, déclarez-la dans `runtimeClasses` pour que ses règles restent.
 
 Ses médias sont dans `lumirift/` :
 - `clip.mp4` : le clip du lundi de la fabrique de clips du jeu (`npm run clips` dans le dépôt de Lumirift), réduit à 720 × 1280, sans son, moins de 2 Mo ; `clip-poster-*` son image à 0,47 s (AVIF, WebP, JPEG pour les données structurées) ;
@@ -114,11 +124,18 @@ Ajouter une langue : un bloc dans `messages.js`, une entrée dans `SUPPORTED` et
 
 Le carrousel, les puces et le compteur s'adaptent automatiquement.
 
-## Lighthouse (objectif ≥ 95 partout)
+## Lighthouse (objectif : 100 partout)
 
-Le site est construit pour : contenu dans le HTML, JS en îlots, effets lancés après le chargement, polices non bloquantes, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
-Testez sur la version **déployée** (HTTPS) en navigation privée : Chrome DevTools → Lighthouse, ou https://pagespeed.web.dev.
-Pour gagner encore quelques points en performance : héberger les polices localement (fichiers WOFF2 dans `assets/fonts`) et copier `vue.esm-browser.prod.js` dans `js/vendor/` en adaptant l'import map.
+Mesuré sur mobile (trois passages après un passage de préchauffage, le pire comptant) et sur ordinateur, à chaque version. Ce qui le tient :
+
+- **Rien ne retient le premier affichage** : chaque page générée porte sa feuille de style (`scripts/css.mjs`).
+- **Le reste vient après** : polices, Vue, vue-i18n et îlots ne sont demandés qu'une fois le premier affichage signalé (`scripts/after-first-paint.mjs`). Lighthouse simule un téléphone lent à partir de ce qui est arrivé avant ce premier affichage : une requête partie plus tôt, même sans rien bloquer, allonge la durée simulée.
+- **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard.
+- **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
+- Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
+
+Testez sur la version **déployée** (HTTPS) en navigation privée : Chrome DevTools → Lighthouse, ou https://pagespeed.web.dev. La note varie d'un passage à l'autre avec le réseau du moment.
+Pistes : héberger les polices sur le site (fichiers WOFF2, plus aucune requête vers Google) et copier `vue.esm-browser.prod.js` dans `js/vendor/` en adaptant l'import map (une version figée, plus de dépendance au CDN).
 
 ## Bande-son
 

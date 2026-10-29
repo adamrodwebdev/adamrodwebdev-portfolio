@@ -2,6 +2,7 @@
 <!--
   FICHIER GÉNÉRÉ — ne pas modifier directement.
   Source : templates/lumirift.html + js/i18n/messages.js (lumiriftPage, et l'en-tête anglais)
+  + les règles de css/style.css que la page applique (copiées dans la page)
   Régénérer : node scripts/build-pages.mjs
 -->
 <html lang="en" dir="ltr">
@@ -47,14 +48,15 @@
     })();
   </script>
 
-  <!-- Les polices du site, sans bloquer le premier affichage ; Unbounded réduite aux lettres du titre. -->
+  <!-- Les polices du site, demandées une fois le premier affichage signalé (scripts/after-first-paint.mjs) ;
+       Unbounded réduite aux lettres du titre. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="[[@fonts]]" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" as="style" href="[[@titleFont]]" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="[[@fonts]]"><link rel="stylesheet" href="[[@titleFont]]"></noscript>
+  <script>[[@afterFirstPaint]]</script>
 
-  <link rel="stylesheet" href="/css/style.css">
+  <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->
+  <style>[[@css]]</style>
   <style>
     /* La page du jeu : ses parties propres. En-tête, pied de page, jetons et thèmes : style.css. */
     :root {

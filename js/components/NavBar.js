@@ -39,7 +39,8 @@ export default {
     });
 
     onMounted(() => {
-      onScroll();
+      // Lire la position de défilement force une mise en page : à l'image suivante, pas pendant le montage.
+      requestAnimationFrame(onScroll);
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('keydown', onKey);
       observer = new IntersectionObserver(
