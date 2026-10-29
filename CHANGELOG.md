@@ -23,7 +23,9 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - Les démos hébergées (`/demos/catapulte-mania/`, `/demos/ballmania/` en 1.4.2, `/demos/lumirift/` en 1.5.0) : leurs adresses redirigent vers Playgama, l'accueil ou `/lumirift/`.
 
 ### Qualité
+- Lighthouse 13.5 : 100 dans les quatre catégories sur mobile (trois passages après un passage de préchauffage, pire passage retenu) et sur ordinateur, sur `npm run serve` (en-têtes de Netlify, CSP comprise, compression Brotli) : accueil (pire passage : FCP 0,99 s, LCP 1,17 s, TBT 27 ms, CLS 0,022, SI 1,06 s), `/en/` (FCP 0,97 s, LCP 1,16 s, TBT 14 ms, CLS 0,002, SI 0,98 s), `/lumirift/` (FCP 0,82 s, LCP 1,44 s, TBT 0 ms, CLS 0,026, SI 0,82 s).
 - Tests Playwright (`npm test`, Chromium, téléphone et ordinateur, un seul processus) : les neuf pages sans requête vers un autre domaine, sans violation de CSP ni erreur ; en-têtes de sécurité ; fichiers internes en 404 ; formulaire avec et sans JavaScript (26 tests).
+- Note A+ des en-têtes (securityheaders.com, Mozilla Observatory) : à vérifier une fois en ligne.
 
 ## [1.8.1] - 2026-10-29
 
