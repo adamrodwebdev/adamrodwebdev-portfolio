@@ -79,8 +79,8 @@ const bastion = (id, t) => {
     </g>
     <g class="a-blips">
       <rect x="560" y="90" width="10" height="10" class="a-fill art-anim a-blink"/>
-      <rect x="170" y="300" width="10" height="10" class="a-fill art-anim a-blink" style="animation-delay:-1s"/>
-      <rect x="600" y="300" width="10" height="10" class="a-fill art-anim a-blink" style="animation-delay:-2s"/>
+      <rect x="170" y="300" width="10" height="10" class="a-fill art-anim a-blink"/>
+      <rect x="600" y="300" width="10" height="10" class="a-fill art-anim a-blink"/>
     </g>
   </g>
   <text x="40" y="56" class="a-text">${esc(t('art.sector'))}</text>
@@ -100,8 +100,8 @@ const classified = (id, t) => `
   <g class="a-scan art-anim"><rect x="0" y="0" width="760" height="3" class="a-fill" opacity=".6"/></g>
   <g class="a-bars">
     <rect x="200" y="320" width="120" height="12" class="a-fill art-anim a-blink"/>
-    <rect x="330" y="320" width="60" height="12" class="a-fill art-anim a-blink" style="animation-delay:-.6s"/>
-    <rect x="400" y="320" width="160" height="12" class="a-fill art-anim a-blink" style="animation-delay:-1.2s"/>
+    <rect x="330" y="320" width="60" height="12" class="a-fill art-anim a-blink"/>
+    <rect x="400" y="320" width="160" height="12" class="a-fill art-anim a-blink"/>
   </g>
   <text x="40" y="56" class="a-text">${esc(t('art.restricted'))}</text>
   <text x="40" y="80" class="a-text">${esc(t('art.decrypting'))}</text>
@@ -137,11 +137,11 @@ const darts = (id, t) => {
     <circle cx="${cx}" cy="${cy}" r="${rings[5].toFixed(1)}" class="a-fill"/>
     ${labels}
   </g>
-  <g class="a-dart art-anim" style="--tx:${cx}px;--ty:${ty.toFixed(1)}px">
+  <g transform="translate(${cx} ${ty.toFixed(1)})"><g class="a-dart art-anim">
     <path d="M0 0 L-46 -30" class="a-line a-thick"/>
     <path d="M-46 -30 L-70 -50 M-58 -38 L-62 -60 M-58 -38 L-80 -38" class="a-line"/>
     <path d="M0 0 L-8 -12 L-12 -6 Z" class="a-fill"/>
-  </g>
+  </g></g>
   <circle cx="${cx}" cy="${ty.toFixed(1)}" r="10" class="a-line a-impact art-anim"/>
   <text x="40" y="56" class="a-text">${esc(t('art.triple'))}</text>
   <text x="40" y="80" class="a-text">${esc(t('art.score'))}</text>

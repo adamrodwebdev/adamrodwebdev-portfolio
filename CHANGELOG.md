@@ -2,6 +2,31 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.9.0] - 2026-10-29
+
+### Sécurité
+- **Plus aucune requête vers un autre domaine** : Vue (3.5.44) et vue-i18n (11.4.16) sont servis par le site, à des versions figées par `package-lock.json` (plus de jsDelivr ni de version flottante) ; Rajdhani, Barlow et Unbounded sont hébergées dans `fonts/` (WOFF2, sous-ensemble latin, `font-display: swap`), plus de Google Fonts. La génération refuse toute ressource d'un autre domaine, et un test le vérifie dans un navigateur.
+- **CSP stricte** sur tout le site : `default-src 'none'`, puis `'self'` seulement ; ni `unsafe-inline` ni `unsafe-eval`, chaque script et style en ligne autorisé par son empreinte SHA-256, calculée à chaque génération ; `form-action 'self'`, `base-uri 'none'`, `object-src 'none'`, `frame-ancestors 'none'`. Les en-têtes passent de `netlify.toml` à `dist/_headers`, écrit par la génération (`scripts/headers.mjs`).
+- **Gabarits Vue précompilés** à la génération (`scripts/vue-templates.mjs`) : le navigateur reçoit la version d'exécution seule de Vue (113 Ko au lieu de 175) et ne compile plus rien avec `new Function`.
+- **Fichiers internes jamais servis** : Netlify publie `dist/`, où ne sont copiés que les fichiers du site ; `/README.md`, `/CHANGELOG.md`, `/package.json` et les autres répondent 404.
+
+### Modifié
+- Le site est généré dans `dist/` par `npm run build` (après `npm ci`) ; `npm run serve` le sert en local avec les en-têtes de Netlify, CSP comprise. `index.html`, `en/index.html` et `lumirift/index.html` ne sont plus commités.
+- Les fiches de Catapulte Mania et de Bastion mènent à leur page Playgama (« Jouer sur Playgama ») ; une fiche peut citer plusieurs plateformes (`play` dans `js/data/projects.js`, noms dans `js/data/platforms.js`). Ballmania est « À venir » en attendant sa page Playgama.
+- Les apparitions en cascade (`--i`) et les décalages des illustrations sont réglés en CSS : la CSP bloque les attributs `style` du HTML et du balisage inséré par `v-html`. La fléchette de l'illustration de Skull Darts 71 est placée par un groupe SVG.
+- Mentions légales et confidentialité (FR / EN) : responsable du traitement, données, base légale (mesures précontractuelles, article 6.1.b du RGPD), conservation (12 mois, 10 ans pour les pièces comptables d'un contrat), sous-traitants (Netlify et son filtre anti-spam Akismet, Zoho Mail dans l'Union européenne), transfert vers les États-Unis (Data Privacy Framework, clauses contractuelles types), droits et CNIL. Google Fonts et jsDelivr ne sont plus utilisés.
+
+### Corrigé
+- Le formulaire envoyé par Vue transmet la case de consentement (`rgpd=oui`), comme le formulaire sans JavaScript ; le pot de miel reste.
+
+### Retiré
+- Les démos hébergées (`/demos/catapulte-mania/`, `/demos/ballmania/` en 1.4.2, `/demos/lumirift/` en 1.5.0) : leurs adresses redirigent vers Playgama, l'accueil ou `/lumirift/`.
+
+### Qualité
+- Lighthouse 13.5 : 100 dans les quatre catégories sur mobile (trois passages après un passage de préchauffage, pire passage retenu) et sur ordinateur, sur `npm run serve` (en-têtes de Netlify, CSP comprise, compression Brotli) : accueil (pire passage : FCP 0,99 s, LCP 1,17 s, TBT 27 ms, CLS 0,022, SI 1,06 s), `/en/` (FCP 0,97 s, LCP 1,16 s, TBT 14 ms, CLS 0,002, SI 0,98 s), `/lumirift/` (FCP 0,82 s, LCP 1,44 s, TBT 0 ms, CLS 0,026, SI 0,82 s).
+- Tests Playwright (`npm test`, Chromium, téléphone et ordinateur, un seul processus) : les neuf pages sans requête vers un autre domaine, sans violation de CSP ni erreur ; en-têtes de sécurité ; fichiers internes en 404 ; formulaire avec et sans JavaScript (26 tests).
+- Note A+ des en-têtes (securityheaders.com, Mozilla Observatory) : à vérifier une fois en ligne.
+
 ## [1.8.1] - 2026-10-29
 
 ### Modifié

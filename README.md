@@ -1,21 +1,26 @@
 # AdamRodWebDev — portfolio
 
-Site vitrine statique : HTML, CSS, JavaScript et **Vue 3** (dernière version stable de la branche 3.x, chargée en module ES via jsDelivr). Aucune compilation, aucun `npm install` : le dossier se déploie tel quel.
+Site vitrine statique : HTML, CSS, JavaScript et îlots **Vue 3** (Vue 3.5.44 et vue-i18n 11.4.16, versions figées, servis par le site). Une génération sans outil de bundle écrit le site publié dans `dist/` : rien n'est demandé à un autre domaine, et une politique de sécurité de contenu (CSP) stricte protège chaque page.
 
 ## Lancer en local
 
-Les modules ES exigent un serveur (l'ouverture directe du fichier ne fonctionne pas) :
+Node 22 ou plus. Les dépendances (Vue, vue-i18n et leur compilateur de gabarits, Playwright pour les tests) s'installent une fois :
 
 ```bash
-python3 -m http.server 8080      # puis http://localhost:8080
-# ou : npx serve .
+npm ci
 ```
 
-`index.html`, `en/index.html` et `lumirift/index.html` sont **générées**, et la feuille `css/style.css` y est copiée : après avoir modifié un gabarit, une traduction ou la feuille de style, régénérez-les avant de regarder le résultat (Netlify le fait à chaque déploiement) :
+Puis, après chaque modification d'un gabarit, d'une traduction, d'un composant ou de la feuille de style :
 
 ```bash
-node scripts/build-pages.mjs
+npm run build
 ```
+
+```bash
+npm run serve
+```
+
+`npm run build` écrit le site dans `dist/` (ignoré par Git, Netlify le régénère à chaque déploiement). `npm run serve` le sert sur http://localhost:8080 avec les en-têtes de Netlify, CSP comprise, et la compression : ce qui marche là marche en ligne.
 
 ## Branches et mise en ligne
 
@@ -36,26 +41,58 @@ Si les builds ont été arrêtés dans Netlify, les pushes reçus pendant l'arr�
 ## Structure
 
 ```
-index.html              Page principale, générée (contenu statique pour le SEO + îlots Vue)
+templates/              Gabarits des pages générées (accueil FR et EN, page de Lumirift)
 css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
+css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
 js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
 js/config.js            Mode d'envoi du formulaire, e-mail de contact
-js/components/          NavBar, ProjectSwiper, ContactForm, MusicPlayer
+js/components/          NavBar, ProjectSwiper, ContactForm, MusicPlayer (gabarits précompilés dans dist/)
 js/composables/         useTheme (mode sombre + View Transitions)
 js/data/projects.js     ← ajoutez vos projets ici
+js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
 js/fx/                  Effets (révélations, curseur, éclats, particules)
 js/audio/ascension.js   Bande-son originale synthétisée (Web Audio API)
 assets/                 Favicons, icônes PWA, image Open Graph
-templates/              Gabarits des pages générées (accueil, page de Lumirift)
-scripts/build-pages.mjs Génération des pages (textes, feuille de style copiée, chargement différé)
+fonts/                  Rajdhani, Barlow, Unbounded (titre de Lumirift) : WOFF2, sous-ensemble latin
+lumirift/               Médias de la page du jeu Lumirift
+404.html, merci.html, mentions-legales.html, en/ (pages écrites à la main)
+robots.txt, sitemap.xml, manifest.webmanifest
+
+scripts/build.mjs       La génération : enchaîne les étapes ci-dessous et écrit dist/
+scripts/site-files.mjs  Liste des fichiers publiés (rien d'autre du dépôt n'est servi)
+scripts/vendor.mjs      Vue et vue-i18n copiés de node_modules, version dans le nom
+scripts/vue-templates.mjs  Gabarits des composants précompilés (aucun unsafe-eval)
+scripts/build-pages.mjs Pages traduites et page de Lumirift (textes, feuille copiée, chargement différé)
 scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
 scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé
-lumirift/               Page du jeu Lumirift (générée) et ses médias
-404.html, merci.html, mentions-legales.html
-robots.txt, sitemap.xml, manifest.webmanifest, netlify.toml
+scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
+scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
+scripts/serve.mjs       Serveur local de dist/ qui applique dist/_headers
+tests/site.spec.mjs     Tests Playwright (domaines tiers, CSP, fichiers internes, formulaire)
+netlify.toml            Génération et redirections
 ```
+
+## Sécurité (1.9.0)
+
+- **Rien d'un autre domaine** : Vue, vue-i18n et les polices sont servis par le site. La génération refuse une page qui chargerait une ressource ailleurs (script, feuille, police, image, préconnexion, import), et les tests le vérifient dans un vrai navigateur. Les liens `<a href>` vers d'autres sites restent libres.
+- **CSP stricte**, écrite par la génération dans `dist/_headers` (`scripts/headers.mjs`) avec les autres en-têtes : `default-src 'none'`, puis `'self'` ; chaque `<script>` et `<style>` en ligne est autorisé par son empreinte SHA-256, recalculée à chaque génération. Ni `unsafe-inline` ni `unsafe-eval`.
+- Conséquences pour écrire le site :
+  - **pas d'attribut `style="…"`** dans le HTML ni dans le balisage inséré par `v-html` ou `innerHTML` (la CSP le bloque) : une classe ou une règle CSS à la place. Les liaisons `:style` de Vue et `element.style` restent permises ;
+  - **pas de gestionnaire `onclick="…"`** : `addEventListener` ou `@click` ;
+  - **pas de gabarit compilé dans le navigateur** : les composants gardent leur `template`, précompilé par la génération ; un gabarit ne contient ni `${…}` ni `\`.
+
+  La génération s'arrête si l'une de ces règles est enfreinte.
+- **Fichiers internes jamais servis** : Netlify publie `dist/`, où `scripts/site-files.mjs` ne copie que les fichiers du site.
+
+## Tests
+
+```bash
+npm test
+```
+
+Génère `dist/`, le sert sur le port 8090, puis Playwright (un seul processus, Chromium, téléphone 390 × 844 et ordinateur 1280 × 800) vérifie : chaque page sans requête vers un autre domaine, sans violation de CSP ni erreur ; les en-têtes de sécurité ; les fichiers internes en 404 ; le formulaire, avec et sans JavaScript.
 
 ## À personnaliser avant la mise en ligne
 
@@ -70,22 +107,21 @@ robots.txt, sitemap.xml, manifest.webmanifest, netlify.toml
 - **Autre hébergeur** : passez `formMode` à `'endpoint'` et renseignez `formEndpoint` (Formspree, Web3Forms, votre API).
 - **Démo** : `formMode: 'demo'` joue l'animation sans rien envoyer.
 
-## Démo de Catapulte Mania
+Les deux versions du formulaire (Vue et sans JavaScript) envoient les mêmes champs, dont la case de consentement (`rgpd=oui`) et le pot de miel (`bot-field`, vide pour un humain). La version 1.10 les enverra à l'API de l'espace client.
 
-`demos/catapulte-mania/index.html` est la démo autonome du jeu (8 niveaux, sans verrou), générée dans le dépôt du jeu avec `npm run build:demo`.
-Pour la mettre à jour : reconstruisez la démo, remplacez ce fichier, puis poussez.
+**Durée de conservation** (mentions légales) : 12 mois après le dernier échange. Netlify et Zoho gardent les messages jusqu'à leur suppression : effacez à la main les envois de plus de 12 mois dans Netlify (**Forms → contact**) et dans la boîte contact@adamrodwebdev.com.
 
-Correctif appliqué à la version 4.1.1 : Vite avait laissé le texte `__VITE_PRELOAD__` dans le code (le jeu restait bloqué sur « Chargement… »). Il a été remplacé par `void 0` et l'empreinte `sha256` de la Content-Security-Policy recalculée. À corriger à la source dans `vite.config.js` du jeu.
+## Jeux du carrousel
 
-## Démo de Ballmania
+Les fiches des jeux mènent à leur page de jeu sur les plateformes (Playgama pour l'instant), plus à des démos hébergées ici (retirées en 1.9.0). Dans `js/data/projects.js`, le champ `play` donne une adresse par plateforme, dans l'ordre d'affichage :
 
-`demos/ballmania/` est la démo du jeu (deux mondes sur six, sans publicité), construite dans le dépôt du jeu avec `npm run build:demo`, qui produit `dist-demo/`.
-Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/ballmania/` par celui de `dist-demo/` (sans `robots.txt`), puis poussez. Les chemins sont relatifs : aucun réglage n'est nécessaire pour le sous-dossier.
+```js
+{ id: 'catapulte-mania', status: 'live', play: { playgama: 'https://playgama.ai/play/…' }, art: 'catapult' },
+```
 
-## Démo de Lumirift
+Une nouvelle plateforme s'ajoute dans `js/data/platforms.js` (son nom) ; le libellé « Jouer sur … » est traduit (`swiper.playOn`). Ballmania est « À venir » tant qu'il n'a pas de page Playgama.
 
-`demos/lumirift/` est la démo du jeu, anciennement Stackrift (`/demos/stackrift/` redirige) : cinq modes sur treize et le premier chapitre de la campagne, construite dans le dépôt du jeu avec `npm run build:demo`, qui produit `dist-demo/`.
-Pour la mettre à jour : reconstruisez la démo, remplacez le contenu de `demos/lumirift/` par `index.html`, `favicon.svg` et `assets/` de `dist-demo/`, puis poussez. Les chemins sont relatifs : aucun réglage n'est nécessaire pour le sous-dossier.
+Les anciennes adresses des démos redirigent (`netlify.toml`) : Catapulte Mania vers Playgama, Ballmania vers l'accueil, Lumirift (et Stackrift) vers `/lumirift/`.
 
 ## Page de Lumirift (`/lumirift/`)
 
@@ -95,18 +131,14 @@ Ses médias sont dans `lumirift/` :
 - `clip.mp4` : le clip du lundi de la fabrique de clips du jeu (`npm run clips` dans le dépôt de Lumirift), réduit à 720 × 1280, sans son, moins de 2 Mo ; `clip-poster-*` son image à 0,47 s (AVIF, WebP, JPEG pour les données structurées) ;
 - `card-*` : les images des trois cartes, recadrées en 4:3 (480 et 800 px) ; `avatar-176` ; `og-lumirift-1200x630.png`, la carte de partage.
 
-Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. La page ne mène jamais à la démo, dont les parties ne comptent pas sur Playgama.
+Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. Le titre utilise Unbounded, réduite aux lettres du titre (`fonts/unbounded-900-title.woff2`, 1,5 Ko) : si le titre change de lettres, refaites ce fichier.
 
 ## Traductions (français / anglais)
 
 Le site existe en français (`/`) et en anglais (`/en/`). Tous les textes sont dans **`js/i18n/messages.js`**.
 
-- Les composants Vue les affichent avec **vue-i18n** (`t('cle')`), chargé depuis jsDelivr via l'import map.
-- Les pages statiques `index.html` et `en/index.html` sont **générées** à partir de `templates/index.html` :
-  ```bash
-  node scripts/build-pages.mjs
-  ```
-  Netlify lance cette commande à chaque déploiement. Ne modifiez pas `index.html` ou `en/index.html` à la main : modifiez le template ou les traductions.
+- Les composants Vue les affichent avec **vue-i18n** (`t('cle')`), servi par le site (`/vendor/`, import map écrite par la génération).
+- Les pages `index.html` et `en/index.html` de `dist/` sont **générées** à partir de `templates/index.html` par `npm run build`, que Netlify lance à chaque déploiement : modifiez le gabarit ou les traductions.
 - Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @).
 
 Ajouter une langue : un bloc dans `messages.js`, une entrée dans `SUPPORTED` et dans `pages` (script de génération).
@@ -117,6 +149,7 @@ Ajouter une langue : un bloc dans `messages.js`, une entrée dans `SUPPORTED` et
    ```js
    { id: 'mon-projet', status: 'live', url: 'https://…', art: 'classified' }
    ```
+   Pour un jeu, `play: { playgama: 'https://…' }` au lieu de `url` (voir « Jeux du carrousel »).
 2. Ajoutez ses textes dans `js/i18n/messages.js`, en français **et** en anglais :
    ```js
    'mon-projet': { title: 'Mon projet', description: '…', tags: ['Vue 3'], link: 'Voir le projet' },
@@ -134,8 +167,9 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 - **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
 - Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
 
-Testez sur la version **déployée** (HTTPS) en navigation privée : Chrome DevTools → Lighthouse, ou https://pagespeed.web.dev. La note varie d'un passage à l'autre avec le réseau du moment.
-Pistes : héberger les polices sur le site (fichiers WOFF2, plus aucune requête vers Google) et copier `vue.esm-browser.prod.js` dans `js/vendor/` en adaptant l'import map (une version figée, plus de dépendance au CDN).
+- **Tout vient du site** (1.9.0) : plus de connexion à ouvrir vers Google Fonts ou jsDelivr, et la version d'exécution seule de Vue (113 Ko au lieu de 175, avant compression).
+
+En local, sur `npm run serve` (mêmes en-têtes et même compression que Netlify), ou sur la version **déployée** (HTTPS) en navigation privée : Chrome DevTools → Lighthouse, ou https://pagespeed.web.dev. La note varie d'un passage à l'autre avec le réseau et la charge de la machine.
 
 ## Bande-son
 
