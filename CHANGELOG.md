@@ -5,7 +5,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 ## [1.8.0] - 2026-10-28
 
 ### Ajouté
-- **La page du jeu Lumirift, `/lumirift/`** (en anglais), l'adresse que donnent les réseaux sociaux : le titre du jeu dans sa police, la promesse, le bouton doré « Play free, on Playgama » (même onglet), le clip de 7,8 s filmé par la fabrique de clips du jeu, trois cartes (le sable qui réagit, les quatre Gardiens, quatorze façons de jouer), puis « Made in public » : trois preuves, les liens (YouTube, GitHub, TikTok, Instagram, contact) et la ligne de crédits. En-tête et pied de page du site ; la scène reste violette dans les deux thèmes.
+- **La page du jeu Lumirift, `/lumirift/`** (en anglais), l'adresse que donnent les réseaux sociaux : le titre du jeu dans sa police, la promesse, le bouton doré « Play free, on Playgama » (même onglet), le clip de 7 s filmé par la fabrique de clips du jeu, trois cartes (le sable qui réagit, les quatre Gardiens, quatorze façons de jouer), puis « Made in public » : trois preuves, les liens (YouTube, GitHub, TikTok, Instagram, contact) et la ligne de crédits. En-tête et pied de page du site ; la scène reste violette dans les deux thèmes.
 - Le clip ne se charge qu'après la page et un moment de calme, jamais avec le mouvement réduit ni l'économie de données (l'affiche reste, avec un bouton pour le lancer) ; un bouton le met en pause. Son affiche (AVIF et WebP) est le plus grand élément affiché.
 - Référencement : titre et description propres, carte de partage du jeu (1200 × 630), données structurées `VideoGame` avec son clip, page ajoutée au plan du site.
 - Données structurées de l'accueil : les profils TikTok, YouTube, Instagram et GitHub (`sameAs`).

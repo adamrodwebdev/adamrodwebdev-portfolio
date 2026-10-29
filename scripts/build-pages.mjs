@@ -86,9 +86,10 @@ const LUMIRIFT = {
   fonts: 'https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap',
   // Unbounded, la police du titre du jeu, réduite par Google Fonts aux lettres du titre.
   titleFont: 'https://fonts.googleapis.com/css2?family=Unbounded:wght@900&text=LUMIRFTBOCKS&display=swap',
-  // Le clip du lundi 2 novembre (la fabrique de clips du jeu, 1.39) : 7,8 s, son affiche à 0,47 s.
-  clipDate: '2026-10-28',
-  clipDuration: 'PT7.8S',
+  // Le clip du lundi 2 novembre (la fabrique de clips du jeu, 1.39) : 7 s qui bouclent sans couture,
+  // son affiche à 0,47 s.
+  clipDate: '2026-10-29',
+  clipDuration: 'PT7S',
   posterTime: '0.467',
   social: {
     youtube: 'https://www.youtube.com/@adamrodwebdev',
