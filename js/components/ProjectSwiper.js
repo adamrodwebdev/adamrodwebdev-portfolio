@@ -1,6 +1,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { projects } from '../data/projects.js';
+import { playLinks } from '../data/platforms.js';
 import { art } from '../data/art.js';
 
 const AUTOPLAY_MS = 7000;
@@ -19,6 +20,13 @@ export default {
   name: 'ProjectSwiper',
   setup() {
     const { t, te, tm, rt } = useI18n();
+    /** Les liens d'une fiche : une plateforme où jouer chacun, sinon l'adresse du projet. */
+    const linksFor = (p, title) => {
+      const links = p.play
+        ? playLinks(p).map(({ platform, url }) => ({ url, label: t('swiper.playOn', { platform }) }))
+        : p.url ? [{ url: p.url, label: te(`projects.${p.id}.link`) ? t(`projects.${p.id}.link`) : t('swiper.discover', { title }) }] : [];
+      return links.map((link) => ({ ...link, newTab: p.newTab || link.url.startsWith('http') }));
+    };
     const slides = projects.map((p) => {
       const k = `projects.${p.id}`;
       const title = t(`${k}.title`);
@@ -27,7 +35,7 @@ export default {
         title,
         description: t(`${k}.description`),
         tags: (tm(`${k}.tags`) || []).map((m) => rt(m)),
-        linkLabel: te(`${k}.link`) ? t(`${k}.link`) : t('swiper.discover', { title }),
+        links: linksFor(p, title),
         statusLabel: t(`swiper.status.${p.status}`),
         svg: p.image ? '' : (art[p.art] || art.classified)(p.id, t),
       };
@@ -248,10 +256,12 @@ export default {
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
             </button>
             <ul class="slide__tags" role="list"><li v-for="t in s.tags" :key="t">{{ t }}</li></ul>
-            <a v-if="s.url" class="slide__link" :href="s.url" :target="s.newTab || s.url.startsWith('http') ? '_blank' : null" :rel="s.newTab || s.url.startsWith('http') ? 'noopener' : null">
-              {{ s.linkLabel }}
-              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
-            </a>
+            <div v-if="s.links.length" class="slide__links">
+              <a v-for="l in s.links" :key="l.url" class="slide__link" :href="l.url" :target="l.newTab ? '_blank' : null" :rel="l.newTab ? 'noopener' : null">
+                {{ l.label }}
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+              </a>
+            </div>
           </div>
         </div>
       </article>

@@ -343,6 +343,12 @@ body::before {
 /* ---------- Révélations (IntersectionObserver) ---------- */
 .js .reveal { opacity: 0; transform: translateY(42px); filter: blur(6px); transition: opacity 0.9s var(--ease-out), transform 1s var(--ease-out), filter 0.9s var(--ease-out); transition-delay: calc(var(--i, 0) * 0.08s); }
 .js .reveal.is-in { opacity: 1; transform: none; filter: none; }
+/* Ordre des apparitions en cascade, en CSS (1.9.0) : la CSP interdit les attributs style dans le HTML. */
+.aug-grid > :nth-child(2), .protocol > :nth-child(2), .contact__form-wrap { --i: 1; }
+.aug-grid > :nth-child(3), .protocol > :nth-child(3) { --i: 2; }
+.aug-grid > :nth-child(4), .protocol > :nth-child(4) { --i: 3; }
+.aug-grid > :nth-child(5) { --i: 4; }
+.aug-grid > :nth-child(6) { --i: 5; }
 
 /* ---------- Cartes « augmentations » ---------- */
 .aug-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; perspective: 1200px; }
@@ -426,8 +432,10 @@ body::before {
 .slide__desc { grid-column: 1 / 2; color: var(--muted); max-width: 52ch; }
 .slide__tags { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; }
 .slide__tags li { font-size: 0.85rem; padding: 3px 10px; border: 1px solid var(--line); color: var(--fg); }
+/* Un lien par plateforme où jouer (Playgama, puis d'autres) */
+.slide__links { grid-column: 2; grid-row: 2 / 4; align-self: center; display: flex; flex-wrap: wrap; gap: 4px 20px; }
 .slide__link {
-  grid-column: 2; grid-row: 2 / 4; align-self: center; display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); text-decoration: none;
   padding: 10px 0; border-bottom: 2px solid var(--line);
   transition: border-color 0.3s, gap 0.3s var(--ease-out);
@@ -688,7 +696,8 @@ body::before {
     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5; overflow: hidden;
   }
   .slide.is-expanded .slide__desc { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
-  .slide__link { align-self: flex-start; margin-top: auto; min-height: 44px; }
+  .slide__links { align-self: flex-start; margin-top: auto; }
+  .slide__link { min-height: 44px; }
 }
 @media (max-width: 767px) {
   /* Commandes du carrousel : les puces ne tiennent plus, segments de progression à la place */
@@ -748,10 +757,16 @@ body::before {
 .a-meter { transform-origin: 40px 92px; animation: meter 2.6s var(--ease-in-out) infinite; }
 .a-radar { transform-origin: 380px 205px; animation: spin 5s linear infinite; }
 .a-blink { animation: blink 3s steps(1) infinite; }
+/* Décalages en CSS (1.9.0) : la CSP bloque les attributs style des illustrations insérées par v-html. */
+.a-blips > :nth-child(2) { animation-delay: -1s; }
+.a-blips > :nth-child(3) { animation-delay: -2s; }
+.a-bars > :nth-child(2) { animation-delay: -0.6s; }
+.a-bars > :nth-child(3) { animation-delay: -1.2s; }
 .a-float { animation: float 4s var(--ease-in-out) infinite; }
 .a-scan { animation: scan 3.2s linear infinite; }
 .slide__visual .a-num { fill: var(--muted); font-family: var(--font-display); font-weight: 600; font-size: 15px; }
-.a-dart { transform: translate(var(--tx), var(--ty)); animation: dart-throw 3s var(--ease-out) infinite; }
+/* La fléchette est placée sur la cible par le groupe qui l'entoure (attribut transform) ; elle part de là. */
+.a-dart { animation: dart-throw 3s var(--ease-out) infinite; }
 .a-burst { transform-box: fill-box; transform-origin: center; animation: marble-burst 2.6s var(--ease-out) infinite; }
 .a-drop { animation: block-drop 2.6s var(--ease-in-out) infinite; }
 .a-piece { transform-box: fill-box; transform-origin: center; animation: piece-burst 2.6s var(--ease-out) infinite; }
@@ -764,12 +779,12 @@ body::before {
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
 @keyframes scan { from { transform: translateY(0); } to { transform: translateY(400px); } }
 @keyframes dart-throw {
-  0% { transform: translate(calc(var(--tx) - 330px), calc(var(--ty) - 215px)) scale(1.6); opacity: 0; }
+  0% { transform: translate(-330px, -215px) scale(1.6); opacity: 0; }
   10% { opacity: 1; }
-  30% { transform: translate(var(--tx), var(--ty)) scale(1); }
-  33% { transform: translate(calc(var(--tx) + 3px), calc(var(--ty) + 2px)) rotate(2deg); }
-  36%, 85% { transform: translate(var(--tx), var(--ty)); opacity: 1; }
-  100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+  30% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(3px, 2px) rotate(2deg); }
+  36%, 85% { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 0; }
 }
 @keyframes marble-burst { 0%, 28% { opacity: 1; transform: scale(1); } 34% { opacity: 1; transform: scale(1.35); } 46%, 88% { opacity: 0; transform: scale(0.2); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes block-drop { 0%, 6% { transform: translateY(-120px); } 28%, 100% { transform: none; } }

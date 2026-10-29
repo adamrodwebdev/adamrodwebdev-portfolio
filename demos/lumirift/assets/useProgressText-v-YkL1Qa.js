@@ -1,1 +1,0 @@
-import{A as e}from"./AppIcon-CdD9NyQG.js";function t(){let{t}=e();return{objective:e=>t(`objectives.${e.kind}`,{n:e.target,size:e.size??0,mode:e.mode?t(`modes.${e.mode}.name`):``},e.target),cosmeticName:e=>t(`cosmetics.${e.kind}.${e.id}`),unlockRule:({unlock:e})=>e.by==="default"?t(`cosmetics.unlock.default`):t(`cosmetics.unlock.${e.by}`,{n:e.value},e.value)}}export{t};
