@@ -5,6 +5,8 @@ import { burst } from '../fx/particles.js';
 
 const MAX = 1500;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+/** Valeur envoyée pour la case de consentement, la même que celle du formulaire sans JavaScript. */
+const CONSENT = 'oui';
 
 export default {
   name: 'ContactForm',
@@ -42,7 +44,7 @@ export default {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
     async function send() {
-      const payload = { nom: form.nom, email: form.email, entreprise: form.entreprise, type: form.type, budget: form.budget, message: form.message };
+      const payload = { nom: form.nom, email: form.email, entreprise: form.entreprise, type: form.type, budget: form.budget, message: form.message, rgpd: form.rgpd ? CONSENT : '' };
       if (config.formMode === 'demo') { await wait(600); return { demo: true }; }
       if (config.formMode === 'endpoint' && config.formEndpoint) {
         const r = await fetch(config.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
