@@ -2,6 +2,15 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.9.1] - 2026-11-01
+
+### Modifié
+- **Le clip de la page Lumirift montre le jeu d'aujourd'hui** : il est recoupé du clip du lundi 2 novembre, re-rendu sur la 1.45 du jeu (le puits de 10 × 18, les pièces d'un seul cristal, la constellation d'atterrissage, la faille au-dessus du puits) à la place de celui de la 1.40 : 7 s qui bouclent sans couture, 720 × 1280, sans son, 1,05 Mo. Son affiche, l'image à 0,47 s, est refaite du même clip, et la date du clip suit (`uploadDate`).
+- L'affiche du clip n'existe plus qu'en JPEG et en WebP : aucun encodeur AVIF sur le poste, et une version AVIF restée ancienne aurait montré l'ancien puits.
+
+### À reprendre avant le prochain déploiement
+- `npm test` : les 18 tests « rien d'un autre domaine, aucune violation de CSP ni erreur » échouent le 1er novembre, déjà sur la 1.9.0 intacte (ils passaient le 29 octobre). Lighthouse sur `/lumirift/` (serveur du site, mobile, trois passages) : Performance, Accessibilité et SEO à 100, **Bonnes pratiques à 88**, pour les mêmes erreurs de console : deux scripts en ligne (`sha256-9Apk9aatNsOtGGFrTqpUQcBVwPSzJEHbZfB6qU0hS+g=`, `sha256-WnWirYmKJzFGX2ZxGIuXOow4ZyiSlUsqRZc9us8byn0=`) et un style en ligne (`sha256-AUemm9kPmdJsXtT60IzZ8Ree4yIKLF8z2hP0dG91i6I=`) bloqués par la CSP. Aucun n'est dans le HTML généré, dont chaque script et style a son empreinte : ils sont créés à l'exécution, sur les pages du site seulement (une page vide sous la même CSP n'en montre aucun, dans Chromium comme dans Chrome 156). `'report-sample'` dans la CSP, le temps du diagnostic, dira lesquels.
+
 ## [1.9.0] - 2026-10-29
 
 ### Sécurité

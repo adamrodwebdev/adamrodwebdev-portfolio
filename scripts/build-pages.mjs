@@ -83,10 +83,11 @@ const LUMIRIFT = {
   out: 'lumirift/index.html',
   url: `${ORIGIN}/lumirift/`,
   play: 'https://playgama.ai/play/be4bqnmqcv',
-  // Le clip du lundi 2 novembre (la fabrique de clips du jeu, 1.39) : 7 s qui bouclent sans couture,
-  // son affiche à 0,47 s. Mis en ligne le 29 octobre à 10 h 08, heure de Paris : une date et une heure
-  // avec leur fuseau, comme Google l'attend pour uploadDate.
-  clipDate: '2026-10-29T10:08:00+01:00',
+  // Le clip du lundi 2 novembre (la fabrique de clips du jeu), re-rendu le 1er novembre sur la 1.45 :
+  // le puits de 10 × 18, les pièces d'un seul cristal, la constellation d'atterrissage. 7 s qui bouclent
+  // sans couture, son affiche à 0,47 s. Recoupé le 1er novembre à 11 h 37, heure de Paris : une date et
+  // une heure avec leur fuseau, comme Google l'attend pour uploadDate.
+  clipDate: '2026-11-01T11:37:00+01:00',
   clipDuration: 'PT7S',
   posterTime: '0.467',
   // Classes que le script de la page ajoute lui-même : leurs règles restent dans la feuille copiée.
