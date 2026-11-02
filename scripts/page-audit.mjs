@@ -11,7 +11,14 @@
  */
 import { createHash } from 'node:crypto';
 
-const sha256 = (text) => `sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}`;
+/**
+ * L'empreinte d'un bloc telle que le navigateur la calcule : sur le texte que l'analyseur HTML en
+ * lit, où chaque fin de ligne CRLF ou CR seule est déjà devenue LF. Hacher les octets du fichier
+ * donnait une autre empreinte dès qu'un gabarit était en CRLF (git sous Windows, `core.autocrlf`),
+ * et la CSP bloquait le bloc (1.9.2).
+ */
+const sha256 = (text) =>
+  `sha256-${createHash('sha256').update(text.replace(/\r\n?/g, '\n'), 'utf8').digest('base64')}`;
 
 /** Une adresse absolue vers un autre site que `origin` (https://…, http://… ou //…). */
 const isThirdParty = (url, origin) => /^(?:https?:)?\/\//i.test(url.trim()) && !url.trim().startsWith(`${origin}/`);
