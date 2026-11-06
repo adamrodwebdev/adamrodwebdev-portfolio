@@ -161,7 +161,8 @@ test('menu des langues : cinq langues, la langue courante marquée, la section g
 });
 
 test("en-tête : la marque et ses boutons tiennent sur une ligne de 320 à 1280 px, sans écraser le logo", async ({ page }) => {
-  for (const width of [320, 360, 390, 768, 1280]) {
+  // Le russe est la langue la plus large ; 861 et 1024 px encadraient l'apparition des liens (1.12.0)
+  for (const width of [320, 360, 390, 412, 440, 768, 861, 1024, 1120, 1280]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/ru/');
     await page.waitForLoadState('networkidle');
@@ -196,8 +197,60 @@ test('titres : l’effet de survol joue une fois, même si la souris reste dessu
   expect(await page.evaluate(() => window.glitches), 'second survol').toBe(2);
 });
 
+// ----- Bande-son (1.12.0) -----
+
+test('partition : chaque note tient dans sa mesure, chaque accord existe, les parties couvrent le morceau', async () => {
+  const { MELODY, GRID, CHORDS, STEPS_PER_BAR, SECTIONS, TOTAL_BARS, BAR } = await import('../js/audio/score.js');
+  for (const [phrase, notes] of Object.entries(MELODY)) {
+    for (const [bar, step, , length] of notes) expect(step + length, `${phrase} mesure ${bar}, pas ${step}`).toBeLessThanOrEqual(STEPS_PER_BAR);
+  }
+  for (const chord of GRID) expect(CHORDS[chord], chord).toBeDefined();
+  expect(SECTIONS.reduce((bars, section) => bars + section.bars, 0)).toBe(TOTAL_BARS);
+  for (const section of SECTIONS) expect(section.start).toBeCloseTo(section.firstBar * BAR, 6);
+});
+
+test('bande-son : l’interrupteur de l’en-tête lance et coupe le thème, le lecteur suit', async ({ page }) => {
+  const { messages } = await import('../js/i18n/messages.js');
+  await page.goto('/');
+  await expect(page.locator('.player')).toHaveCount(0);
+  const toggle = page.locator('#nav-app .sound-btn');
+  await expect(toggle).toHaveAccessibleName(messages.fr.nav.sound);
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true', { timeout: 10_000 });
+  const position = page.locator('#soundtrack-app .sound-deck__timeline input');
+  await expect.poll(async () => Number(await position.inputValue()), { timeout: 10_000 }).toBeGreaterThan(1);
+  await expect(page.locator('#soundtrack-app .sound-deck__play')).toHaveText(messages.fr.soundtrack.pause);
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  const held = await position.inputValue();
+  await page.waitForTimeout(1200);
+  expect(await position.inputValue(), 'la position reste sur la pause').toBe(held);
+});
+
+test('bande-son : chaque partie se joue depuis son début, et s’allume', async ({ page }) => {
+  const { SECTIONS } = await import('../js/audio/score.js');
+  await page.goto('/#bande-son');
+  const chapters = page.locator('#soundtrack-app .chapter');
+  await expect(chapters).toHaveCount(SECTIONS.length);
+  await chapters.nth(3).locator('.chapter__play').click();
+  await expect(chapters.nth(3)).toHaveAttribute('aria-current', 'time', { timeout: 10_000 });
+  const position = Number(await page.locator('#soundtrack-app .sound-deck__timeline input').inputValue());
+  expect(position).toBeGreaterThanOrEqual(Math.floor(SECTIONS[3].start));
+  expect(position).toBeLessThan(SECTIONS[4].start);
+  await page.locator('#nav-app .sound-btn').click();
+  await expect(page.locator('#nav-app .sound-btn')).toHaveAttribute('aria-pressed', 'false');
+});
+
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
+
+  test('bande-son : les cinq parties et la note restent lisibles', async ({ page }) => {
+    const { messages } = await import('../js/i18n/messages.js');
+    await page.goto('/');
+    await expect(page.locator('#bande-son .chapter')).toHaveCount(5);
+    await expect(page.locator('#bande-son .no-js-only')).toHaveText(messages.fr.soundtrack.noscript);
+  });
 
   test('menu des langues : il s’ouvre et mène à une autre langue', async ({ page }) => {
     await page.goto('/es/');

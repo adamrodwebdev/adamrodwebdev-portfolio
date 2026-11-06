@@ -15,6 +15,7 @@ import { LANGUAGES, DEFAULT_LANGUAGE } from '../js/i18n/languages.js';
 import { config } from '../js/config.js';
 import { projects } from '../js/data/projects.js';
 import { playLinks } from '../js/data/platforms.js';
+import { SECTIONS, DURATION, TITLE, clock } from '../js/audio/score.js';
 import { minifyCss, purgeCss, pageNames } from './css.mjs';
 import { afterFirstPaintScript } from './after-first-paint.mjs';
 
@@ -28,6 +29,28 @@ const playUrl = (id) => playLinks(projects.find((project) => project.id === id))
 
 /** Repère de la feuille dans une page rendue, remplacé une fois la page connue. */
 const CSS_SLOT = '\u0000css\u0000';
+
+/**
+ * La section « Bande-son » sans JavaScript (1.12.0) : le morceau et ses cinq parties, les mêmes classes que le
+ * lecteur Vue qui la remplace. La note « JavaScript requis » n'apparaît que si JavaScript manque.
+ */
+function soundtrackStatic(texts) {
+  const st = texts.soundtrack;
+  const chapters = SECTIONS.map((section, i) => {
+    const chapter = st.chapters[section.key];
+    return `<li class="chapter"><span class="chapter__num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>`
+      + `<div class="chapter__body"><h3 class="chapter__name">${escape(chapter.name)}</h3><p class="chapter__text">${escape(chapter.text)}</p></div>`
+      + `<span class="chapter__play chapter__play--static"><time datetime="PT${Math.floor(section.start)}S">${clock(section.start)}</time></span></li>`;
+  });
+  return `<div class="soundtrack__grid">
+            <div class="sound-deck">
+              <div class="sound-deck__head"><span class="sound-deck__viz" aria-hidden="true"></span><div class="sound-deck__id"><p class="sound-deck__title">${escape(TITLE)}</p><p class="sound-deck__facts">${escape(st.facts.replace('{duration}', clock(DURATION)))}</p></div></div>
+              <p class="sound-deck__note no-js-only">${escape(st.noscript)}</p>
+            </div>
+            <ol class="chapters" role="list" aria-label="${escape(st.chaptersLabel)}">${chapters.join('')}</ol>
+            <p class="soundtrack__credits">${escape(st.credits)}</p>
+          </div>`;
+}
 
 /** Les accueils à générer, un par langue : index.html pour la langue par défaut, <code>/index.html sinon. */
 const pages = LANGUAGES.map((language) => ({ ...language, out: `${language.base.slice(1)}index.html` }));
@@ -163,6 +186,7 @@ export async function buildPages({ root, out, imports }) {
       typeOptions: m.form.types.map((o) => `<option>${escape(o)}</option>`).join(''),
       budgetOptions: m.form.budgets.map((o) => `<option>${escape(o)}</option>`).join(''),
       sendLabel: escape(m.form.steps[0]),
+      soundtrackStatic: soundtrackStatic(m),
       contactEmail: escape(config.contactEmail),
       playCatapulte: escape(playUrl('catapulte-mania')),
       playBastion: escape(playUrl('bastion')),
