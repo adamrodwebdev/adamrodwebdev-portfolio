@@ -1,7 +1,7 @@
 {
   "name": "AdamRodWebDev",
   "short_name": "AdamRod",
-  "description": "Développeur web front-end Vue.js : sites rapides, accessibles et optimisés SEO.",
+  "description": "Développeur web full-stack Vue.js et Symfony : sites rapides, accessibles et optimisés SEO.",
   "lang": "fr",
   "start_url": "/",
   "display": "standalone",
