@@ -2,6 +2,14 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.10.1] - 2026-11-06
+
+### Corrigé
+- **Effet de survol des titres** : la souris immobile sur un titre relançait l'effet en boucle (14 fois en 3 secondes). L'animation découpe et décale le titre : il sortait de sous la souris, et chaque retour comptait comme un nouveau survol. L'effet joue maintenant une fois, et se réarme seulement quand la souris quitte l'en-tête de la section ; il ne joue plus sur un écran tactile.
+
+### Qualité
+- `npm test` : 55 tests passés et 1 sauté (le survol, sans objet sur mobile), sur Chromium seulement. Nouveau test : la souris reste sur un titre, l'effet joue une seule fois, puis une seconde fois après un aller-retour ; il échoue sur l'ancien code (5 lancements en 1,5 seconde).
+
 ## [1.10.0] - 2026-11-06
 
 ### Ajouté

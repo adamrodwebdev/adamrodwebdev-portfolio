@@ -177,12 +177,23 @@ export function initShards() {
   new MutationObserver(() => { readColors(); if (reduce) draw(true); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
 
-/* ---------- Effet de « glitch » au survol des titres ---------- */
+/* ---------- Effet de « glitch » au survol des titres ----------
+   Une fois par survol. L'animation découpe et décale le titre : il sort de sous la souris immobile,
+   et chaque retour relançait l'effet en boucle (1.10.1). L'effet se réarme donc seulement quand la
+   souris quitte l'en-tête de la section, dont la boîte ne bouge pas. */
 export function initGlitch() {
-  if (reduce) return;
-  document.querySelectorAll('.section__title').forEach((t) => {
-    t.addEventListener('pointerenter', () => {
-      t.classList.remove('glitch-once'); void t.offsetWidth; t.classList.add('glitch-once');
+  if (reduce || !fine) return;
+  document.querySelectorAll('.section__title').forEach((title) => {
+    const zone = title.closest('.section__head') ?? title.parentElement;
+    let armed = true;
+    title.addEventListener('pointerenter', (event) => {
+      if (!armed || event.pointerType !== 'mouse') return;
+      armed = false;
+      title.classList.add('glitch-once');
     });
+    title.addEventListener('animationend', (event) => {
+      if (event.animationName === 'glitch') title.classList.remove('glitch-once');
+    });
+    zone.addEventListener('pointerleave', () => { armed = true; });
   });
 }
