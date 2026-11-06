@@ -173,6 +173,29 @@ test("en-tête : la marque et ses boutons tiennent sur une ligne de 320 à 1280 
   }
 });
 
+test('titres : l’effet de survol joue une fois, même si la souris reste dessus (1.10.1)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'pas de survol sur un écran tactile');
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  const title = page.locator('#services-title');
+  await title.scrollIntoViewIfNeeded();
+  await title.evaluate((element) => {
+    window.glitches = 0;
+    new MutationObserver(() => { if (element.classList.contains('glitch-once')) window.glitches += 1; })
+      .observe(element, { attributes: true, attributeFilter: ['class'] });
+  });
+  // Le milieu du titre : la première image de l'effet le découpe, il sort de sous la souris immobile
+  await title.hover();
+  await page.waitForTimeout(1500);
+  expect(await page.evaluate(() => window.glitches), 'souris immobile sur le titre').toBe(1);
+  await expect(title).not.toHaveClass(/glitch-once/);
+  // Sortie de l'en-tête de la section, puis retour : l'effet rejoue une fois
+  await page.mouse.move(5, 5);
+  await title.hover();
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => window.glitches), 'second survol').toBe(2);
+});
+
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
