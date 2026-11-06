@@ -183,7 +183,7 @@ body::before {
 }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--header-h); }
 .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--fg); }
-.brand__mark { width: 38px; height: 38px; color: var(--gold); transition: transform 0.6s var(--ease-out); }
+.brand__mark { flex: none; width: 38px; height: 38px; color: var(--gold); transition: transform 0.6s var(--ease-out); }
 .brand:hover .brand__mark { transform: rotate(60deg); }
 .brand__name { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.04em; }
 .brand__name b { color: var(--gold); font-weight: 700; }
@@ -357,7 +357,8 @@ body::before {
 }
 #projets { z-index: 2; }
 #methode { z-index: 3; }
-#contact { z-index: 4; }
+#bande-son { z-index: 4; }
+#contact { z-index: 5; }
 .panel--fall { --step-x: 60%; }
 .panel::before, .panel::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 /* La plaque du panneau : éclairée en haut, fondue dans le fond plus bas */
@@ -410,7 +411,8 @@ body::before {
 .panel--fall .panel__shard--far { right: auto; left: max(10px, (100% - 1240px) / 2 - 6px); rotate: 40deg; }
 
 /* Les plaques derrière les cartes, les étapes et le formulaire : chanfreinées, liseré compris, en un seul élément */
-.aug-slot::before, .protocol__step::before, .contact__form-wrap::before, .protocol__step::after {
+.aug-slot::before, .protocol__step::before, .contact__form-wrap::before, .protocol__step::after,
+.sound-deck::before, .sound-deck::after {
   --edge: color-mix(in srgb, var(--gold) 30%, transparent);
   --fill: color-mix(in srgb, var(--gold) 7%, transparent);
   border: 1px solid var(--edge);
@@ -420,15 +422,15 @@ body::before {
     var(--fill) padding-box;
   clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
 }
-/* La face d'une étape : la carte elle-même */
-.protocol__step::after { --edge: var(--line); --fill: var(--surface); }
+/* La face d'une étape ou du lecteur : la carte elle-même */
+.protocol__step::after, .sound-deck::after { --edge: var(--line); --fill: var(--surface); }
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .panel__index { animation: depth-far linear both; animation-timeline: --panel; animation-range: cover; }
     .panel__shard--near { animation: depth-near linear both; animation-timeline: --panel; animation-range: cover; }
     .panel__shard--far { animation: depth-mid linear both; animation-timeline: --panel; animation-range: cover; }
-    .aug-slot::before, .protocol__step::before, .contact__form-wrap::before {
+    .aug-slot::before, .protocol__step::before, .contact__form-wrap::before, .sound-deck::before {
       animation: depth-plate linear both; animation-timeline: view(); animation-range: cover;
     }
     /* Le numéro part de sa place (il ne dépasse jamais sur le contenu de la section d'avant) et descend */
@@ -713,27 +715,6 @@ body::before {
 .footer__links a:hover { color: var(--gold); }
 .footer__copy { color: var(--muted); font-size: var(--step--1); width: 100%; }
 
-/* ---------- Lecteur audio ---------- */
-.player {
-  position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 80;
-  display: flex; align-items: center; gap: 4px; padding: 6px;
-  background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(10px);
-  border: 1px solid var(--line); animation: hud-in 0.8s var(--ease-out) 1.5s both;
-}
-.player__toggle { width: 46px; height: 46px; display: grid; place-items: center; background: none; border: 0; cursor: pointer; color: var(--gold); }
-.player__bars { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
-.player__bars i { width: 3px; height: 100%; background: currentColor; transform-origin: bottom; transform: scaleY(0.2); transition: transform 0.4s; }
-.player.is-playing .player__bars i { animation: eq 1s var(--ease-in-out) infinite alternate; }
-.player.is-playing .player__bars i:nth-child(2) { animation-delay: -0.3s; animation-duration: 0.8s; }
-.player.is-playing .player__bars i:nth-child(3) { animation-delay: -0.6s; animation-duration: 1.2s; }
-.player.is-playing .player__bars i:nth-child(4) { animation-delay: -0.15s; animation-duration: 0.9s; }
-.player__info { display: grid; overflow: hidden; max-width: 0; opacity: 0; transition: max-width 0.6s var(--ease-out), opacity 0.4s, padding 0.6s; white-space: nowrap; }
-.player.is-open .player__info { max-width: 260px; opacity: 1; padding-right: 10px; }
-.player__title { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem; }
-.player__sub { font-size: 0.78rem; color: var(--muted); }
-.player__vol { width: 120px; accent-color: var(--gold); margin-top: 4px; }
-.player__viz { width: 46px; height: 46px; }
-
 /* ---------- Curseur personnalisé ---------- */
 .cursor { position: fixed; inset: 0; pointer-events: none; z-index: 9999; display: none; }
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
@@ -781,6 +762,89 @@ body::before {
 }
 .slide:not(.is-active) .art-anim, .slide:not(.is-active) .art-anim * { animation-play-state: paused !important; }
 .glitch-once { animation: glitch 0.35s steps(2) 1; }
+
+/* ---------- Bande-son (1.12.0) ---------- */
+/* L'interrupteur de l'en-tête : ondes quand la musique joue, croix quand elle est coupée */
+.sound-icon { overflow: visible; }
+.sound-icon__on, .sound-icon__off { transform-box: fill-box; transform-origin: left center; transition: opacity 0.3s, transform 0.4s var(--ease-out); }
+.sound-btn:not(.is-on) .sound-icon__on, .sound-btn.is-on .sound-icon__off { opacity: 0; transform: scale(0.5); }
+.sound-btn.is-on { color: var(--gold); }
+.sound-btn[aria-busy="true"] { cursor: progress; }
+@media (prefers-reduced-motion: no-preference) {
+  .sound-btn.is-on .sound-icon__on path { animation: sound-wave 1.6s var(--ease-in-out) infinite; }
+  .sound-btn.is-on .sound-icon__on path + path { animation-delay: 0.25s; }
+}
+@keyframes sound-wave { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.js .no-js-only { display: none; }
+.soundtrack__grid { display: grid; gap: clamp(28px, 4vw, 48px); align-items: start; }
+@media (width >= 64rem) {
+  .soundtrack__grid { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); }
+  .soundtrack__credits { grid-column: 1 / -1; }
+}
+
+/* Le lecteur : une carte chanfreinée sur sa plaque */
+.sound-deck { position: relative; isolation: isolate; display: grid; gap: 22px; padding: clamp(22px, 3.5vw, 34px); min-width: 0; }
+.sound-deck::before, .sound-deck::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.sound-deck::before { z-index: -2; translate: var(--plate) var(--plate); }
+.sound-deck::after { z-index: -1; }
+.sound-deck__head { display: flex; align-items: center; gap: 20px; min-width: 0; }
+.sound-deck__viz { flex: none; width: clamp(96px, 22vw, 132px); aspect-ratio: 1; }
+span.sound-deck__viz {
+  background: var(--line-soft); border: 0;
+  clip-path: polygon(50% 18%, 77% 34%, 77% 66%, 50% 82%, 23% 66%, 23% 34%);
+}
+.sound-deck__id { min-width: 0; }
+.sound-deck__title {
+  font-family: var(--font-display); font-weight: 700; font-size: var(--step-3); line-height: 1; text-transform: uppercase; letter-spacing: 0.04em;
+  color: transparent; -webkit-text-stroke: 1.5px var(--gold);
+  background: linear-gradient(100deg, var(--gold-deep), var(--gold-hi) 45%, var(--gold) 60%, var(--gold-deep)); -webkit-background-clip: text; background-clip: text;
+}
+.sound-deck__facts { margin-top: 8px; color: var(--muted); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem; }
+.sound-deck__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.sound-deck__play { min-width: 11rem; }
+.sound-deck__play svg { position: relative; z-index: 1; width: 20px; height: 20px; }
+.sound-deck__volume { display: flex; align-items: center; gap: 10px; flex: 1 1 9rem; min-width: 0; color: var(--gold); }
+.sound-deck__volume svg { flex: none; width: 22px; height: 22px; }
+.sound-deck input[type="range"] { width: 100%; min-width: 0; height: 44px; margin: 0; accent-color: var(--gold); cursor: pointer; }
+.sound-deck__timeline { display: flex; align-items: center; gap: 14px; }
+.sound-deck__clock { flex: none; font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
+.sound-deck__note, .soundtrack__credits { color: var(--muted); font-size: var(--step--1); }
+.sound-deck__error { color: var(--danger); }
+
+/* Les cinq parties : un rail d'or, la partie en cours allumée */
+.chapters { position: relative; display: grid; gap: 10px; counter-reset: chapter; }
+.chapters::before { content: ""; position: absolute; top: 22px; bottom: 22px; left: 21px; width: 2px; background: linear-gradient(var(--gold), var(--line)); }
+.chapter {
+  position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 4px 16px;
+  padding: 12px 14px 12px 0; border: 1px solid transparent; transition: background-color 0.3s, border-color 0.3s;
+}
+/* Le numéro : un hexagone liseré d'or (la plaque en or, son centre noir par-dessus), plein pour la partie en cours */
+.chapter__num {
+  position: relative; display: grid; place-items: center; width: 44px; height: 44px; isolation: isolate;
+  font-family: var(--font-display); font-weight: 700; font-size: 1rem; color: var(--gold); background: var(--gold);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.chapter__num::before {
+  content: ""; position: absolute; inset: 2px; z-index: -1; background: var(--bg);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.chapter__name { font-size: clamp(1.15rem, 1rem + 0.6vw, 1.45rem); text-transform: uppercase; }
+.chapter__text { color: var(--muted); font-size: 0.98rem; }
+.chapter__play {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px;
+  border: 1px solid var(--line); background: transparent; color: var(--gold); cursor: pointer;
+  font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.06em;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  transition: background-color 0.3s, color 0.3s;
+}
+.chapter__play svg { width: 14px; height: 14px; }
+.chapter__play:hover { background: var(--surface-2); }
+.chapter__play--static { cursor: default; }
+.chapter.is-current { background: var(--surface-2); border-color: var(--line); }
+.chapter.is-current .chapter__num { color: var(--on-gold); background: var(--gold-hi); }
+.chapter.is-current .chapter__num::before { display: none; }
+.chapter.is-current .chapter__play { background: var(--gold-hi); color: var(--on-gold); border-color: var(--gold-hi); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
@@ -835,8 +899,6 @@ body::before {
   .swiper__controls { margin-top: 20px; }
   .submit-btn { width: 100%; min-width: 0; }
   .brand__name { font-size: 1.15rem; }
-  .player.is-open .player__info { max-width: 170px; }
-  .player__vol { width: 100px; }
 }
 
 /* ---------- Mouvement réduit ---------- */
@@ -940,8 +1002,16 @@ body::before {
   .nav__tools .icon-btn { width: 44px; height: 44px; }
   .lang-menu > summary.lang-btn { width: auto; min-width: 44px; }
 }
-@media (max-width: 340px) {
+/* Quatre boutons dans l'en-tête (1.12.0) : sous 432 px, le logo seul porte la marque (le titre du hero la
+   répète juste dessous, le lien garde son nom accessible). */
+@media (width < 27.5rem) {
   .brand__name { display: none; }
+}
+/* Cinq liens, la marque et quatre boutons ne tiennent sur une ligne qu'à partir de 1120 px (le russe est le
+   plus large) : en dessous, le menu (1.12.0). */
+@media (width < 70rem) {
+  .nav__links { display: none; }
+  .burger { display: grid; }
 }
 
 /* Russe : Rajdhani et Barlow n'ont pas de cyrillique. Polices système qui en ont, plutôt qu'un mélange au hasard. */

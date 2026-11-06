@@ -114,6 +114,7 @@
           <li><a href="#services">[[nav.services]]</a></li>
           <li><a href="#projets">[[nav.projects]]</a></li>
           <li><a href="#methode">[[nav.method]]</a></li>
+          <li><a href="#bande-son">[[nav.soundtrack]]</a></li>
           <li><a href="#contact">[[nav.contact]]</a></li>
         </ul>
         <div class="nav__tools">
@@ -303,8 +304,25 @@
       <p class="visually-hidden">[[tools.hidden]]</p>
     </section>
 
-    <section id="contact" class="section section--contact panel panel--fall" aria-labelledby="contact-title">
+    <section id="bande-son" class="section panel panel--fall" aria-labelledby="bande-son-title">
       <span class="panel__index" data-index="04" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">[[soundtrack.tag]]</p>
+          <h2 id="bande-son-title" class="section__title" data-scramble>[[soundtrack.title]]</h2>
+          <p class="section__intro">[[soundtrack.intro]]</p>
+        </header>
+        <!-- Le lecteur (Vue) remplace ce contenu : le morceau, ses cinq parties, la note sans JavaScript (1.12.0) -->
+        <div id="soundtrack-app" class="soundtrack reveal">
+          [[@soundtrackStatic]]
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section--contact panel panel--rise" aria-labelledby="contact-title">
+      <span class="panel__index" data-index="05" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container contact">
@@ -352,6 +370,7 @@
           <li><a href="#services">[[nav.services]]</a></li>
           <li><a href="#projets">[[nav.projects]]</a></li>
           <li><a href="#methode">[[nav.method]]</a></li>
+          <li><a href="#bande-son">[[nav.soundtrack]]</a></li>
           <li><a href="#contact">[[nav.contact]]</a></li>
           <li><a href="[[@legal]]"[[@legalHreflang]]>[[nav.legal]]</a></li>
           [[@footerLangs]]
@@ -361,7 +380,6 @@
     </div>
   </footer>
 
-  <div id="music-app"></div>
   <div class="cursor" aria-hidden="true"><span class="cursor__ring"></span><span class="cursor__dot"></span></div>
 </body>
 </html>

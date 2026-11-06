@@ -2,7 +2,26 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
-## [1.11.0] - 2026-11-06
+## [1.12.0] - 2026-11-06
+
+### Ajouté
+- **Nouveau thème, « Sfumato »** : composition originale de 3 min 23 en cinq parties (Éveil, Signal, Montée, Apogée, Retour), mi mineur, 116 BPM joués en demi-temps. Pulsation à délai pointé, nappes, chœur et voix sans paroles (formants), basse en sidechain, cloche FM, percussions de film en demi-temps, cordes à l'apogée. Toujours synthétisé en direct, sans fichier audio, chargé au premier clic.
+- **Interrupteur du son dans l'en-tête**, à côté du thème : un bouton bascule (`aria-pressed`), ondes quand la musique joue, croix quand elle est coupée.
+- **Section « Bande-son »**, cinquième lien du menu : le lecteur (lecture et pause, position, volume, spectre en hexagone) et les cinq parties du morceau, chacune jouable depuis son début, la partie en cours allumée (`aria-current`). Sans JavaScript, les parties restent lisibles. Touches multimédia et écran verrouillé (Media Session).
+- Textes dans les cinq langues.
+
+### Modifié
+- **L'ancien lecteur flottant disparaît** (bas de l'écran, réglages cachés) : peu accessible, et il masquait le contenu. « Ascension » est remplacé par « Sfumato ».
+- En-tête : sous 440 px, le logo seul porte la marque (le titre du hero la répète dessous) ; sous 1120 px, les cinq liens passent dans le menu. Le logo ne se laisse plus écraser entre 861 et 1023 px (c'était déjà le cas avec quatre liens), ni en russe, la langue la plus large.
+- Contact devient le panneau 05.
+
+### Qualité
+- Le thème rendu hors ligne et analysé : mi mineur, 115 à 116 BPM, aucun écrêtage (crête à 0,79), niveau qui monte d'environ 13 dB de l'éveil à l'apogée et brillance de 840 Hz à 2 200 Hz.
+- `npm test` : 63 tests passés et 1 sauté, sur Chromium seulement. Nouveaux tests : la partition (chaque note dans sa mesure, chaque accord défini), l'interrupteur de l'en-tête lance et coupe le thème et le lecteur suit, une partie se joue depuis son début et s'allume, la section sans JavaScript. Le test de l'en-tête couvre 10 largeurs, dont 440, 861 et 1120 px.
+- Aucun défilement horizontal de 320 à 2560 px, en français et en russe.
+- Lighthouse 13.6 : 100 dans les quatre catégories sur `/`, `/en/`, `/ru/` et `/it/`, sur mobile (pire de trois passages) comme sur ordinateur.
+
+
 
 ### Ajouté
 - **Profondeur** : Services, Projets, Méthode et Contact deviennent des panneaux qui glissent sur la section d'avant, bord haut en marche biaise liseré d'or. Ils recouvrent la marge de la section précédente, jamais son contenu ; le hero passe sous le premier panneau quand on défile, et le bord du suivant se voit dès le premier écran.

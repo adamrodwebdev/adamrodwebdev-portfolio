@@ -1,4 +1,4 @@
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { ref, inject, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTheme } from '../composables/useTheme.js';
 import { languages, locale } from '../i18n/index.js';
@@ -7,6 +7,7 @@ const links = [
   { id: 'services', key: 'nav.services' },
   { id: 'projets', key: 'nav.projects' },
   { id: 'methode', key: 'nav.method' },
+  { id: 'bande-son', key: 'nav.soundtrack' },
   { id: 'contact', key: 'nav.contact' },
 ];
 
@@ -17,6 +18,8 @@ export default {
     const open = ref(false);
     const active = ref('');
     const { isDark, toggle } = useTheme();
+    /** La bande-son partagée (islands.js) : l'interrupteur coupe et relance la musique du site (1.12.0) */
+    const soundtrack = inject('soundtrack', null);
     const burger = ref(null);
     const langMenu = ref(null);
     let observer;
@@ -74,7 +77,7 @@ export default {
     const go = () => { open.value = false; };
     // Changement de langue : on garde la section affichée (#projets, #contact…)
     const switchLang = (e, language) => { e.currentTarget.href = language.base + location.hash; };
-    return { links, open, active, isDark, toggle, go, burger, langMenu, t, languages, locale, switchLang };
+    return { links, open, active, isDark, toggle, go, burger, langMenu, t, languages, locale, switchLang, soundtrack };
   },
   template: `
   <nav class="nav container" :aria-label="t('a11y.mainNav')">
@@ -98,6 +101,15 @@ export default {
           </li>
         </ul>
       </details>
+      <button v-if="soundtrack" class="icon-btn sound-btn" :class="{ 'is-on': soundtrack.state.playing }" type="button"
+        @click="soundtrack.toggle()" :aria-label="t('nav.sound')" :title="t('nav.sound')"
+        :aria-pressed="soundtrack.state.playing ? 'true' : 'false'" :aria-busy="soundtrack.state.loading ? 'true' : null">
+        <svg class="sound-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3.5 9h4l5-4v14l-5-4h-4z" fill="currentColor"/>
+          <g class="sound-icon__on" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18 7a7 7 0 0 1 0 10"/></g>
+          <g class="sound-icon__off" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 9.5l5 5M21 9.5l-5 5"/></g>
+        </svg>
+      </button>
       <button class="icon-btn" :class="{ 'is-dark': isDark }" type="button" @click="toggle($event)"
         :aria-label="isDark ? t('nav.themeLight') : t('nav.themeDark')" :aria-pressed="isDark ? 'true' : 'false'">
         <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">

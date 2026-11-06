@@ -49,13 +49,15 @@ js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
 js/config.js            Mode d'envoi du formulaire, e-mail de contact
 js/i18n/languages.js    Les cinq langues : code, nom, adresses, langue de l'heure
 js/i18n/locales/        Textes de l'accueil, un fichier par langue (fr, en, ru, it, es)
-js/components/          NavBar, ProjectSwiper, ContactForm, MusicPlayer (gabarits précompilés dans dist/)
+js/components/          NavBar, ProjectSwiper, SoundtrackPlayer, ContactForm (gabarits précompilés dans dist/)
 js/composables/         useTheme (mode sombre + View Transitions)
 js/data/projects.js     ← ajoutez vos projets ici
 js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
 js/fx/                  Effets (révélations, curseur, éclats, particules)
-js/audio/ascension.js   Bande-son originale synthétisée (Web Audio API)
+js/audio/score.js       « Sfumato » : la partition (grille, mélodie, parties), sans son
+js/audio/sfumato.js     Le moteur qui la joue en Web Audio, chargé à la première écoute
+js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
 assets/                 Favicons, icônes PWA, image Open Graph
 fonts/                  Rajdhani, Barlow, Unbounded (titre de Lumirift) : WOFF2, sous-ensemble latin
 lumirift/               Médias de la page du jeu Lumirift
@@ -188,6 +190,12 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 
 En local, sur `npm run serve` (mêmes en-têtes et même compression que Netlify), ou sur la version **déployée** (HTTPS) en navigation privée : Chrome DevTools → Lighthouse, ou https://pagespeed.web.dev. La note varie d'un passage à l'autre avec le réseau et la charge de la machine.
 
-## Bande-son
+## Bande-son (1.12.0)
 
-« Ascension » est une composition originale, synthétisée en direct (ré mineur, 84 BPM) : nappes analogiques, arpège à délai pointé, basse en sidechain, percussions cinématiques et mélodie de cloche FM. Elle ne démarre qu'au clic (règles des navigateurs) et ne pèse rien au chargement : le moteur n'est téléchargé qu'à la première écoute.
+« Sfumato » est le thème original du site : 3 min 23, mi mineur, 116 BPM joués en demi-temps, en cinq parties (Éveil, Signal, Montée, Apogée, Retour). Aucun fichier audio : chaque note est synthétisée en direct par le navigateur (Web Audio API). Pulsation staccato à délai pointé, nappes, chœur et voix sans paroles par filtres de formants, basse en sidechain, cloche FM, percussions de film, souffle filtré.
+
+- **Écouter** : l'interrupteur de l'en-tête (`aria-pressed`) coupe et relance le son ; la section « Bande-son » (`#bande-son`, cinquième lien du menu) a le lecteur complet : lecture, position, volume, et les cinq parties, chacune jouable depuis son début. Les deux pilotent le même état (`js/audio/soundtrack.js`, créé dans `js/islands.js` et fourni aux deux îlots). Les touches multimédia et l'écran verrouillé l'affichent aussi (Media Session).
+- **Rien au chargement** : le moteur (`sfumato.js`) n'est téléchargé qu'au premier clic. Le son ne démarre jamais seul (règle des navigateurs, et de l'accessibilité).
+- **La partition** (`score.js`) est de la donnée : grille d'accords mesure par mesure, mélodie, parties. Le lecteur et la génération des pages y lisent la durée et le début de chaque partie. La lecture reprend toujours au début d'une mesure.
+- **Vérifier un changement** : le moteur sait rendre la partition hors ligne (`renderBars`, `OfflineAudioContext`). Rendre chaque partie, puis comparer niveau, bandes de fréquence, tempo et tonalité : un pupitre trop fort ou une nappe qui « pompe » se voient sur le spectre.
+- **Composition originale** : ni échantillon, ni mélodie, ni grille empruntés. Ne citez pas d'œuvre existante dans le site ni dans le code.
