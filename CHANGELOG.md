@@ -2,7 +2,19 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
-## [1.10.1] - 2026-11-06
+## [1.11.0] - 2026-11-06
+
+### Ajouté
+- **Profondeur** : Services, Projets, Méthode et Contact deviennent des panneaux qui glissent sur la section d'avant, bord haut en marche biaise liseré d'or. Ils recouvrent la marge de la section précédente, jamais son contenu ; le hero passe sous le premier panneau quand on défile, et le bord du suivant se voit dès le premier écran.
+- **Plaques** : les cartes des services, les étapes de la méthode et le formulaire reposent sur une plaque d'or décalée ; une carte s'en détache au survol. Les étapes de la méthode deviennent des cartes, l'hexagone à cheval sur leur bord, posé sur la ligne qui les relie.
+- **Trois plans en défilant** : un grand numéro au fond de chaque panneau (01 à 04) va moins vite que la page, deux éclats d'or devant vont plus vite, les plaques traînent légèrement. Animations liées au défilement, `transform` seulement ; immobiles avec les animations réduites et dans les navigateurs qui ne les connaissent pas.
+
+### Qualité
+- Aucun défilement horizontal de 320 à 2560 px (10 largeurs, page parcourue de haut en bas, garde-fou du `body` retiré pour la mesure), en français et en russe.
+- `npm test` : 55 tests passés et 1 sauté, sur Chromium seulement.
+- Lighthouse 13.6 : 100 dans les quatre catégories sur `/`, `/en/` et `/ru/`, sur mobile (pire de trois passages) comme sur ordinateur.
+
+
 
 ### Corrigé
 - **Effet de survol des titres** : la souris immobile sur un titre relançait l'effet en boucle (14 fois en 3 secondes). L'animation découpe et décale le titre : il sortait de sous la souris, et chaque retour comptait comme un nouveau survol. L'effet joue maintenant une fois, et se réarme seulement quand la souris quitte l'en-tête de la section ; il ne joue plus sur un écran tactile.

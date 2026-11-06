@@ -167,7 +167,10 @@
       <a class="hero__scroll" href="#services" aria-label="[[a11y.scrollDown]]"><span></span></a>
     </section>
 
-    <section id="services" class="section" aria-labelledby="services-title">
+    <section id="services" class="section panel panel--rise" aria-labelledby="services-title">
+      <span class="panel__index" data-index="01" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
         <header class="section__head reveal">
           <p class="section__tag">[[services.tag]]</p>
@@ -176,47 +179,62 @@
         </header>
 
         <ul class="aug-grid" role="list">
-          <li class="aug reveal tilt">
-            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 10h36v24H6zM18 40h12M24 34v6"/><path d="M12 18h14M12 24h20"/></svg>
-            <h3 class="aug__title">[[services.showcase.title]]</h3>
-            <p class="aug__text">[[services.showcase.text]]</p>
-            <p class="aug__meta">[[services.showcase.meta]]</p>
+          <li class="aug-slot reveal">
+            <div class="aug tilt">
+              <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 10h36v24H6zM18 40h12M24 34v6"/><path d="M12 18h14M12 24h20"/></svg>
+              <h3 class="aug__title">[[services.showcase.title]]</h3>
+              <p class="aug__text">[[services.showcase.text]]</p>
+              <p class="aug__meta">[[services.showcase.meta]]</p>
+            </div>
           </li>
-          <li class="aug reveal tilt">
-            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 8h10l10 17 10-17h10L24 42Z"/><path d="M14 8l10 17 10-17"/></svg>
-            <h3 class="aug__title">[[services.apps.title]]</h3>
-            <p class="aug__text">[[services.apps.text]]</p>
-            <p class="aug__meta">[[services.apps.meta]]</p>
+          <li class="aug-slot reveal">
+            <div class="aug tilt">
+              <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 8h10l10 17 10-17h10L24 42Z"/><path d="M14 8l10 17 10-17"/></svg>
+              <h3 class="aug__title">[[services.apps.title]]</h3>
+              <p class="aug__text">[[services.apps.text]]</p>
+              <p class="aug__meta">[[services.apps.meta]]</p>
+            </div>
           </li>
-          <li class="aug reveal tilt">
-            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a18 18 0 1 1 32 0"/><path d="M24 34l9-13"/><circle cx="24" cy="34" r="3"/></svg>
-            <h3 class="aug__title">[[services.perf.title]]</h3>
-            <p class="aug__text">[[services.perf.text]]</p>
-            <p class="aug__meta">[[services.perf.meta]]</p>
+          <li class="aug-slot reveal">
+            <div class="aug tilt">
+              <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a18 18 0 1 1 32 0"/><path d="M24 34l9-13"/><circle cx="24" cy="34" r="3"/></svg>
+              <h3 class="aug__title">[[services.perf.title]]</h3>
+              <p class="aug__text">[[services.perf.text]]</p>
+              <p class="aug__meta">[[services.perf.meta]]</p>
+            </div>
           </li>
-          <li class="aug reveal tilt">
-            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="12"/><path d="M29 29l13 13M14 20h12M20 14v12"/></svg>
-            <h3 class="aug__title">[[services.seo.title]]</h3>
-            <p class="aug__text">[[services.seo.text]]</p>
-            <p class="aug__meta">[[services.seo.meta]]</p>
+          <li class="aug-slot reveal">
+            <div class="aug tilt">
+              <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="12"/><path d="M29 29l13 13M14 20h12M20 14v12"/></svg>
+              <h3 class="aug__title">[[services.seo.title]]</h3>
+              <p class="aug__text">[[services.seo.text]]</p>
+              <p class="aug__meta">[[services.seo.meta]]</p>
+            </div>
           </li>
-          <li class="aug reveal tilt">
-            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M8 17l16 4 16-4M24 21v8l-7 13M24 29l7 13"/></svg>
-            <h3 class="aug__title">[[services.a11y.title]]</h3>
-            <p class="aug__text">[[services.a11y.text]]</p>
-            <p class="aug__meta">[[services.a11y.meta]]</p>
+          <li class="aug-slot reveal">
+            <div class="aug tilt">
+              <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M8 17l16 4 16-4M24 21v8l-7 13M24 29l7 13"/></svg>
+              <h3 class="aug__title">[[services.a11y.title]]</h3>
+              <p class="aug__text">[[services.a11y.text]]</p>
+              <p class="aug__meta">[[services.a11y.meta]]</p>
+            </div>
           </li>
-          <li class="aug reveal tilt">
-            <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 38c8-20 14-28 18-28s6 12 10 12 6-6 8-8"/><path d="M6 38h36"/></svg>
-            <h3 class="aug__title">[[services.motion.title]]</h3>
-            <p class="aug__text">[[services.motion.text]]</p>
-            <p class="aug__meta">[[services.motion.meta]]</p>
+          <li class="aug-slot reveal">
+            <div class="aug tilt">
+              <svg class="aug__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 38c8-20 14-28 18-28s6 12 10 12 6-6 8-8"/><path d="M6 38h36"/></svg>
+              <h3 class="aug__title">[[services.motion.title]]</h3>
+              <p class="aug__text">[[services.motion.text]]</p>
+              <p class="aug__meta">[[services.motion.meta]]</p>
+            </div>
           </li>
         </ul>
       </div>
     </section>
 
-    <section id="projets" class="section section--projects" aria-labelledby="projets-title">
+    <section id="projets" class="section section--projects panel panel--fall" aria-labelledby="projets-title">
+      <span class="panel__index" data-index="02" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
         <header class="section__head reveal">
           <p class="section__tag">[[projectsSection.tag]]</p>
@@ -236,7 +254,10 @@
       </div>
     </section>
 
-    <section id="methode" class="section" aria-labelledby="methode-title">
+    <section id="methode" class="section panel panel--rise" aria-labelledby="methode-title">
+      <span class="panel__index" data-index="03" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
         <header class="section__head reveal">
           <p class="section__tag">[[method.tag]]</p>
@@ -282,7 +303,10 @@
       <p class="visually-hidden">[[tools.hidden]]</p>
     </section>
 
-    <section id="contact" class="section section--contact" aria-labelledby="contact-title">
+    <section id="contact" class="section section--contact panel panel--fall" aria-labelledby="contact-title">
+      <span class="panel__index" data-index="04" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container contact">
         <div class="contact__intro reveal">
           <p class="section__tag">[[contactSection.tag]]</p>
