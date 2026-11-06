@@ -41,12 +41,14 @@ Si les builds ont été arrêtés dans Netlify, les pushes reçus pendant l'arr�
 ## Structure
 
 ```
-templates/              Gabarits des pages générées (accueil FR et EN, page de Lumirift)
+templates/              Gabarits des pages générées (accueil des cinq langues, page de Lumirift)
 css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
 css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
 js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
 js/config.js            Mode d'envoi du formulaire, e-mail de contact
+js/i18n/languages.js    Les cinq langues : code, nom, adresses, langue de l'heure
+js/i18n/locales/        Textes de l'accueil, un fichier par langue (fr, en, ru, it, es)
 js/components/          NavBar, ProjectSwiper, ContactForm, MusicPlayer (gabarits précompilés dans dist/)
 js/composables/         useTheme (mode sombre + View Transitions)
 js/data/projects.js     ← ajoutez vos projets ici
@@ -57,7 +59,7 @@ js/audio/ascension.js   Bande-son originale synthétisée (Web Audio API)
 assets/                 Favicons, icônes PWA, image Open Graph
 fonts/                  Rajdhani, Barlow, Unbounded (titre de Lumirift) : WOFF2, sous-ensemble latin
 lumirift/               Médias de la page du jeu Lumirift
-404.html, merci.html, mentions-legales.html, en/ (pages écrites à la main)
+404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
 robots.txt, sitemap.xml, manifest.webmanifest
 
 scripts/build.mjs       La génération : enchaîne les étapes ci-dessous et écrit dist/
@@ -70,7 +72,7 @@ scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier a
 scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
 scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
 scripts/serve.mjs       Serveur local de dist/ qui applique dist/_headers
-tests/site.spec.mjs     Tests Playwright (domaines tiers, CSP, fichiers internes, formulaire)
+tests/site.spec.mjs     Tests Playwright (domaines tiers, CSP, fichiers internes, formulaire, langues)
 netlify.toml            Génération et redirections
 ```
 
@@ -133,15 +135,20 @@ Ses médias sont dans `lumirift/` :
 
 Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. Le titre utilise Unbounded, réduite aux lettres du titre (`fonts/unbounded-900-title.woff2`, 1,5 Ko) : si le titre change de lettres, refaites ce fichier.
 
-## Traductions (français / anglais)
+## Traductions (cinq langues, 1.10.0)
 
-Le site existe en français (`/`) et en anglais (`/en/`). Tous les textes sont dans **`js/i18n/messages.js`**.
+Le site existe en français (`/`), en anglais (`/en/`), en russe (`/ru/`), en italien (`/it/`) et en espagnol (`/es/`). Un menu dans l'en-tête (un `<details>`, utilisable sans JavaScript) mène de l'une à l'autre en gardant la section affichée ; le pied de page liste aussi les autres langues.
 
-- Les composants Vue les affichent avec **vue-i18n** (`t('cle')`), servi par le site (`/vendor/`, import map écrite par la génération).
-- Les pages `index.html` et `en/index.html` de `dist/` sont **générées** à partir de `templates/index.html` par `npm run build`, que Netlify lance à chaque déploiement : modifiez le gabarit ou les traductions.
-- Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @).
+- **Textes** : un fichier par langue dans **`js/i18n/locales/`** (`fr.js` fait référence). Toutes les langues ont exactement les mêmes clés, les mêmes longueurs de listes et les mêmes paramètres (`{title}`…) : un test le vérifie.
+- **Langues et adresses** : `js/i18n/languages.js` (code, nom affiché, accueil, page de confirmation, mentions légales, langue de l'heure). La génération, le menu et l'horloge s'en servent.
+- **Chaque page ne charge que sa langue** : `js/i18n/index.js` importe `locales/<code>.js`, que la génération précharge avec les îlots Vue. `js/i18n/messages.js` réunit toutes les langues pour la génération et les tests ; le navigateur ne le demande pas.
+- Les accueils de `dist/` sont **générés** à partir de `templates/index.html` par `npm run build`, avec les liens `hreflang` des cinq langues et `x-default` vers le français.
+- Les pages 404 et de confirmation existent dans chaque langue (`ru/404.html`, `ru/thank-you.html`…). Les mentions légales n'existent qu'en français (version légale) et en anglais : les autres langues mènent à l'anglaise, et le lien le dit.
+- **Russe** : Rajdhani et Barlow n'ont pas de cyrillique ; la page russe utilise des polices système qui en ont (`:root:lang(ru)` dans `css/style.css`).
+- Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @) ; le test le contrôle.
+- Registre : *vous* en français, *you* en anglais, *вы* en russe, *tu* en italien, *tú* en espagnol (Espagne). Les textes italiens et espagnols méritent une relecture par une personne de langue maternelle avant d'être mis en avant.
 
-Ajouter une langue : un bloc dans `messages.js`, une entrée dans `SUPPORTED` et dans `pages` (script de génération).
+Ajouter une langue : une entrée dans `js/i18n/languages.js`, le fichier `js/i18n/locales/<code>.js` (mêmes clés que `fr.js`) et son import dans `messages.js`, un dossier `<code>/` avec `404.html` et `thank-you.html`, puis `scripts/site-files.mjs`, la règle 404 de `netlify.toml` et `sitemap.xml`.
 
 ## Ajouter un projet au carrousel
 
@@ -150,7 +157,7 @@ Ajouter une langue : un bloc dans `messages.js`, une entrée dans `SUPPORTED` et
    { id: 'mon-projet', status: 'live', url: 'https://…', art: 'classified' }
    ```
    Pour un jeu, `play: { playgama: 'https://…' }` au lieu de `url` (voir « Jeux du carrousel »).
-2. Ajoutez ses textes dans `js/i18n/messages.js`, en français **et** en anglais :
+2. Ajoutez ses textes sous `projects` dans **chacun** des cinq fichiers de `js/i18n/locales/` (le test des traductions échoue s'il en manque un) :
    ```js
    'mon-projet': { title: 'Mon projet', description: '…', tags: ['Vue 3'], link: 'Voir le projet' },
    ```

@@ -1,6 +1,8 @@
 /* Effets d'interface : révélations, décodage de texte, curseur, inclinaison 3D,
    boutons magnétiques, horloge et champ d'éclats du hero. */
 
+import { languageOf } from '../i18n/languages.js';
+
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(pointer: fine)').matches;
 
@@ -102,7 +104,7 @@ export function initMagnetic() {
 /* ---------- Horloge (heure de Paris) ---------- */
 export function initClock() {
   const el = document.querySelector('[data-clock]');
-  const fmt = new Intl.DateTimeFormat(document.documentElement.lang === 'en' ? 'en-GB' : 'fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Paris' });
+  const fmt = new Intl.DateTimeFormat(languageOf(document.documentElement.lang.slice(0, 2)).intl, { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Paris' });
   const tick = () => { if (el) el.textContent = fmt.format(new Date()); };
   tick(); setInterval(tick, 1000);
   const y = document.querySelector('[data-year]');

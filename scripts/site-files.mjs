@@ -10,7 +10,7 @@ import { basename, join } from 'node:path';
 export const PUBLIC_ENTRIES = [
   '404.html', 'merci.html', 'mentions-legales.html',
   'manifest.webmanifest', 'robots.txt', 'sitemap.xml',
-  'assets', 'css', 'fonts', 'js', 'en', 'lumirift',
+  'assets', 'css', 'fonts', 'js', 'en', 'ru', 'it', 'es', 'lumirift',
 ];
 
 /** Jamais copiés, même dans un dossier publié : fichiers cachés et notes en Markdown. */

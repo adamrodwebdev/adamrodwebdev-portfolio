@@ -2,6 +2,25 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.10.0] - 2026-11-06
+
+### Ajouté
+- **Le site en russe, en italien et en espagnol** (`/ru/`, `/it/`, `/es/`), en plus du français et de l'anglais : accueil, page 404 et page de confirmation du formulaire dans chaque langue. Russe en *вы*, italien en *tu*, espagnol d'Espagne en *tú*. Les mentions légales restent en français et en anglais ; les autres langues mènent à l'anglaise, et le lien le dit.
+- **Menu des langues** dans l'en-tête à la place du bouton FR / EN : le bouton montre la langue courante, la liste donne les cinq langues chacune dans sa propre langue, la langue courante marquée. Un `<details>` qui marche sans JavaScript ; avec Vue, il se ferme d'un clic ailleurs ou avec Échap, et garde la section affichée (`#contact`…). Le pied de page liste les autres langues.
+- Pour les moteurs de recherche : liens `hreflang` vers les cinq langues et `x-default` sur chaque accueil, `og:locale:alternate` pour chaque autre langue, `inLanguage` des données structurées et plan du site à jour.
+
+### Modifié
+- **Un fichier de textes par langue** (`js/i18n/locales/`), et la liste des langues dans `js/i18n/languages.js` : chaque page ne télécharge que sa langue, préchargée avec les îlots Vue, au lieu d'un fichier commun à toutes.
+- L'heure du bandeau s'affiche dans la langue de la page.
+- Page russe : polices système avec cyrillique (Rajdhani et Barlow n'en ont pas).
+
+### Corrigé
+- **En-tête sur petit téléphone** : à 320 px, le bouton du menu dépassait déjà du bord (la ligne demandait 313 px pour 288), et le logo se faisait écraser jusqu'à 390 px. Le logo garde sa taille, les écarts se resserrent sur téléphone, le nom se réduit à 380 px et seul le logo reste à 340 px.
+
+### Qualité
+- `npm test` : 54 tests passés, sur Chromium seulement (mobile et ordinateur, la configuration du projet ne lance pas Firefox ni WebKit). Nouveaux tests : mêmes clés, listes et paramètres dans les cinq langues, sans caractère spécial de vue-i18n ; chaque accueil annonce les cinq langues et ne charge que la sienne ; le menu des langues, avec et sans JavaScript ; l'en-tête tient de 320 à 1280 px sans écraser le logo. Les contrôles de CSP, de domaines et d'erreurs couvrent les neuf nouvelles pages.
+- Lighthouse 13.6 sur `npm run serve` : 100 dans les quatre catégories sur `/`, `/en/`, `/ru/`, `/it/`, `/es/` et `/lumirift/`, sur mobile (pire de trois passages après un préchauffage) comme sur ordinateur, sans erreur de console.
+
 ## [1.9.3] - 2026-11-06
 
 ### Modifié
