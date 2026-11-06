@@ -164,6 +164,16 @@ Ajouter une langue : une entrée dans `js/i18n/languages.js`, le fichier `js/i18
 
 Le carrousel, les puces et le compteur s'adaptent automatiquement.
 
+## Profondeur (1.11.0)
+
+La page se lit comme une pile de plaques, en CSS seulement (`css/style.css`, bloc « Profondeur ») :
+
+- **Panneaux** : Services, Projets, Méthode et Contact sont des panneaux (`.panel`) qui glissent sur la section d'avant. Chacun la recouvre de `--overlap`, toujours dans sa marge du bas, jamais sur son contenu ; son bord haut fait une marche en biais (`.panel--rise` ou `.panel--fall`), liseré d'or. Le hero passe sous le premier panneau quand on défile.
+- **Plaques** : les cartes des services, les étapes de la méthode et le formulaire reposent sur une plaque décalée de `--plate` ; au survol, une carte se détache de la sienne.
+- **Trois plans en défilant** : au fond, le grand numéro du panneau (`.panel__index`, 01 à 04) va moins vite que la page ; devant, deux éclats (`.panel__shard`) vont plus vite ; les plaques traînent un peu. Animations liées au défilement (`animation-timeline`), `transform` seulement, sur le processeur graphique. Immobiles si le visiteur a réduit les animations, ou si son navigateur ne les connaît pas (Firefox à ce jour) : la profondeur reste, sans le mouvement.
+
+Ajouter un panneau : la classe `panel panel--rise` (ou `--fall`, en alternance), son `z-index` au-dessus du précédent, ses trois décors (`panel__index` avec `data-index`, deux `panel__shard`).
+
 ## Lighthouse (objectif : 100 partout)
 
 Mesuré sur mobile (trois passages après un passage de préchauffage, le pire comptant) et sur ordinateur, à chaque version. Ce qui le tient :

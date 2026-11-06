@@ -33,6 +33,10 @@
   --step-4: clamp(3.2rem, 2rem + 7vw, 8.5rem);
 
   --cut: 14px;
+  /* Profondeur (1.11.0) : recouvrement des panneaux, hauteur de leur marche, décalage des plaques */
+  --overlap: clamp(48px, 7vw, 112px);
+  --bevel: clamp(16px, 2.2vw, 30px);
+  --plate: clamp(8px, 1vw, 12px);
   --gutter: clamp(16px, 4vw, 48px);
   --header-h: 72px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -247,7 +251,7 @@ body::before {
 /* ---------- Hero ---------- */
 .hero {
   position: relative; min-height: min(100svh, 980px); display: flex; align-items: center;
-  padding-block: calc(var(--header-h) + 48px) 96px; overflow: hidden; isolation: isolate;
+  padding-block: calc(var(--header-h) + 48px) calc(96px + var(--overlap)); overflow: hidden; isolation: isolate;
 }
 .hero__shards { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; }
 .hero__veil {
@@ -317,7 +321,7 @@ body::before {
 .hud-clock { font-variant-numeric: tabular-nums; color: var(--gold); }
 
 .hero__scroll {
-  position: absolute; left: 50%; bottom: 28px; translate: -50% 0; width: 26px; height: 42px;
+  position: absolute; left: 50%; bottom: calc(28px + var(--overlap)); translate: -50% 0; width: 26px; height: 42px;
   border: 1px solid var(--line); border-radius: 14px; display: grid; justify-items: center; padding-top: 8px;
 }
 .hero__scroll span { width: 3px; height: 8px; background: var(--gold); border-radius: 2px; animation: scroll-hint 1.8s var(--ease-in-out) infinite; }
@@ -329,7 +333,7 @@ body::before {
 
 /* ---------- Sections ---------- */
 .section { position: relative; padding-block: clamp(80px, 12vw, 160px); }
-.section--tight { padding-block: clamp(48px, 7vw, 96px); }
+.section--tight { padding-block: clamp(48px, 7vw, 96px) calc(clamp(48px, 7vw, 96px) + var(--overlap)); }
 .section__head { max-width: 760px; margin-bottom: clamp(40px, 6vw, 72px); }
 .section__tag {
   display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px;
@@ -339,6 +343,101 @@ body::before {
 .section__title { font-size: var(--step-3); text-transform: uppercase; letter-spacing: 0.01em; }
 .section__title--small { font-size: var(--step-2); margin-bottom: 28px; }
 .section__intro { margin-top: 20px; color: var(--muted); font-size: var(--step-1); max-width: 58ch; line-height: 1.5; }
+
+/* ---------- Profondeur (1.11.0) ----------
+   Chaque section est un panneau qui glisse sur la précédente : il la recouvre de --overlap (sa marge
+   du bas, jamais son contenu), et son bord haut fait une marche en biais, liseré d'or. Trois plans :
+   au fond, le grand numéro du panneau ; au milieu, le contenu ; devant, deux éclats. En défilant,
+   le fond va moins vite que le contenu et les éclats plus vite (animations liées au défilement,
+   transform seulement ; immobiles si le mouvement est réduit ou si le navigateur ne les connaît pas). */
+.panel {
+  --step-x: 34%;
+  z-index: 1; margin-top: calc(-1 * var(--overlap)); isolation: isolate; overflow-x: clip;
+  view-timeline: --panel block;
+}
+#projets { z-index: 2; }
+#methode { z-index: 3; }
+#contact { z-index: 4; }
+.panel--fall { --step-x: 60%; }
+.panel::before, .panel::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+/* La plaque du panneau : éclairée en haut, fondue dans le fond plus bas */
+.panel::before {
+  inset: 0;
+  background:
+    radial-gradient(ellipse 34% 150px at calc(var(--step-x) + var(--bevel) / 2) 0, var(--line-soft), transparent 70%),
+    linear-gradient(180deg, var(--surface-2) 0, var(--bg) min(600px, 70%));
+}
+/* Le liseré d'or qui suit la marche */
+.panel::after {
+  inset: 0 0 auto; height: calc(var(--bevel) + 2px);
+  background: linear-gradient(90deg, transparent, var(--gold) 14%, var(--gold-hi) var(--step-x), var(--gold) 82%, transparent);
+}
+/* Marche qui monte (bas à gauche, haut à droite) */
+.panel--rise::before { clip-path: polygon(0 var(--bevel), var(--step-x) var(--bevel), calc(var(--step-x) + var(--bevel)) 0, 100% 0, 100% 100%, 0 100%); }
+.panel--rise::after {
+  clip-path: polygon(0 var(--bevel), var(--step-x) var(--bevel), calc(var(--step-x) + var(--bevel)) 0, 100% 0, 100% 2px,
+    calc(var(--step-x) + var(--bevel) + 1px) 2px, calc(var(--step-x) + 1px) calc(var(--bevel) + 2px), 0 calc(var(--bevel) + 2px));
+}
+/* Marche qui descend (haut à gauche, bas à droite) */
+.panel--fall::before { clip-path: polygon(0 0, var(--step-x) 0, calc(var(--step-x) + var(--bevel)) var(--bevel), 100% var(--bevel), 100% 100%, 0 100%); }
+.panel--fall::after {
+  clip-path: polygon(0 0, var(--step-x) 0, calc(var(--step-x) + var(--bevel)) var(--bevel), 100% var(--bevel), 100% calc(var(--bevel) + 2px),
+    calc(var(--step-x) + var(--bevel) - 1px) calc(var(--bevel) + 2px), calc(var(--step-x) - 1px) 2px, 0 2px);
+}
+
+/* Au fond : le numéro du panneau, à cheval sur son bord haut */
+.panel__index {
+  position: absolute; z-index: -1; top: 0; right: max(var(--gutter), (100% - 1240px) / 2 + var(--gutter));
+  translate: 0 -18%; pointer-events: none; user-select: none;
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(5.5rem, 3rem + 12vw, 15rem); line-height: 0.8; letter-spacing: -0.02em;
+  color: transparent; -webkit-text-stroke: 1px var(--line);
+  background: linear-gradient(180deg, var(--line-soft), transparent 75%); -webkit-background-clip: text; background-clip: text;
+}
+.panel__index::before { content: attr(data-index); }
+.panel--fall .panel__index { right: auto; left: max(var(--gutter), (100% - 1240px) / 2 + var(--gutter)); }
+
+/* Devant : deux éclats d'or, l'un près de la marche, l'autre dans la marge */
+.panel__shard {
+  position: absolute; z-index: 2; pointer-events: none;
+  clip-path: polygon(50% 0, 100% 88%, 0 64%);
+  background: linear-gradient(160deg, var(--gold-hi), var(--gold-deep));
+}
+.panel__shard--near { top: calc(var(--bevel) * -1 - 10px); left: calc(var(--step-x) - 56px); width: clamp(22px, 2.4vw, 36px); aspect-ratio: 1; rotate: 18deg; }
+.panel__shard--far {
+  top: 34%; right: max(10px, (100% - 1240px) / 2 - 6px); width: clamp(14px, 1.4vw, 22px); aspect-ratio: 1; rotate: -32deg; opacity: 0.55;
+}
+.panel--fall .panel__shard--near { left: auto; right: calc(100% - var(--step-x) + 18px); rotate: -24deg; }
+.panel--fall .panel__shard--far { right: auto; left: max(10px, (100% - 1240px) / 2 - 6px); rotate: 40deg; }
+
+/* Les plaques derrière les cartes, les étapes et le formulaire : chanfreinées, liseré compris, en un seul élément */
+.aug-slot::before, .protocol__step::before, .contact__form-wrap::before, .protocol__step::after {
+  --edge: color-mix(in srgb, var(--gold) 30%, transparent);
+  --fill: color-mix(in srgb, var(--gold) 7%, transparent);
+  border: 1px solid var(--edge);
+  background:
+    linear-gradient(135deg, var(--edge) calc(var(--cut) * 0.7071 + 1px), transparent 0) top left / 50% 50% no-repeat border-box,
+    linear-gradient(315deg, var(--edge) calc(var(--cut) * 0.7071 + 1px), transparent 0) bottom right / 50% 50% no-repeat border-box,
+    var(--fill) padding-box;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+/* La face d'une étape : la carte elle-même */
+.protocol__step::after { --edge: var(--line); --fill: var(--surface); }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .panel__index { animation: depth-far linear both; animation-timeline: --panel; animation-range: cover; }
+    .panel__shard--near { animation: depth-near linear both; animation-timeline: --panel; animation-range: cover; }
+    .panel__shard--far { animation: depth-mid linear both; animation-timeline: --panel; animation-range: cover; }
+    .aug-slot::before, .protocol__step::before, .contact__form-wrap::before {
+      animation: depth-plate linear both; animation-timeline: view(); animation-range: cover;
+    }
+    /* Le numéro part de sa place (il ne dépasse jamais sur le contenu de la section d'avant) et descend */
+    @keyframes depth-far { from { transform: none; } to { transform: translateY(120px); } }
+    @keyframes depth-near { from { transform: translateY(110px) rotate(-14deg); } to { transform: translateY(-110px) rotate(14deg); } }
+    @keyframes depth-mid { from { transform: translateY(50px); } to { transform: translateY(-50px); } }
+    @keyframes depth-plate { from { transform: translateY(calc(var(--plate) * -0.6)); } to { transform: translateY(calc(var(--plate) * 0.6)); } }
+  }
+}
 
 /* ---------- Révélations (IntersectionObserver) ---------- */
 .js .reveal { opacity: 0; transform: translateY(42px); filter: blur(6px); transition: opacity 0.9s var(--ease-out), transform 1s var(--ease-out), filter 0.9s var(--ease-out); transition-delay: calc(var(--i, 0) * 0.08s); }
@@ -351,15 +450,19 @@ body::before {
 .aug-grid > :nth-child(6) { --i: 5; }
 
 /* ---------- Cartes « augmentations » ---------- */
-.aug-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; perspective: 1200px; }
+.aug-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(20px + var(--plate)); }
+/* La case : une plaque décalée derrière la carte ; au survol, la carte s'en détache (1.11.0) */
+.aug-slot { position: relative; min-width: 0; isolation: isolate; }
+.aug-slot::before { content: ""; position: absolute; inset: 0; z-index: -1; translate: var(--plate) var(--plate); pointer-events: none; }
+.aug-slot:hover > .aug { translate: calc(var(--plate) * -0.5) calc(var(--plate) * -0.5); }
 .aug {
-  position: relative; padding: 32px 28px 28px; min-width: 0;
+  position: relative; height: 100%; padding: 32px 28px 28px; min-width: 0;
+  transition: transform 0.25s var(--ease-out), translate 0.5s var(--ease-out);
   background: var(--line);
   clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
   transform-style: preserve-3d;
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
 }
-.js .aug.reveal.is-in { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: opacity 0.9s var(--ease-out), transform 0.25s var(--ease-out), filter 0.9s; transition-delay: calc(var(--i, 0) * 0.08s), 0s, calc(var(--i, 0) * 0.08s); }
 .aug::before {
   content: ""; position: absolute; inset: 1px; z-index: -1; background: var(--surface);
   clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
@@ -380,7 +483,7 @@ body::before {
 .aug__meta { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.9rem; color: var(--gold); }
 
 /* ---------- Carrousel de projets ---------- */
-.section--projects { overflow: hidden; }
+.section--projects { overflow-x: clip; }
 .projects-static { display: grid; gap: 16px; }
 .projects-static h3 { font-size: var(--step-2); }
 
@@ -483,9 +586,12 @@ body::before {
   .protocol::before { animation: line-draw linear both; animation-timeline: view(); animation-range: entry 20% cover 55%; }
   @keyframes line-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 }
-.protocol__step { position: relative; padding-top: 72px; min-width: 0; }
+.protocol__step { position: relative; padding: 76px 22px 26px; min-width: 0; isolation: isolate; }
+.protocol__step::before, .protocol__step::after { content: ""; position: absolute; inset: 27px 0 0; pointer-events: none; }
+.protocol__step::before { z-index: -2; translate: var(--plate) var(--plate); }
+.protocol__step::after { z-index: -1; }
 .protocol__num {
-  position: absolute; top: 0; left: 0; width: 54px; height: 54px; display: grid; place-items: center;
+  position: absolute; top: 0; left: 22px; width: 54px; height: 54px; display: grid; place-items: center;
   font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: var(--on-gold); background: var(--gold-hi);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
@@ -515,7 +621,8 @@ body::before {
   transition: text-decoration-thickness 0.2s, color 0.3s;
 }
 .contact__mail:hover { color: var(--gold-hi); text-decoration-thickness: 2px; }
-.contact__form-wrap { position: relative; min-width: 0; }
+.contact__form-wrap { position: relative; min-width: 0; isolation: isolate; }
+.contact__form-wrap::before { content: ""; position: absolute; inset: 0; z-index: -1; translate: var(--plate) var(--plate); pointer-events: none; }
 
 .cform {
   position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 20px;
@@ -709,9 +816,11 @@ body::before {
 }
 @media (max-width: 600px) {
   :root { --header-h: 64px; }
+  .panel__index { opacity: 0.7; }
+  .panel__shard--far { display: none; }
   .aug-grid, .protocol { grid-template-columns: minmax(0, 1fr); }
   .cform { grid-template-columns: minmax(0, 1fr); }
-  .hero { min-height: auto; padding-bottom: 120px; }
+  .hero { min-height: auto; padding-bottom: calc(120px + var(--overlap)); }
   .hero__line--outline { -webkit-text-stroke-width: 1.5px; }
   .hud-panel { right: 0; }
   /* Carrousel : piste plate, cartes presque pleine largeur, textes resserrés */
