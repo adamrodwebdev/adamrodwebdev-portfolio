@@ -156,7 +156,13 @@
 
     .lr-maker { border-top: 1px solid var(--line-soft); }
     .lr-maker__inner { display: grid; gap: 1.5rem; }
-    .lr-avatar { width: 5.5rem; height: 5.5rem; border-radius: 50%; }
+    /* Logo AdamRodWebDev : la signature de la marque dans le bloc « Made in public » */
+    .lr-logo {
+      display: grid; place-items: center; width: 5.5rem; height: 5.5rem; color: var(--gold);
+      background: var(--surface); border: 1px solid var(--line);
+      clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    }
+    .lr-logo svg { width: 3.5rem; height: 3.5rem; }
     .lr-maker p { max-width: 62ch; }
     .lr-proofs { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-block: 1rem 1.25rem; font: 700 1.15rem var(--font-display); letter-spacing: 0.04em; }
     .lr-proofs li::before { content: "◆ " / ""; color: var(--gold); font-size: 0.8em; }
@@ -312,10 +318,7 @@
 
     <section class="lr-section lr-maker" aria-labelledby="lr-maker-title">
       <div class="container lr-maker__inner">
-        <picture>
-          <source type="image/avif" srcset="/lumirift/avatar-176.avif">
-          <img class="lr-avatar" src="/lumirift/avatar-176.webp" width="88" height="88" alt="" loading="lazy" decoding="async">
-        </picture>
+        <span class="lr-logo" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg></span>
         <div>
           <h2 id="lr-maker-title" class="lr-h2">[[page.maker.title]]</h2>
           <p>[[page.maker.line]]</p>

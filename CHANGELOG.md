@@ -2,6 +2,16 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.9.3] - 2026-11-06
+
+### Modifié
+- **Développeur web full-stack** au lieu de « front-end » partout où le site se présente : titre de la page et des résultats de recherche, titre et description de partage, données structurées (`knowsAbout` : TypeScript, PHP, Symfony, API REST en plus), pied du menu mobile, manifeste, en français et en anglais. Le texte d'accueil, l'encart « Spécialité » (Vue.js, Symfony, performance) et la carte « Applications web » (Vue 3, Symfony, API REST) le disent aussi.
+- **Carte de partage** (`assets/og-image.png`) redessinée : même composition et même logo hexagonal, sous-titre « Développeur web full-stack · Vue.js et Symfony », dans les polices du site (Rajdhani, Barlow).
+- **Le bloc « Made in public » de `/lumirift/` porte le logo AdamRodWebDev** (hexagone doré dans une tuile chanfreinée) à la place de l'avatar du jeu : il présente le studio, pas le jeu ; sa phrase dit « a full-stack web developer in France ».
+
+### Qualité
+- `npm test` : 26 tests passés, sur Chromium seulement (mobile et ordinateur, la configuration du projet ne lance pas Firefox ni WebKit). Lighthouse 13.6 sur `npm run serve` : 100 dans les quatre catégories sur `/`, `/en/` et `/lumirift/`, sur mobile (pire de trois passages après un préchauffage) comme sur ordinateur, sans erreur de console.
+
 ## [1.9.2] - 2026-11-02
 
 ### Corrigé
