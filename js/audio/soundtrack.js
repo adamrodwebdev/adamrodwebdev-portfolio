@@ -11,9 +11,11 @@ import { DURATION, SECTIONS, TITLE, sectionIndexAt, snapToBar } from './score.js
  * @param {MediaSession | undefined} [options.mediaSession] commandes du système (écran verrouillé, touches multimédia)
  * @param {(callback: FrameRequestCallback) => number} [options.requestFrame]
  * @param {(handle: number) => void} [options.cancelFrame]
+ * @param {object} [options.engineOptions] réglages du moteur (voix par note des ensembles)
  */
 export function createSoundtrack({
   loadEngine = () => import('./sfumato.js'),
+  engineOptions = {},
   mediaSession = globalThis.navigator?.mediaSession,
   requestFrame = (callback) => requestAnimationFrame(callback),
   cancelFrame = (handle) => cancelAnimationFrame(handle),
@@ -29,7 +31,7 @@ export function createSoundtrack({
     state.loading = true;
     try {
       const { createEngine } = await loadEngine();
-      engine = createEngine();
+      engine = createEngine(engineOptions);
       engine.setVolume(state.volume);
       engine.onEnded(() => {
         state.playing = false;
