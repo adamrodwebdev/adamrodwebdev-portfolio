@@ -29,7 +29,8 @@ const inTurn = (steps) => steps.reduce(
  */
 export async function mountIslands() {
   const messages = await loadMessages();
-  const soundtrack = createSoundtrack();
+  // Un appareil modeste (4 cœurs ou moins) joue les ensembles à deux voix par note au lieu de trois
+  const soundtrack = createSoundtrack({ engineOptions: { voices: (navigator.hardwareConcurrency || 8) <= 4 ? 2 : 3 } });
   return inTurn([
     () => mount(NavBar, '#nav-app', messages, { soundtrack }),
     () => mount(ProjectSwiper, '#projects-app', messages),

@@ -2,7 +2,25 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
-## [1.12.0] - 2026-11-06
+## [1.12.1] - 2026-11-06
+
+### Modifié
+- **« Sfumato » orchestré, plus vocal et plus dramatique**, sur la même ossature (grille, mélodie, pulsation, basse, batterie, structure) :
+  - **orchestre** : violons et altos entrent par pupitres, violoncelles et contrebasses portent la basse, spiccato en croches puis en doubles croches, cors tenus et en crescendo vers chaque phrase, trombones sur les temps forts de l'apogée, timbales accordées sur la fondamentale ;
+  - **voix** : chœur à quatre voix dont la voyelle glisse (« ou », « o », « a ») selon la partie, voix soliste plus présente, liée d'une note à l'autre par un port de voix, seconde voix à l'apogée puis doublure à l'octave ;
+  - **dramaturgie** : roulements de timbale et cymbales à l'envers avant chaque partie, rupture à la fin de la montée (la batterie se tait, le roulement enfle) puis l'apogée frappée par tout l'orchestre, coup final sur la dominante avant le retour, dernier accord à vide sur un roulement qui s'éteint.
+- Le moteur se sépare en trois : pupitres (`instruments.js`), arrangement (`arrangement.js`), mixage et lecture (`sfumato.js`). Les deux premiers ne se chargent qu'à la première écoute, comme lui.
+- Sur un appareil de 4 cœurs ou moins, les ensembles jouent deux voix par note au lieu de trois.
+
+### Corrigé
+- Les glissements de hauteur et de filtre partent de l'instant de leur note (ils partaient du début du morceau).
+
+### Qualité
+- Rendu hors ligne et analysé : niveau de -30 dB (éveil) à -15 dB (apogée), brillance de l'apogée à 1 800 Hz, aucun écrêtage (crête à 0,82).
+- Temps réel vérifié : l'apogée jouée 12 s dans Chrome à 48 kHz, horloge audio au pas de l'horloge réelle (rapport 0,999), avec trois comme avec deux voix par note.
+- `npm test` : 63 tests passés et 1 sauté, sur Chromium seulement. La page ne précharge toujours que la partition et la bande-son ; l'orchestre se charge au premier clic.
+
+
 
 ### Ajouté
 - **Nouveau thème, « Sfumato »** : composition originale de 3 min 23 en cinq parties (Éveil, Signal, Montée, Apogée, Retour), mi mineur, 116 BPM joués en demi-temps. Pulsation à délai pointé, nappes, chœur et voix sans paroles (formants), basse en sidechain, cloche FM, percussions de film en demi-temps, cordes à l'apogée. Toujours synthétisé en direct, sans fichier audio, chargé au premier clic.

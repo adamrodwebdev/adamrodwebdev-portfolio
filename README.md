@@ -56,7 +56,9 @@ js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
 js/fx/                  Effets (révélations, curseur, éclats, particules)
 js/audio/score.js       « Sfumato » : la partition (grille, mélodie, parties), sans son
-js/audio/sfumato.js     Le moteur qui la joue en Web Audio, chargé à la première écoute
+js/audio/sfumato.js     Le moteur : mixage, effets, lecture ; chargé à la première écoute
+js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, chœur, voix, synthés)
+js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
 assets/                 Favicons, icônes PWA, image Open Graph
 fonts/                  Rajdhani, Barlow, Unbounded (titre de Lumirift) : WOFF2, sous-ensemble latin
@@ -192,10 +194,11 @@ En local, sur `npm run serve` (mêmes en-têtes et même compression que Netlify
 
 ## Bande-son (1.12.0)
 
-« Sfumato » est le thème original du site : 3 min 23, mi mineur, 116 BPM joués en demi-temps, en cinq parties (Éveil, Signal, Montée, Apogée, Retour). Aucun fichier audio : chaque note est synthétisée en direct par le navigateur (Web Audio API). Pulsation staccato à délai pointé, nappes, chœur et voix sans paroles par filtres de formants, basse en sidechain, cloche FM, percussions de film, souffle filtré.
+« Sfumato » est le thème original du site : 3 min 23, mi mineur, 116 BPM joués en demi-temps, en cinq parties (Éveil, Signal, Montée, Apogée, Retour). Aucun fichier audio : chaque note est synthétisée en direct par le navigateur (Web Audio API). L'ossature : pulsation staccato à délai pointé, nappes, basse en sidechain, cloche FM, percussions de film. L'orchestre (1.12.1) : violons et altos, violoncelles et contrebasses, spiccato, cors et trombones, timbales et roulements ; un chœur à quatre voix et une voix soliste par filtres de formants (voyelles qui glissent, port de voix entre les notes liées, seconde voix à l'apogée).
 
 - **Écouter** : l'interrupteur de l'en-tête (`aria-pressed`) coupe et relance le son ; la section « Bande-son » (`#bande-son`, cinquième lien du menu) a le lecteur complet : lecture, position, volume, et les cinq parties, chacune jouable depuis son début. Les deux pilotent le même état (`js/audio/soundtrack.js`, créé dans `js/islands.js` et fourni aux deux îlots). Les touches multimédia et l'écran verrouillé l'affichent aussi (Media Session).
 - **Rien au chargement** : le moteur (`sfumato.js`) n'est téléchargé qu'au premier clic. Le son ne démarre jamais seul (règle des navigateurs, et de l'accessibilité).
+- **Trois couches** : la partition (`score.js`) dit quoi jouer, l'arrangement (`arrangement.js`) qui le joue et quand, les pupitres (`instruments.js`) comment chacun sonne ; le moteur (`sfumato.js`) mixe et lit. Un appareil de 4 cœurs ou moins joue les ensembles à deux voix par note au lieu de trois (`islands.js`).
 - **La partition** (`score.js`) est de la donnée : grille d'accords mesure par mesure, mélodie, parties. Le lecteur et la génération des pages y lisent la durée et le début de chaque partie. La lecture reprend toujours au début d'une mesure.
 - **Vérifier un changement** : le moteur sait rendre la partition hors ligne (`renderBars`, `OfflineAudioContext`). Rendre chaque partie, puis comparer niveau, bandes de fréquence, tempo et tonalité : un pupitre trop fort ou une nappe qui « pompe » se voient sur le spectre.
 - **Composition originale** : ni échantillon, ni mélodie, ni grille empruntés. Ne citez pas d'œuvre existante dans le site ni dans le code.
