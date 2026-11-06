@@ -1,7 +1,8 @@
 /**
  * Serveur local de dist/ qui se comporte comme Netlify sur ce qui compte pour les essais (1.9.0) :
  * en-têtes de dist/_headers (CSP comprise), compression Brotli ou gzip, index des dossiers,
- * adresses sans .html, pages 404 (française et anglaise) et envoi du formulaire accepté.
+ * adresses sans .html, page 404 de la langue de l'adresse (/ru/… → ru/404.html, comme netlify.toml)
+ * et envoi du formulaire accepté.
  *
  *   npm run build && npm run serve        (http://localhost:8080, ou PORT=… npm run serve)
  *
@@ -14,6 +15,7 @@ import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { parseHeadersFile } from './headers.mjs';
+import { DEFAULT_LANGUAGE, LANGUAGES } from '../js/i18n/languages.js';
 
 const DIST = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
 const PORT = Number(process.env.PORT ?? 8080);
@@ -61,7 +63,8 @@ createServer(async (request, response) => {
   let status = 200;
   if (!file) {
     status = 404;
-    file = join(DIST, pathname.startsWith('/en/') ? 'en/404.html' : '404.html');
+    const language = LANGUAGES.find((l) => l !== DEFAULT_LANGUAGE && pathname.startsWith(l.base)) ?? DEFAULT_LANGUAGE;
+    file = join(DIST, language.base.slice(1), '404.html');
   }
   // Netlify Forms : l'envoi est accepté, puis la page d'action est servie.
   if (request.method === 'POST') request.resume();

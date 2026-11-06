@@ -16,6 +16,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 
 ### Corrigé
 - **En-tête sur petit téléphone** : à 320 px, le bouton du menu dépassait déjà du bord (la ligne demandait 313 px pour 288), et le logo se faisait écraser jusqu'à 390 px. Le logo garde sa taille, les écarts se resserrent sur téléphone, le nom se réduit à 380 px et seul le logo reste à 340 px.
+- Le serveur local (`npm run serve`) sert la page 404 de la langue de l'adresse, comme Netlify (`/ru/…` → `ru/404.html`) ; il ne connaissait que le français et l'anglais.
 
 ### Qualité
 - `npm test` : 54 tests passés, sur Chromium seulement (mobile et ordinateur, la configuration du projet ne lance pas Firefox ni WebKit). Nouveaux tests : mêmes clés, listes et paramètres dans les cinq langues, sans caractère spécial de vue-i18n ; chaque accueil annonce les cinq langues et ne charge que la sienne ; le menu des langues, avec et sans JavaScript ; l'en-tête tient de 320 à 1280 px sans écraser le logo. Les contrôles de CSP, de domaines et d'erreurs couvrent les neuf nouvelles pages.
