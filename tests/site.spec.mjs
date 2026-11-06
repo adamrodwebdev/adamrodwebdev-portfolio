@@ -102,8 +102,88 @@ test('formulaire (Vue) : envoie le consentement et le pot de miel', async ({ pag
   expect(sent.get('nom')).toBe('Camille Martin');
 });
 
+// ----- Langues (1.10.0) -----
+
+/** Les textes à plat : chemin de clé → valeur (les tableaux restent des valeurs). */
+const flatten = (object, prefix = '') => Object.entries(object).flatMap(([key, value]) =>
+  value && typeof value === 'object' && !Array.isArray(value) ? flatten(value, `${prefix}${key}.`) : [[`${prefix}${key}`, value]]);
+const placeholders = (text) => (String(text).match(/\{\w+\}/g) ?? []).sort().join(' ');
+
+test('traductions : chaque langue a les clés, les listes et les paramètres du français', async () => {
+  const { messages } = await import('../js/i18n/messages.js');
+  const reference = new Map(flatten(messages.fr));
+  for (const [code, texts] of Object.entries(messages)) {
+    const flat = new Map(flatten(texts));
+    expect([...flat.keys()].filter((key) => !reference.has(key)), `${code} : clés en trop`).toEqual([]);
+    for (const [key, value] of reference) {
+      const other = flat.get(key);
+      expect(other, `${code}.${key} manque`).toBeDefined();
+      if (Array.isArray(value)) {
+        expect(other.length, `${code}.${key} : longueur de liste`).toBe(value.length);
+        continue;
+      }
+      expect(placeholders(other), `${code}.${key} : paramètres`).toBe(placeholders(value));
+      // vue-i18n lit { } @ $ | : hors des paramètres, seuls les titres de page (jamais lus par vue-i18n) en ont
+      if (!key.startsWith('meta.')) expect(String(other).replace(/\{\w+\}/g, ''), `${code}.${key} : caractère spécial`).not.toMatch(/[{}@$|]/);
+    }
+  }
+});
+
+test('langues : chaque accueil annonce les cinq langues et ne charge que la sienne', async ({ page }) => {
+  const { LANGUAGES } = await import('../js/i18n/languages.js');
+  for (const language of LANGUAGES) {
+    const locales = [];
+    page.on('request', (request) => { const m = /\/js\/i18n\/locales\/(\w+)\.js$/.exec(request.url()); if (m) locales.push(m[1]); });
+    await page.goto(language.base);
+    await expect(page.locator('html')).toHaveAttribute('lang', language.code);
+    const hreflangs = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((links) => links.map((link) => link.hreflang));
+    expect(hreflangs).toEqual([...LANGUAGES.map((l) => l.code), 'x-default']);
+    await expect(page.locator('#nav-app .lang-menu summary')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    expect([...new Set(locales)], language.code).toEqual([language.code]);
+    page.removeAllListeners('request');
+  }
+});
+
+test('menu des langues : cinq langues, la langue courante marquée, la section gardée', async ({ page }) => {
+  await page.goto('/#contact');
+  await page.waitForLoadState('networkidle');
+  const menu = page.locator('#nav-app .lang-menu');
+  await menu.locator('summary').click();
+  const links = menu.locator('.lang-menu__list a');
+  await expect(links).toHaveText(['Français', 'English', 'Русский', 'Italiano', 'Español']);
+  await expect(links.first()).toHaveAttribute('aria-current', 'true');
+  const box = await links.nth(3).boundingBox();
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  await links.nth(3).click();
+  await page.waitForURL((url) => url.pathname === '/it/' && url.hash === '#contact');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'it');
+});
+
+test("en-tête : la marque et ses boutons tiennent sur une ligne de 320 à 1280 px, sans écraser le logo", async ({ page }) => {
+  for (const width of [320, 360, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/ru/');
+    await page.waitForLoadState('networkidle');
+    // Le bord droit de chaque élément visible de l'en-tête (le bouton du menu est caché sur grand écran)
+    const rights = await page.locator('#nav-app .brand__mark, #nav-app .lang-menu summary, #nav-app .nav__tools > *').evaluateAll((elements) =>
+      elements.filter((element) => element.getClientRects().length).map((element) => Math.round(element.getBoundingClientRect().right)));
+    expect(Math.max(...rights), `en-tête à ${width} px`).toBeLessThanOrEqual(width);
+    expect((await page.locator('#nav-app .brand__mark').boundingBox()).width, `logo à ${width} px`).toBeGreaterThanOrEqual(30);
+  }
+});
+
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
+
+  test('menu des langues : il s’ouvre et mène à une autre langue', async ({ page }) => {
+    await page.goto('/es/');
+    const menu = page.locator('.lang-menu');
+    await menu.locator('summary').click();
+    await menu.getByRole('link', { name: 'Русский' }).click();
+    await page.waitForURL('**/ru/');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  });
 
   test('formulaire : envoie le consentement et le pot de miel', async ({ page }) => {
     let sent = null;

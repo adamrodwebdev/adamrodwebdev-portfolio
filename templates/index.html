@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   FICHIER GÉNÉRÉ — ne pas modifier directement.
-  Source : templates/index.html + js/i18n/messages.js + css/style.css (copiée dans la page)
+  Source : templates/index.html + js/i18n/locales/<langue>.js + css/style.css (copiée dans la page)
   Régénérer : npm run build (écrit dist/)
 -->
 <html lang="[[@lang]]" dir="ltr">
@@ -13,9 +13,7 @@
   <meta name="author" content="AdamRodWebDev">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="[[@url]]">
-  <link rel="alternate" hreflang="fr" href="[[@urlFr]]">
-  <link rel="alternate" hreflang="en" href="[[@urlEn]]">
-  <link rel="alternate" hreflang="x-default" href="[[@urlFr]]">
+  [[@alternates]]
 
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
@@ -23,7 +21,7 @@
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="[[meta.ogLocale]]">
-  <meta property="og:locale:alternate" content="[[@ogAltLocale]]">
+  [[@ogAltLocales]]
   <meta property="og:site_name" content="AdamRodWebDev">
   <meta property="og:title" content="[[meta.ogTitle]]">
   <meta property="og:description" content="[[meta.ogDescription]]">
@@ -87,7 +85,7 @@
         "@id": "[[@origin]]/#site",
         "url": "[[@origin]]/",
         "name": "AdamRodWebDev",
-        "inLanguage": ["fr-FR", "en"],
+        "inLanguage": [[@inLanguage]],
         "publisher": { "@id": "[[@origin]]/#entreprise" }
       },
       {
@@ -119,7 +117,7 @@
           <li><a href="#contact">[[nav.contact]]</a></li>
         </ul>
         <div class="nav__tools">
-          <a class="icon-btn lang-btn" href="[[@altBase]]" hreflang="[[@altLang]]" lang="[[@altLang]]" aria-label="[[nav.langSwitchLabel]]">[[nav.langSwitch]]</a>
+          [[@langMenu]]
         </div>
       </nav>
     </div>
@@ -331,8 +329,8 @@
           <li><a href="#projets">[[nav.projects]]</a></li>
           <li><a href="#methode">[[nav.method]]</a></li>
           <li><a href="#contact">[[nav.contact]]</a></li>
-          <li><a href="[[@legal]]">[[nav.legal]]</a></li>
-          <li><a href="[[@altBase]]" hreflang="[[@altLang]]" lang="[[@altLang]]">[[@altLangName]]</a></li>
+          <li><a href="[[@legal]]"[[@legalHreflang]]>[[nav.legal]]</a></li>
+          [[@footerLangs]]
         </ul>
       </nav>
       <p class="footer__copy">© <span data-year>2026</span> AdamRodWebDev. [[footer.copy]]</p>

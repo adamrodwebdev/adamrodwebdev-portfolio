@@ -1,7 +1,7 @@
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTheme } from '../composables/useTheme.js';
-import { altBase, altLocale } from '../i18n/index.js';
+import { languages, locale } from '../i18n/index.js';
 
 const links = [
   { id: 'services', key: 'nav.services' },
@@ -18,16 +18,25 @@ export default {
     const active = ref('');
     const { isDark, toggle } = useTheme();
     const burger = ref(null);
+    const langMenu = ref(null);
     let observer;
 
     const onScroll = () => {
       document.querySelector('.site-header')?.classList.toggle('is-scrolled', window.scrollY > 24);
     };
     const onKey = (e) => {
-      if (e.key === 'Escape' && open.value) {
+      if (e.key !== 'Escape') return;
+      if (langMenu.value?.open) {
+        langMenu.value.open = false;
+        langMenu.value.querySelector('summary')?.focus();
+      } else if (open.value) {
         open.value = false;
         burger.value?.focus();
       }
+    };
+    // Menu des langues : un clic ailleurs le referme
+    const onOutside = (e) => {
+      if (langMenu.value?.open && !langMenu.value.contains(e.target)) langMenu.value.open = false;
     };
 
     watch(open, async (v) => {
@@ -43,6 +52,7 @@ export default {
       requestAnimationFrame(onScroll);
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('keydown', onKey);
+      document.addEventListener('click', onOutside);
       observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((en) => { if (en.isIntersecting) active.value = en.target.id; });
@@ -57,13 +67,14 @@ export default {
     onBeforeUnmount(() => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('keydown', onKey);
+      document.removeEventListener('click', onOutside);
       observer?.disconnect();
     });
 
     const go = () => { open.value = false; };
     // Changement de langue : on garde la section affichée (#projets, #contact…)
-    const switchLang = (e) => { e.currentTarget.href = altBase + location.hash; };
-    return { links, open, active, isDark, toggle, go, burger, t, altBase, altLocale, switchLang };
+    const switchLang = (e, language) => { e.currentTarget.href = language.base + location.hash; };
+    return { links, open, active, isDark, toggle, go, burger, langMenu, t, languages, locale, switchLang };
   },
   template: `
   <nav class="nav container" :aria-label="t('a11y.mainNav')">
@@ -77,7 +88,16 @@ export default {
       </li>
     </ul>
     <div class="nav__tools">
-      <a class="icon-btn lang-btn" :href="altBase" :hreflang="altLocale" :lang="altLocale" :aria-label="t('nav.langSwitchLabel')" @click="switchLang">{{ t('nav.langSwitch') }}</a>
+      <details ref="langMenu" class="lang-menu">
+        <summary class="icon-btn lang-btn">{{ locale.toUpperCase() }}<span class="visually-hidden"> {{ t('nav.langMenu') }}</span>
+          <svg class="lang-menu__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+        </summary>
+        <ul class="lang-menu__list">
+          <li v-for="l in languages" :key="l.code">
+            <a :href="l.base" :hreflang="l.code" :lang="l.code" :aria-current="l.code === locale ? 'true' : null" @click="switchLang($event, l)">{{ l.name }}</a>
+          </li>
+        </ul>
+      </details>
       <button class="icon-btn" :class="{ 'is-dark': isDark }" type="button" @click="toggle($event)"
         :aria-label="isDark ? t('nav.themeLight') : t('nav.themeDark')" :aria-pressed="isDark ? 'true' : 'false'">
         <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">

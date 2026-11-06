@@ -4,12 +4,14 @@
  * puis la page du jeu Lumirift (templates/lumirift.html, en anglais seulement).
  * Appelé par scripts/build.mjs, une fois dist/ préparé (fichiers publiés, Vue, gabarits précompilés).
  *
- * Produit, dans dist/ : index.html (français), en/index.html (anglais) et lumirift/index.html.
+ * Produit, dans dist/ : un accueil par langue de js/i18n/languages.js (index.html en français,
+ * en/, ru/, it/, es/…) et lumirift/index.html.
  * La feuille css/style.css est copiée dans chaque page (1.8.1).
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { messages, lumiriftPage } from '../js/i18n/messages.js';
+import { LANGUAGES, DEFAULT_LANGUAGE } from '../js/i18n/languages.js';
 import { config } from '../js/config.js';
 import { projects } from '../js/data/projects.js';
 import { playLinks } from '../js/data/platforms.js';
@@ -27,10 +29,8 @@ const playUrl = (id) => playLinks(projects.find((project) => project.id === id))
 /** Repère de la feuille dans une page rendue, remplacé une fois la page connue. */
 const CSS_SLOT = '\u0000css\u0000';
 
-const pages = {
-  fr: { base: '/', out: 'index.html', thanks: '/merci.html', legal: '/mentions-legales.html', langName: 'Français' },
-  en: { base: '/en/', out: 'en/index.html', thanks: '/en/thank-you.html', legal: '/en/legal-notice.html', langName: 'English' },
-};
+/** Les accueils à générer, un par langue : index.html pour la langue par défaut, <code>/index.html sinon. */
+const pages = LANGUAGES.map((language) => ({ ...language, out: `${language.base.slice(1)}index.html` }));
 
 const escape = (s) => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -100,6 +100,22 @@ const LUMIRIFT = {
   },
 };
 
+/**
+ * Le menu des langues de l'en-tête (1.10.0), tel qu'avant le montage de Vue : un <details> qui marche
+ * sans JavaScript. Le code visible (FR, EN…) fait partie du nom accessible du bouton (WCAG 2.5.3).
+ */
+function languageMenu(current, label) {
+  const items = pages.map((p) => `<li><a href="${p.base}" hreflang="${p.code}" lang="${p.code}"${p.code === current.code ? ' aria-current="true"' : ''}>${escape(p.name)}</a></li>`);
+  return `<details class="lang-menu">
+            <summary class="icon-btn lang-btn">${current.code.toUpperCase()}<span class="visually-hidden"> ${escape(label)}</span>
+              <svg class="lang-menu__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+            </summary>
+            <ul class="lang-menu__list">
+              ${items.join('\n              ')}
+            </ul>
+          </details>`;
+}
+
 async function writePage(out, file, html) {
   const target = join(out, file);
   await mkdir(dirname(target), { recursive: true });
@@ -121,23 +137,29 @@ export async function buildPages({ root, out, imports }) {
   const ENTRY = '/js/main.js';
   const ISLANDS = '/js/islands.js';
   const homeModules = (await moduleGraph(out, [ENTRY, ISLANDS], imports)).filter((url) => url !== ENTRY);
-  const homeLoader = afterFirstPaintScript({ stylesheets: [FONTS], modules: homeModules, entry: ENTRY });
 
-  for (const [locale, page] of Object.entries(pages)) {
-    const other = locale === 'fr' ? 'en' : 'fr';
+  for (const page of pages) {
+    const locale = page.code;
+    const others = pages.filter((other) => other.code !== locale);
     const m = messages[locale];
+    // Ses seuls textes : préchargés avec les îlots, importés par js/i18n/index.js
+    const loader = afterFirstPaintScript({ stylesheets: [FONTS], modules: [...homeModules, `/js/i18n/locales/${locale}.js`], entry: ENTRY });
     const special = {
       lang: locale,
       url: ORIGIN + page.base,
-      urlFr: ORIGIN + pages.fr.base,
-      urlEn: ORIGIN + pages.en.base,
       origin: ORIGIN,
-      ogAltLocale: messages[other].meta.ogLocale,
-      altBase: pages[other].base,
-      altLang: other,
-      altLangName: pages[other].langName,
+      alternates: [
+        ...pages.map((p) => `<link rel="alternate" hreflang="${p.code}" href="${ORIGIN}${p.base}">`),
+        `<link rel="alternate" hreflang="x-default" href="${ORIGIN}${DEFAULT_LANGUAGE.base}">`,
+      ].join('\n  '),
+      ogAltLocales: others.map((p) => `<meta property="og:locale:alternate" content="${messages[p.code].meta.ogLocale}">`).join('\n  '),
+      inLanguage: JSON.stringify(pages.map((p) => messages[p.code].meta.ldLanguage)),
+      langMenu: languageMenu(page, m.nav.langMenu),
+      footerLangs: others.map((p) => `<li><a href="${p.base}" hreflang="${p.code}" lang="${p.code}">${escape(p.name)}</a></li>`).join('\n          '),
       thanks: page.thanks,
       legal: page.legal,
+      // Les mentions légales n'existent qu'en français et en anglais : le lien dit vers quelle langue il mène
+      legalHreflang: page.legal.startsWith(page.base) ? '' : ' hreflang="en"',
       typeOptions: m.form.types.map((o) => `<option>${escape(o)}</option>`).join(''),
       budgetOptions: m.form.budgets.map((o) => `<option>${escape(o)}</option>`).join(''),
       sendLabel: escape(m.form.steps[0]),
@@ -147,9 +169,9 @@ export async function buildPages({ root, out, imports }) {
       importMap: JSON.stringify({ imports }),
       fonts: FONTS,
       css: siteCss,
-      afterFirstPaint: homeLoader,
+      afterFirstPaint: loader,
     };
-    await writePage(out, page.out, render(template, messages[locale], special, locale));
+    await writePage(out, page.out, render(template, m, special, locale));
   }
 
   const lumirift = render(

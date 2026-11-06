@@ -4,15 +4,51 @@
     <loc>https://adamrodwebdev.com/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://adamrodwebdev.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://adamrodwebdev.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://adamrodwebdev.com/es/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
-    <lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+    <lastmod>2026-11-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
   </url>
   <url>
     <loc>https://adamrodwebdev.com/en/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://adamrodwebdev.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://adamrodwebdev.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://adamrodwebdev.com/es/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
-    <lastmod>2026-10-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+    <lastmod>2026-11-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/ru/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://adamrodwebdev.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://adamrodwebdev.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://adamrodwebdev.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
+    <lastmod>2026-11-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/it/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://adamrodwebdev.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://adamrodwebdev.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://adamrodwebdev.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
+    <lastmod>2026-11-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/es/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://adamrodwebdev.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://adamrodwebdev.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://adamrodwebdev.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/"/>
+    <lastmod>2026-11-06</lastmod><changefreq>monthly</changefreq><priority>1.0</priority>
   </url>
   <url>
     <loc>https://adamrodwebdev.com/lumirift/</loc>
