@@ -29,10 +29,13 @@ export default {
     });
     const chapterName = (section) => t(`soundtrack.chapters.${section.key}.name`);
 
-    const onScrub = (event) => { scrub.value = Number(event.target.value); };
+    // La valeur d'une glissière, lue en nombre fini : une page modifiée pourrait y mettre n'importe quoi
+    const sliderValue = (event) => (Number.isFinite(event.target.valueAsNumber) ? event.target.valueAsNumber : null);
+    const onScrub = (event) => { scrub.value = sliderValue(event); };
     async function onSeek(event) {
       scrub.value = null;
-      await soundtrack.seek(Number(event.target.value));
+      const at = sliderValue(event);
+      if (at !== null) await soundtrack.seek(at);
     }
     const playFrom = (start) => soundtrack.play(start);
 

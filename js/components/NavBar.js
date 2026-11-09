@@ -75,8 +75,9 @@ export default {
     });
 
     const go = () => { open.value = false; };
-    // Changement de langue : on garde la section affichée (#projets, #contact…)
-    const switchLang = (e, language) => { e.currentTarget.href = language.base + location.hash; };
+    // Changement de langue : on garde la section affichée (#projets, #contact…), si c'en est bien une
+    const section = () => (/^#[a-z0-9-]{1,60}$/i.test(location.hash) ? location.hash : '');
+    const switchLang = (e, language) => { e.currentTarget.href = language.base + section(); };
     return { links, open, active, isDark, toggle, go, burger, langMenu, t, languages, locale, switchLang, soundtrack };
   },
   template: `

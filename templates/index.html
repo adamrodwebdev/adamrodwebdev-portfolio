@@ -342,15 +342,15 @@
           <!-- Formulaire de secours (sans JavaScript), détecté aussi par Netlify Forms -->
           <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="[[@thanks]]">
             <input type="hidden" name="form-name" value="contact">
-            <p class="visually-hidden"><label>[[form.bot]] <input name="bot-field"></label></p>
-            <p class="field"><label for="f-nom">[[form.name]]</label><input id="f-nom" name="nom" autocomplete="name" required></p>
-            <p class="field"><label for="f-email">[[form.email]]</label><input id="f-email" name="email" type="email" autocomplete="email" required></p>
-            <p class="field"><label for="f-entreprise">[[form.company]]</label><input id="f-entreprise" name="entreprise" autocomplete="organization"></p>
+            <p class="visually-hidden"><label>[[form.bot]] <input name="bot-field" maxlength="500"></label></p>
+            <p class="field"><label for="f-nom">[[form.name]]</label><input id="f-nom" name="nom" autocomplete="name" required maxlength="80"></p>
+            <p class="field"><label for="f-email">[[form.email]]</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="180"></p>
+            <p class="field"><label for="f-entreprise">[[form.company]]</label><input id="f-entreprise" name="entreprise" autocomplete="organization" maxlength="120"></p>
             <p class="field"><label for="f-type">[[form.type]]</label>
               <select id="f-type" name="type">[[@typeOptions]]</select></p>
             <p class="field"><label for="f-budget">[[form.budgetShort]]</label>
               <select id="f-budget" name="budget">[[@budgetOptions]]</select></p>
-            <p class="field"><label for="f-message">[[form.messageShort]]</label><textarea id="f-message" name="message" rows="5" required></textarea></p>
+            <p class="field"><label for="f-message">[[form.messageShort]]</label><textarea id="f-message" name="message" rows="5" required maxlength="1500"></textarea></p>
             <p class="field field--check"><input id="f-rgpd" name="rgpd" type="checkbox" value="oui" required><label for="f-rgpd">[[form.consentShort]]</label></p>
             <button class="btn btn--gold" type="submit"><span>[[@sendLabel]]</span></button>
           </form>
