@@ -2,7 +2,7 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
-## [1.12.2] - 2026-11-09
+## [1.13.1] - 2026-11-09
 
 ### Sécurité
 - **Données vérifiées à la porte** (règle du 9 novembre 2026) : le formulaire envoie des textes nettoyés (caractères invisibles et de contrôle, inversions bidirectionnelles et espaces de largeur nulle retirés, Unicode composé, espaces resserrés), chacun borné dans le code (nom 80, adresse 180, entreprise 120, message 1 500 caractères) ; le type et le budget viennent de leurs listes, même si la page a été modifiée. Le formulaire sans JavaScript porte les mêmes longueurs maximales (`js/input.js`, portage du nettoyage partagé).
@@ -13,6 +13,20 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 
 ### Qualité
 - `npm test` : 69 tests passés et 1 sauté, mobile et bureau sur Chromium, dont un formulaire rempli de caractères piégés, les longueurs maximales avec et sans JavaScript, et le curseur.
+
+## [1.13.0] - 2026-11-09
+
+### Ajouté
+- **Plumb dans les projets**, après Skull Darts 71 : la page produit immersive en 3D d’une fléchette fictive, publiée sur GitHub Pages (https://adamrodwebdev.github.io/plumb-darts/). Elle a sa propre illustration animée, une vue éclatée dont la pointe, le fût, la tige et l’ailette se rassemblent puis s’écartent ; au repos, et pour qui réduit les animations, la vue reste éclatée.
+- Textes dans les cinq langues ; la liste lisible sans JavaScript la cite aussi.
+
+### Qualité
+- `npm test` : 63 tests passés, sur Chromium (téléphone et bureau). Carte vérifiée à 1280 × 800 et à 375 × 812 : aucun défilement horizontal.
+
+## [1.12.2] - 2026-11-09
+
+### Corrigé
+- **Mentions légales (FR et EN) : l'immatriculation au RCS.** L'entreprise est inscrite au Registre du commerce et des sociétés, pas seulement au RNE : les pages indiquent désormais « 840 846 927 RCS Chalon-sur-Saône », comme l'exige l'article R123-237 du Code de commerce (mention RCS suivie de la ville du greffe), en plus du SIRET.
 
 ## [1.12.1] - 2026-11-06
 
