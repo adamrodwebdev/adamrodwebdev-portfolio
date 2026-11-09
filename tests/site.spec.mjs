@@ -102,7 +102,7 @@ test('formulaire (Vue) : envoie le consentement et le pot de miel', async ({ pag
   expect(sent.get('nom')).toBe('Camille Martin');
 });
 
-// ----- Données vérifiées à la porte (1.12.2) -----
+// ----- Données vérifiées à la porte (1.13.1) -----
 
 test('formulaire (Vue) : envoie des textes nettoyés et des choix pris dans leurs listes', async ({ page }) => {
   let sent = null;

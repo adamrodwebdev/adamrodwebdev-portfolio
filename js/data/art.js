@@ -227,4 +227,31 @@ const lumirift = (id, t) => {
 </svg>`;
 };
 
-export const art = { catapult, bastion, darts, marbles, lumirift, classified };
+const plumb = (id, t) => {
+  // Vue éclatée de la fléchette Plumb : pointe, fût à bagues, tige et ailette écartées sur leur axe
+  // (l’état de repos, aussi celui du mouvement réduit), qui se rassemblent puis s’écartent de nouveau.
+  const y = 228;
+  const rings = Array.from({ length: 9 }, (_, i) => `M${262 + i * 14} ${y - 22}v44`).join('');
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.plumbAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <path d="M40 ${y}H720" class="a-soft a-dash-static"/>
+  <g class="a-plumb">
+    <g class="art-anim"><path d="M70 ${y}L190 ${y - 5}v10Z" class="a-fill"/></g>
+    <g class="art-anim">
+      <rect x="230" y="${y - 24}" width="190" height="48" rx="22" class="a-line"/>
+      <path d="${rings}" class="a-soft"/>
+      <path d="M400 ${y - 23}v46" class="a-line a-thick"/>
+    </g>
+    <g class="art-anim"><path d="M460 ${y - 8}h120v16H460Z" class="a-line"/></g>
+    <g class="art-anim">
+      <path d="M600 ${y}L650 ${y - 62}h70l-30 62 30 62h-70Z" class="a-line"/>
+      <path d="M612 ${y}H708" class="a-soft"/>
+    </g>
+  </g>
+  <text x="40" y="56" class="a-text">${esc(t('art.exploded'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.lighthouse'))}</text>
+</svg>`;
+};
+
+export const art = { catapult, bastion, darts, plumb, marbles, lumirift, classified };
