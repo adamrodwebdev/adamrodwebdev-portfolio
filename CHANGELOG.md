@@ -2,6 +2,11 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.12.2] - 2026-11-09
+
+### Corrigé
+- **Mentions légales (FR et EN) : l'immatriculation au RCS.** L'entreprise est inscrite au Registre du commerce et des sociétés, pas seulement au RNE : les pages indiquent désormais « 840 846 927 RCS Chalon-sur-Saône », comme l'exige l'article R123-237 du Code de commerce (mention RCS suivie de la ville du greffe), en plus du SIRET.
+
 ## [1.12.1] - 2026-11-06
 
 ### Modifié
