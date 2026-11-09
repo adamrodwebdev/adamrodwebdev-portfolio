@@ -2,6 +2,15 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.13.0] - 2026-11-09
+
+### Ajouté
+- **Plumb dans les projets**, après Skull Darts 71 : la page produit immersive en 3D d’une fléchette fictive, publiée sur GitHub Pages (https://adamrodwebdev.github.io/plumb-darts/). Elle a sa propre illustration animée, une vue éclatée dont la pointe, le fût, la tige et l’ailette se rassemblent puis s’écartent ; au repos, et pour qui réduit les animations, la vue reste éclatée.
+- Textes dans les cinq langues ; la liste lisible sans JavaScript la cite aussi.
+
+### Qualité
+- `npm test` : 63 tests passés, sur Chromium (téléphone et bureau). Carte vérifiée à 1280 × 800 et à 375 × 812 : aucun défilement horizontal.
+
 ## [1.12.2] - 2026-11-09
 
 ### Corrigé
