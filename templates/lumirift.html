@@ -420,8 +420,9 @@
         video.setAttribute('aria-hidden', 'true');
         video.preload = 'auto';
         video.addEventListener('loadedmetadata', function () {
-          // Depuis l'image de l'affiche : le clip ne saute pas en démarrant.
-          video.currentTime = Number(figure.dataset.start);
+          // Depuis l'image de l'affiche : le clip ne saute pas en démarrant (un instant écrit en chiffres, sinon le début).
+          var start = figure.dataset.start || '';
+          video.currentTime = /^\d{1,4}(\.\d{1,3})?$/.test(start) ? Number(start) : 0;
           play();
         }, { once: true });
         video.src = figure.dataset.src;
