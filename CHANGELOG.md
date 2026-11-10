@@ -2,6 +2,18 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.13.1] - 2026-11-09
+
+### Sécurité
+- **Données vérifiées à la porte** (règle du 9 novembre 2026) : le formulaire envoie des textes nettoyés (caractères invisibles et de contrôle, inversions bidirectionnelles et espaces de largeur nulle retirés, Unicode composé, espaces resserrés), chacun borné dans le code (nom 80, adresse 180, entreprise 120, message 1 500 caractères) ; le type et le budget viennent de leurs listes, même si la page a été modifiée. Le formulaire sans JavaScript porte les mêmes longueurs maximales (`js/input.js`, portage du nettoyage partagé).
+- La glissière de la bande-son, l'ancre gardée au changement de langue et l'instant de départ des clips de Lumirift sont lus strictement (un nombre fini, une ancre de section, des chiffres).
+
+### Modifié
+- **Le curseur dit ce qui se clique** : la flèche sur tout le contenu, la main sur les seuls liens, boutons et contrôles, la barre de texte dans les champs.
+
+### Qualité
+- `npm test` : 69 tests passés et 1 sauté, mobile et bureau sur Chromium, dont un formulaire rempli de caractères piégés, les longueurs maximales avec et sans JavaScript, et le curseur.
+
 ## [1.13.0] - 2026-11-09
 
 ### Ajouté

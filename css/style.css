@@ -98,6 +98,18 @@ body {
 }
 img, svg, canvas { display: block; max-width: 100%; }
 a { color: inherit; }
+
+/* Le curseur dit ce qui se clique (règle du 2026-11-09) : la flèche sur tout le contenu, la main
+   sur les seuls éléments cliquables, la barre de texte dans les champs */
+html { cursor: default; }
+a[href], area[href], button:not(:disabled), select:not(:disabled), summary, label[for],
+[role='button'], [role='link'], [role='tab'], [role='menuitem'], [role='option'], [role='switch'],
+input:is([type='checkbox'], [type='radio'], [type='submit'], [type='button'], [type='reset'], [type='file'], [type='color'], [type='range']):not(:disabled) { cursor: pointer; }
+/* Règle à part : un navigateur sans :has() n'abandonne qu'elle, pas la liste ci-dessus */
+label:has(> input:not(:disabled)) { cursor: pointer; }
+input:is(:not([type]), [type='text'], [type='email'], [type='search'], [type='password'], [type='number'], [type='tel'], [type='url']):not(:disabled),
+textarea:not(:disabled), [contenteditable='true'] { cursor: text; }
+:disabled, [aria-disabled='true'] { cursor: not-allowed; }
 button, input, select, textarea { font: inherit; color: inherit; }
 h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; margin: 0; text-wrap: balance; font-weight: 700; }
 p { margin: 0; text-wrap: pretty; }

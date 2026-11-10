@@ -2,8 +2,9 @@ import { reactive, ref, computed, nextTick, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { config } from '../config.js';
 import { burst } from '../fx/particles.js';
+import { TEXT_LIMITS, cleanText, textLength } from '../input.js';
 
-const MAX = 1500;
+const MAX = TEXT_LIMITS.message;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 /** Valeur envoyée pour la case de consentement, la même que celle du formulaire sans JavaScript. */
 const CONSENT = 'oui';
@@ -29,12 +30,25 @@ export default {
     const ticket = ref('');
     let stopBurst = null;
 
+    // Ce qui part est nettoyé (invisibles retirés, espaces resserrés) et borné ; type et budget
+    // viennent de leurs listes, jamais d'une valeur modifiée dans la page
+    const clean = computed(() => ({
+      nom: cleanText(form.nom),
+      email: cleanText(form.email),
+      entreprise: cleanText(form.entreprise),
+      type: types.includes(form.type) ? form.type : types[0],
+      budget: budgets.includes(form.budget) ? form.budget : budgets[1],
+      message: cleanText(form.message, true),
+    }));
     const errors = computed(() => {
       const e = {};
-      if (form.nom.trim().length < 2) e.nom = t('form.errors.name');
-      if (!emailRe.test(form.email.trim())) e.email = t('form.errors.email', { at: '@' });
-      if (form.message.trim().length < 20) e.message = t('form.errors.message');
-      if (form.message.length > MAX) e.message = t('form.errors.tooLong', { max: MAX });
+      const { nom, email, entreprise, message } = clean.value;
+      if (textLength(nom) < 2) e.nom = t('form.errors.name');
+      else if (textLength(nom) > TEXT_LIMITS.name) e.nom = t('form.errors.tooLong', { max: TEXT_LIMITS.name });
+      if (!emailRe.test(email) || textLength(email) > TEXT_LIMITS.email) e.email = t('form.errors.email', { at: '@' });
+      if (textLength(entreprise) > TEXT_LIMITS.company) e.entreprise = t('form.errors.tooLong', { max: TEXT_LIMITS.company });
+      if (textLength(message) < 20) e.message = t('form.errors.message');
+      if (textLength(message) > MAX) e.message = t('form.errors.tooLong', { max: MAX });
       if (!form.rgpd) e.rgpd = t('form.errors.consent');
       return e;
     });
@@ -44,7 +58,7 @@ export default {
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
     async function send() {
-      const payload = { nom: form.nom, email: form.email, entreprise: form.entreprise, type: form.type, budget: form.budget, message: form.message, rgpd: form.rgpd ? CONSENT : '' };
+      const payload = { ...clean.value, rgpd: form.rgpd ? CONSENT : '' };
       if (config.formMode === 'demo') { await wait(600); return { demo: true }; }
       if (config.formMode === 'endpoint' && config.formEndpoint) {
         const r = await fetch(config.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
@@ -59,7 +73,7 @@ export default {
 
     const demo = ref(false);
     async function submit() {
-      ['nom', 'email', 'message', 'rgpd'].forEach((k) => (touched[k] = true));
+      ['nom', 'email', 'entreprise', 'message', 'rgpd'].forEach((k) => (touched[k] = true));
       errorMsg.value = '';
       if (Object.keys(errors.value).length) {
         shaking.value = false; await nextTick(); shaking.value = true;
@@ -94,17 +108,17 @@ export default {
     }
     onBeforeUnmount(() => stopBurst?.());
 
-    return { form, touched, errors, show, state, step, stepLabels, submit, reset, formEl, canvas, successTitle, shaking, errorMsg, ticket, demo, types, budgets, MAX, email: config.contactEmail, t };
+    return { form, touched, errors, show, state, step, stepLabels, submit, reset, formEl, canvas, successTitle, shaking, errorMsg, ticket, demo, types, budgets, MAX, LIMITS: TEXT_LIMITS, email: config.contactEmail, t };
   },
   template: `
   <Transition name="swap" mode="out-in">
     <form v-if="state !== 'sent'" key="form" ref="formEl" class="cform" :class="{ shake: shaking }" novalidate
           name="contact" @submit.prevent="submit" @animationend="shaking = false" :aria-busy="state === 'sending' ? 'true' : 'false'">
-      <p class="visually-hidden"><label for="f-bot">{{ t('form.bot') }}</label><input id="f-bot" v-model="form.bot" tabindex="-1" autocomplete="off"></p>
+      <p class="visually-hidden"><label for="f-bot">{{ t('form.bot') }}</label><input id="f-bot" v-model="form.bot" tabindex="-1" autocomplete="off" :maxlength="LIMITS.honeypot"></p>
 
       <div class="field" :class="{ 'has-error': show('nom') }">
         <label for="f-nom">{{ t('form.name') }}</label>
-        <input id="f-nom" v-model="form.nom" autocomplete="name" required @blur="touched.nom = true"
+        <input id="f-nom" v-model="form.nom" autocomplete="name" required :maxlength="LIMITS.name" @blur="touched.nom = true"
                :aria-invalid="show('nom') ? 'true' : 'false'" aria-describedby="e-nom">
         <span class="field__bar" aria-hidden="true"></span>
         <Transition name="err"><p v-if="show('nom')" id="e-nom" class="field__error">{{ errors.nom }}</p></Transition>
@@ -112,16 +126,18 @@ export default {
 
       <div class="field" :class="{ 'has-error': show('email') }">
         <label for="f-email">{{ t('form.email') }}</label>
-        <input id="f-email" v-model="form.email" type="email" inputmode="email" autocomplete="email" required @blur="touched.email = true"
+        <input id="f-email" v-model="form.email" type="email" inputmode="email" autocomplete="email" required :maxlength="LIMITS.email" @blur="touched.email = true"
                :aria-invalid="show('email') ? 'true' : 'false'" aria-describedby="e-email">
         <span class="field__bar" aria-hidden="true"></span>
         <Transition name="err"><p v-if="show('email')" id="e-email" class="field__error">{{ errors.email }}</p></Transition>
       </div>
 
-      <div class="field">
+      <div class="field" :class="{ 'has-error': show('entreprise') }">
         <label for="f-entreprise">{{ t('form.company') }} <small>{{ t('form.optional') }}</small></label>
-        <input id="f-entreprise" v-model="form.entreprise" autocomplete="organization">
+        <input id="f-entreprise" v-model="form.entreprise" autocomplete="organization" :maxlength="LIMITS.company" @blur="touched.entreprise = true"
+               :aria-invalid="show('entreprise') ? 'true' : 'false'" aria-describedby="e-entreprise">
         <span class="field__bar" aria-hidden="true"></span>
+        <Transition name="err"><p v-if="show('entreprise')" id="e-entreprise" class="field__error">{{ errors.entreprise }}</p></Transition>
       </div>
 
       <div class="field">
