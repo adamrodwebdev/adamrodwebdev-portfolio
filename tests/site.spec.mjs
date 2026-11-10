@@ -102,6 +102,60 @@ test('formulaire (Vue) : envoie le consentement et le pot de miel', async ({ pag
   expect(sent.get('nom')).toBe('Camille Martin');
 });
 
+// ----- Données vérifiées à la porte (1.13.1) -----
+
+test('formulaire (Vue) : envoie des textes nettoyés et des choix pris dans leurs listes', async ({ page }) => {
+  let sent = null;
+  await page.route((url) => url.pathname === '/', async (route) => {
+    if (route.request().method() !== 'POST') return route.continue();
+    sent = new URLSearchParams(route.request().postData() ?? '');
+    return route.fulfill({ status: 200, body: '' });
+  });
+  await page.goto('/');
+  const form = page.locator('#contact-app form[aria-busy]');
+  await form.scrollIntoViewIfNeeded();
+  await expect(form).toBeVisible();
+  await page.fill('#f-nom', '  Camille‮   Martin​ ');
+  await page.fill('#f-email', ' camille@example.com ');
+  await page.fill('#f-message', 'Bonjour,\r\nje voudrais un site\u0007 vitrine pour mon atelier.');
+  // Une page modifiée : un type qui n'est pas dans la liste
+  await page.locator('#f-type').evaluate((select) => {
+    select.add(new Option('<script>', '<script>'));
+    select.value = '<script>';
+    select.dispatchEvent(new Event('change'));
+  });
+  await page.check('#f-rgpd');
+  await form.locator('button[type="submit"]').click();
+  await expect(page.locator('#contact-app .success')).toBeVisible({ timeout: 10_000 });
+
+  expect(sent.get('nom')).toBe('Camille Martin');
+  expect(sent.get('email')).toBe('camille@example.com');
+  expect(sent.get('message')).toBe('Bonjour,\nje voudrais un site vitrine pour mon atelier.');
+  expect(sent.get('type')).not.toBe('<script>');
+});
+
+test('formulaire : chaque champ de texte a une longueur maximale, avec et sans JavaScript', async ({ page, browser }) => {
+  await page.goto('/');
+  for (const [field, max] of [['#f-nom', '80'], ['#f-email', '180'], ['#f-entreprise', '120']]) {
+    await expect(page.locator(`#contact-app ${field}`)).toHaveAttribute('maxlength', max);
+  }
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const plain = await context.newPage();
+  await plain.goto('/');
+  for (const [field, max] of [['#f-nom', '80'], ['#f-email', '180'], ['#f-entreprise', '120'], ['#f-message', '1500']]) {
+    await expect(plain.locator(field)).toHaveAttribute('maxlength', max);
+  }
+  await context.close();
+});
+
+test('curseur : la flèche sur le contenu, la main sur ce qui se clique, la barre dans un champ', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCSS('cursor', 'default');
+  await expect(page.locator('main p').first()).toHaveCSS('cursor', 'default');
+  await expect(page.locator('main a[href]').first()).toHaveCSS('cursor', 'pointer');
+  await expect(page.locator('#contact-app #f-nom')).toHaveCSS('cursor', 'text');
+});
+
 // ----- Langues (1.10.0) -----
 
 /** Les textes à plat : chemin de clé → valeur (les tableaux restent des valeurs). */
