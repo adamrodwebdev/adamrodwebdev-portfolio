@@ -16,6 +16,89 @@ export const messages = { fr, en, ru, it, es };
 export const SUPPORTED = LANGUAGES.map((language) => language.code);
 
 /**
+ * La série « Comment marche le Web » (/learn/, version 1.14.0), en français et en anglais d'abord : les
+ * autres langues mènent à la page anglaise tant que leur voix n'est pas enregistrée. Hors de vue-i18n
+ * (la page n'a pas d'îlot Vue). Les épisodes tutoient, comme leur voix ; les textes de la page évitent
+ * de s'adresser au visiteur. Les sous-titres (dix par épisode, 35 caractères au plus) suivent la voix.
+ */
+export const learnPage = {
+  fr: {
+    meta: {
+      title: 'Comment marche le Web, épisode 1 : que se passe-t-il quand on ouvre une page ?',
+      description:
+        'Une page web voyage d’un téléphone à un serveur et revient : une demande, un fichier HTML, puis le CSS et le JavaScript. L’épisode 1 en 40 secondes, à regarder ou à parcourir pas à pas.',
+    },
+    series: 'Comment marche le Web',
+    episode: 'Épisode 1',
+    title: 'Que se passe-t-il quand on ouvre une page web ?',
+    lede: 'Cinq étapes en une seconde environ, sur un plan de métro : la demande part sur la ligne verte, la page revient sur les lignes rouge, bleue et ambre.',
+    stage: 'Animation : une demande part d’un téléphone vers un serveur, qui renvoie un fichier HTML, puis le CSS et le JavaScript ; la page se construit dans le navigateur du téléphone.',
+    noscript: 'L’animation demande JavaScript. Le texte de l’épisode est juste en dessous.',
+    controls: { play: 'Lire', pause: 'Pause', replay: 'Revoir', back: 'Précédent', next: 'Suivant', steps: 'Étapes de l’épisode' },
+    beats: ['Demander', 'Répondre', 'Construire', 'Habiller', 'Réveiller', 'Fini'],
+    transcript: 'Ce que dit l’épisode',
+    narration: [
+      'Tu touches un lien. Ton téléphone envoie un petit message sur Internet : « Je peux avoir cette page ? »',
+      'Un serveur, un ordinateur au loin, répond avec un fichier texte. Juste du texte, avec des étiquettes.',
+      'Ton navigateur lit ces étiquettes et construit des boîtes : un titre, un paragraphe, une image, un bouton.',
+      'Puis il demande un fichier de style, le CSS : couleurs, tailles, espaces. Mêmes boîtes, nouveaux habits.',
+      'Enfin arrive un script, le JavaScript. Et maintenant, le bouton réagit quand tu le touches.',
+      'Du texte en entrée, une page en sortie, en une seconde environ. La prochaine fois : ce que cache ce fichier.',
+    ],
+    captions: [
+      'Tu touches un lien',
+      '« Je peux avoir cette page ? »',
+      'Un serveur répond',
+      'Du texte, avec des étiquettes',
+      'Chaque étiquette, une boîte',
+      'CSS : couleurs, tailles, espaces',
+      'Mêmes boîtes, nouveaux habits',
+      'JavaScript réveille le bouton',
+      'Du texte entre, une page sort',
+      'La suite : ce que cache ce fichier',
+    ],
+    otherLanguage: 'English',
+  },
+  en: {
+    meta: {
+      title: 'How the web works, episode 1: what happens when you open a web page?',
+      description:
+        'A web page travels from a phone to a server and back: a request, an HTML file, then CSS and JavaScript. Episode 1 in 40 seconds, to watch or to step through.',
+    },
+    series: 'How the web works',
+    episode: 'Episode 1',
+    title: 'What happens when you open a web page?',
+    lede: 'Five steps in about a second, on a metro map: the request leaves on the green line, the page comes back on the red, blue and amber lines.',
+    stage: 'Animation: a request travels from a phone to a server, which sends back an HTML file, then CSS and JavaScript; the page builds in the phone’s browser.',
+    noscript: 'The animation needs JavaScript. The episode’s text is just below.',
+    controls: { play: 'Play', pause: 'Pause', replay: 'Replay', back: 'Back', next: 'Next', steps: 'Steps of the episode' },
+    beats: ['Ask', 'Answer', 'Build', 'Dress', 'Wake', 'Done'],
+    transcript: 'What the episode says',
+    narration: [
+      'You tap a link. Your phone sends a tiny message across the internet: can I have this page, please?',
+      'A server, another computer far away, answers. It sends back a text file. Just text, with labels.',
+      'Your browser reads the labels and builds boxes: a title, a paragraph, a picture, a button.',
+      'Then it asks for a style file, called CSS. Colours, sizes, spacing. Same boxes, new clothes.',
+      'Last, a script arrives: JavaScript. Now the button actually does something when you tap it.',
+      'Text in, a page out, in about a second. Next time: what’s inside that text file.',
+    ],
+    captions: [
+      'You tap a link',
+      '“Can I have this page?”',
+      'A server answers',
+      'Just text, with labels',
+      'Labels become boxes',
+      'CSS: colours, sizes, spacing',
+      'Same boxes, new clothes',
+      'JavaScript wakes the button',
+      'Text in. A page out.',
+      'Next: what’s in that file',
+    ],
+    otherLanguage: 'Français',
+  },
+};
+
+/**
  * La page du jeu, /lumirift/ (version 1.8.0), en anglais seulement : scripts/build-pages.mjs la
  * génère à partir de templates/lumirift.html, avec les textes de l'en-tête et du pied de page
  * anglais ci-dessus. Hors de vue-i18n (la page n'a pas d'îlot Vue) : aucune clé à doubler en

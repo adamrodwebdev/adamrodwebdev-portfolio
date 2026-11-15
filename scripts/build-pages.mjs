@@ -11,8 +11,8 @@
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { messages, lumiriftPage } from '../js/i18n/messages.js';
-import { LANGUAGES, DEFAULT_LANGUAGE } from '../js/i18n/languages.js';
+import { messages, lumiriftPage, learnPage } from '../js/i18n/messages.js';
+import { LANGUAGES, DEFAULT_LANGUAGE, languageOf } from '../js/i18n/languages.js';
 import { config } from '../js/config.js';
 import { projects } from '../js/data/projects.js';
 import { playLinks } from '../js/data/platforms.js';
@@ -102,6 +102,22 @@ const LUMIRIFT = {
     instagram: 'https://www.instagram.com/adamrodwebdev/',
   },
 };
+
+/**
+ * La série « Comment marche le Web » (1.14.0) : l'épisode 1, en français (/learn/) et en anglais
+ * (/en/learn/) d'abord. Les autres langues mènent à la page anglaise tant que leur voix n'est pas
+ * enregistrée : aucune page en anglais sous /it/ ou /ru/ (doublons, hreflang faux). Pas d'îlot Vue :
+ * son module se charge après le premier affichage, comme les îlots de l'accueil.
+ */
+const LEARN = {
+  languages: ['fr', 'en'],
+  entry: '/js/learn/main.js',
+  // La pastille de chaque battement prend la couleur de la ligne de métro qu'il emprunte.
+  beatColours: ['green', 'red', 'red', 'blue', 'amber', ''],
+  // Classes que le module de la page ajoute lui-même : leurs règles restent dans la feuille copiée.
+  runtimeClasses: ['is-dark', 'is-ready', 'learn-film'],
+};
+const learnBase = (code) => `${languageOf(code).base}learn/`;
 
 /**
  * Le menu des langues de l'en-tête (1.10.0), tel qu'avant le montage de Vue : un <details> qui marche
@@ -203,4 +219,38 @@ export async function buildPages({ root, out, imports }) {
 
   // La licence des polices Ressac (1.18.0), en français et en anglais
   await buildLicencePages({ root, out, origin: ORIGIN, siteCss, fonts: FONTS });
+
+  // « Comment marche le Web » : une page par langue enregistrée, ses modules préchargés après le premier affichage.
+  const learnTemplate = await readFile(join(root, 'templates/learn.html'), 'utf8');
+  const learnModules = (await moduleGraph(out, [LEARN.entry], imports)).filter((url) => url !== LEARN.entry);
+  for (const code of LEARN.languages) {
+    const page = learnPage[code];
+    const language = languageOf(code);
+    const other = LEARN.languages.find((candidate) => candidate !== code);
+    const base = learnBase(code);
+    const html = render(learnTemplate, { ...messages[code], page }, {
+      lang: code,
+      url: ORIGIN + base,
+      alternates: [
+        ...LEARN.languages.map((c) => `<link rel="alternate" hreflang="${c}" href="${ORIGIN}${learnBase(c)}">`),
+        `<link rel="alternate" hreflang="x-default" href="${ORIGIN}${learnBase(DEFAULT_LANGUAGE.code)}">`,
+      ].join('\n  '),
+      home: language.base,
+      otherHref: learnBase(other),
+      otherLang: other,
+      otherCode: other.toUpperCase(),
+      legal: language.legal,
+      legalHreflang: language.legal.startsWith(language.base) ? '' : ' hreflang="en"',
+      fonts: FONTS,
+      css: CSS_SLOT,
+      afterFirstPaint: afterFirstPaintScript({ stylesheets: [FONTS], modules: learnModules, entry: LEARN.entry }),
+      dots: page.beats
+        .map((name, i) => `<li><button class="learn-step${LEARN.beatColours[i] ? ` learn-step--${LEARN.beatColours[i]}` : ''}" type="button" data-learn-dot>${escape(name)}</button></li>`)
+        .join('\n        '),
+      narration: page.narration.map((line) => `<li>${escape(line)}</li>`).join('\n        '),
+      captions: page.captions.map((caption) => `<li data-caption>${escape(caption)}</li>`).join('\n      '),
+    }, `learn-${code}`);
+    const css = purgeCss(siteCss, pageNames(html, LEARN.runtimeClasses), html);
+    await writePage(out, `${base.slice(1)}index.html`, html.replace(CSS_SLOT, () => css));
+  }
 }
