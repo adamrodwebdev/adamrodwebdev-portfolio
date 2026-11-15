@@ -38,7 +38,7 @@ export function repair(el) {
 
 /* Le hero s'affiche entier ; une fois la signature chargée et son entrée (slice-in) finie, il se brise
    puis se répare. Sans la police, ou sans JavaScript, il reste simplement entier. */
-const SIGNATURE = 'AdamRod Cristal';
+const SIGNATURE = 'Clivage';
 const HERO_ENTRY_MS = 1600; // slice-in : 1,1 s, plus 0,15 s pour la seconde ligne, compté depuis la navigation
 export function initShatterHero() {
   const lines = document.querySelectorAll('.hero [data-repair]');

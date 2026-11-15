@@ -61,7 +61,7 @@ js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, c
 js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
 assets/                 Favicons, icônes PWA, image Open Graph
-fonts/                  AdamRod Cristal (la police signature, exclusive), Barlow, Unbounded (titre de Lumirift) : WOFF2, latin
+fonts/                  Clivage (la police signature, exclusive), Barlow, Unbounded (titre de Lumirift) : WOFF2, latin
 lumirift/               Médias de la page du jeu Lumirift
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
 robots.txt, sitemap.xml, manifest.webmanifest
@@ -141,14 +141,14 @@ Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefe
 
 ## La police signature (1.14.0)
 
-**AdamRod Cristal** (nom de travail) est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebDev et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici.
+**Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebDev et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici. Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
 
 - **Une police variable à un axe, `FRAC`** : 0 entière, 100 brisée (le verre se fend, le signal se perd, le mot se déchire en deux). La chasse ne change jamais sur l'axe : l'animer ne déplace rien.
 - **Les animations** (`css/style.css`, `js/fx/effects.js`) : un titre arrive brisé et se répare en apparaissant (`data-repair`, classe `is-repairing`) ; le hero se brise puis se répare une fois la police chargée (`is-shattering`) ; le logo et les titres se fissurent au survol à la souris (`crack-once`) ; les pages 404 perdent leur signal (`lost-signal`). Rien avec « réduire les animations ».
 - **Jamais de `-webkit-text-stroke` sur la signature** : la lettre est faite d'éclats jointifs, un contour CSS tracerait leurs lignes de cassure. Pour un effet doré, remplir (`background-clip: text`) ; un test le vérifie.
-- **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`AdamRod Cristal Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive.
+- **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`Clivage Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive.
 - **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs. Un caractère absent passe à la police suivante de la pile.
-- **La remplacer** : refaire le fichier depuis la fonderie, le déposer sous un **nouveau nom** (`adamrod-cristal-v2.woff2`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
+- **La remplacer** : refaire le fichier depuis la fonderie, le déposer sous un **nouveau nom** (`clivage-v2.woff2`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
 
 ## Traductions (cinq langues, 1.10.0)
 

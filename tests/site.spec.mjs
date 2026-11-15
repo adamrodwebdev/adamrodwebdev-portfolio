@@ -255,23 +255,25 @@ test('titres : l’effet de survol joue une fois, même si la souris reste dessu
 
 // ----- La police signature (1.14.0) -----
 
-const SIGNATURE = 'AdamRod Cristal';
+const SIGNATURE = 'Clivage';
 const signatureLoaded = (page) => page.waitForFunction((family) =>
   [...document.fonts].some((face) => face.family.replace(/["']/g, '') === family && face.status === 'loaded'), SIGNATURE);
 const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily);
 
-test('police signature : tout l’affichage en AdamRod Cristal, le texte courant en Barlow, plus de Rajdhani', async ({ page }) => {
+test('police signature : tout l’affichage en Clivage, le texte courant en Barlow, plus de Rajdhani', async ({ page }) => {
   const fonts = [];
   page.on('request', (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); });
   await page.goto('/');
+  // Les îlots Vue montés (la navigation remplace l'en-tête) : un élément détaché n'a pas de style calculé
+  await page.waitForLoadState('networkidle');
   await signatureLoaded(page);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
-    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^"AdamRod Cristal", "AdamRod Cristal Fallback"/);
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, "Clivage Fallback"/);
   }
   expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
   // Une seule graisse, déclarée pour toutes : le navigateur ne simule aucun gras
   expect(await page.evaluate((family) => [...document.fonts].find((face) => face.family.replace(/["']/g, '') === family).weight, SIGNATURE)).toBe('100 900');
-  expect(fonts.some((path) => path === '/fonts/adamrod-cristal-v1.woff2')).toBe(true);
+  expect(fonts.some((path) => path === '/fonts/clivage-v1.woff2')).toBe(true);
   expect(fonts.filter((path) => path.includes('rajdhani'))).toEqual([]);
 });
 
@@ -313,8 +315,9 @@ test('police signature : aucun contour CSS, qui tracerait ses lignes de cassure'
 
 test('police signature : en russe, le logo et le titre du hero la gardent, les titres passent aux polices système', async ({ page }) => {
   await page.goto('/ru/');
-  expect(await fontOf(page.locator('.brand__name').first())).toMatch(/^"AdamRod Cristal"/);
-  expect(await fontOf(page.locator('.hero__title'))).toMatch(/^"AdamRod Cristal"/);
+  await page.waitForLoadState('networkidle');
+  expect(await fontOf(page.locator('.brand__name').first())).toMatch(/^Clivage,/);
+  expect(await fontOf(page.locator('.hero__title'))).toMatch(/^Clivage,/);
   expect(await fontOf(page.locator('#services-title'))).toMatch(/^Bahnschrift/);
 });
 
@@ -325,11 +328,11 @@ test('police signature : son arrivée ne décale rien (repli calé sur ses mesur
       '#services-title', '#projets-title', '#methode-title', '#bande-son-title', '#contact-title']
       .map((selector) => [selector, Math.round(document.querySelector(selector).getBoundingClientRect().height)])));
   // D'abord sans la signature (le repli seul), puis avec
-  await page.route('**/fonts/adamrod-cristal-*.woff2', (route) => route.abort());
+  await page.route('**/fonts/clivage-*.woff2', (route) => route.abort());
   await page.goto('/');
   await page.waitForLoadState('networkidle');
   const fallback = await boxes();
-  await page.unroute('**/fonts/adamrod-cristal-*.woff2');
+  await page.unroute('**/fonts/clivage-*.woff2');
   await page.goto('/');
   await signatureLoaded(page);
   expect(await boxes()).toEqual(fallback);

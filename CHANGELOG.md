@@ -5,7 +5,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 ## [1.14.0] - 2026-11-15
 
 ### Ajouté
-- **AdamRod Cristal, la police signature du site** (nom de travail), inventée et dessinée pour AdamRodWebDev : **exclusive, jamais vendue, tous droits réservés** (`fonts/LICENCES.md`, et les mentions du fichier lui-même). Au repos, la grandeur de la technologie : des capitales et des minuscules taillées comme du cristal, arrondis hexagonaux aux facettes de 30° (l'angle de l'hexagone du logo), bols en flèche, diagonales en pointe. Le long de son axe animé, `FRAC`, la rupture d'une humanité divisée autour d'elle : le verre se fend en éclats, le signal se perd en lignes de balayage, le mot se déchire en deux.
+- **Clivage, la police signature du site**, inventée et dessinée pour AdamRodWebDev : **exclusive, jamais vendue, tous droits réservés** (`fonts/LICENCES.md`, et les mentions du fichier lui-même). Au repos, la grandeur de la technologie : des capitales et des minuscules taillées comme du cristal, arrondis hexagonaux aux facettes de 30° (l'angle de l'hexagone du logo), bols en flèche, diagonales en pointe. Le long de son axe animé, `FRAC`, la rupture d'une humanité divisée autour d'elle : le verre se fend en éclats, le signal se perd en lignes de balayage, le mot se déchire en deux. Son nom tient les deux : le clivage d'un cristal et celui qui divise une société.
 - Une police variable WOFF2 de 30,6 Ko, quand Rajdhani pesait 46,5 Ko en trois fichiers : latin du français, de l'anglais, de l'espagnol et de l'italien, crénage, et des chiffres tabulaires qui font enfin agir `font-variant-numeric: tabular-nums` (l'horloge du hero et les compteurs ne tremblent plus).
 
 ### Modifié

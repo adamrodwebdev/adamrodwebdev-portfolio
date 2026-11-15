@@ -4,7 +4,7 @@ Ce fichier n'est pas publié (`scripts/site-files.mjs` ne copie pas le Markdown)
 
 ## La police signature
 
-`adamrod-cristal-v1.woff2` : **AdamRod Cristal** (nom de travail), police variable dessinée pour ce site le 15 novembre 2026 et propriété d'AdamRodWebDev. **Exclusive, jamais vendue : tous droits réservés.** Aucune licence n'est accordée pour la copier, l'installer, l'intégrer ailleurs ni la redistribuer ; ses mentions de copyright et de licence le disent. Sa source (le code qui la dessine) est dans le dépôt privé de la fonderie ; seul le fichier compilé est ici.
+`clivage-v1.woff2` : **Clivage**, police variable dessinée pour ce site le 15 novembre 2026 et propriété d'AdamRodWebDev. **Exclusive, jamais vendue : tous droits réservés.** Aucune licence n'est accordée pour la copier, l'installer, l'intégrer ailleurs ni la redistribuer ; ses mentions de copyright et de licence le disent. Sa source (le code qui la dessine) est dans le dépôt privé de la fonderie ; seul le fichier compilé est ici.
 
 ## Polices tierces
 
