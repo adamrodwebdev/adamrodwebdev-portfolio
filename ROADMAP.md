@@ -62,6 +62,7 @@ Statut : demandée le 15 novembre 2026 (« une police purement inventée et anim
 - **Le rôle** : tout l'affichage (Rajdhani retirée) ; Barlow garde le texte courant.
 - **Les caractères** : le latin des cinq langues ; le russe garde les polices système pour ses titres, la signature reste sur le logo, le titre du hero et les numéros.
 - **L'animation** : les titres se réparent en apparaissant (à la place des lettres aléatoires), le hero se brise puis se répare au chargement, le logo se fissure au survol ; rien avec « réduire les animations ».
+- **Le nom** : Clivage (le plan selon lequel un cristal se fend net, et la fracture qui divise une société), choisi parmi des noms vérifiés dans douze catalogues de polices ; aucune police ne le porte.
 - **L'exclusivité** : la police n'est jamais vendue ni réutilisée dans une famille à vendre. Servie par le site, elle reste téléchargeable par qui inspecte la page : ses mentions (copyright, licence, `fsType` « aperçu et impression ») disent qu'aucune utilisation n'est permise ailleurs.
 
 ### Vérifications (« fini » quand)
@@ -71,5 +72,5 @@ Statut : demandée le 15 novembre 2026 (« une police purement inventée et anim
 - Entrée 1.14.0 dans le CHANGELOG, README à jour.
 
 ### Ensuite
-- Chercher le nom définitif (AdamRod Cristal est un nom de travail) et l'identifiant de fournisseur `ARWD`.
+- Enregistrer l'identifiant de fournisseur `ARWD` (gratuit, auprès de Microsoft).
 - Le cyrillique, si les pages russes doivent un jour parler avec la même voix.

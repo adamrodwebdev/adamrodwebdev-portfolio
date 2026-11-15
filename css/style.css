@@ -22,8 +22,8 @@
   --danger: #ff6b5e;
   --shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
 
-  /* La police signature (1.14.0) : AdamRod Cristal pour tout l'affichage, son repli calé juste après */
-  --font-signature: "AdamRod Cristal", "AdamRod Cristal Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  /* La police signature (1.14.0) : Clivage pour tout l'affichage, son repli calé juste après */
+  --font-signature: "Clivage", "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
   --font-display: var(--font-signature);
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
 
@@ -84,11 +84,11 @@
   color-scheme: light;
 }
 
-/* Repli de la police signature (1.14.0) : Arial Bold, mise à la taille d'AdamRod Cristal (mêmes largeurs
+/* Repli de la police signature (1.14.0) : Arial Bold, mise à la taille de Clivage (mêmes largeurs
    sur les titres, les menus et les boutons du site) et à sa boîte de ligne. Déclaré ici, dans la feuille
    copiée dans chaque page, il sert dès le premier affichage : rien ne bouge quand la signature arrive. */
 @font-face {
-  font-family: "AdamRod Cristal Fallback";
+  font-family: "Clivage Fallback";
   src: local("Arial Bold"), local("Arial-BoldMT");
   font-weight: 100 900;
   size-adjust: 76.7%;
