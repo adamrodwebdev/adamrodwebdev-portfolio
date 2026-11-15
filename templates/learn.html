@@ -1,0 +1,217 @@
+<!doctype html>
+<!--
+  FICHIER GÉNÉRÉ — ne pas modifier directement.
+  Source : templates/learn.html + js/i18n/messages.js (learnPage, et l'en-tête de la langue)
+  + les règles de css/style.css que la page applique (copiées dans la page)
+  Régénérer : npm run build
+-->
+<html lang="[[@lang]]" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>[[page.meta.title]]</title>
+  <meta name="description" content="[[page.meta.description]]">
+  <meta name="author" content="AdamRodWebDev">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="[[@url]]">
+  [[@alternates]]
+
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="[[meta.ogLocale]]">
+  <meta property="og:site_name" content="AdamRodWebDev">
+  <meta property="og:title" content="[[page.meta.title]]">
+  <meta property="og:description" content="[[page.meta.description]]">
+  <meta property="og:url" content="[[@url]]">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('arwd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Les polices du site et l'épisode, demandés une fois le premier affichage signalé
+       (scripts/after-first-paint.mjs). -->
+  <noscript><link rel="stylesheet" href="[[@fonts]]"></noscript>
+  <script>[[@afterFirstPaint]]</script>
+
+  <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->
+  <style>[[@css]]</style>
+  <style>
+    /* La série « Comment marche le Web » : ses parties propres. En-tête, pied de page, jetons, thèmes,
+       boutons : style.css. La scène garde son fond noir dans les deux thèmes, comme le film. */
+    :root {
+      --learn-green: #22c37b;
+      --learn-red: #ff4b44;
+      --learn-blue: #4d86ff;
+      --learn-amber: #ffb400;
+      --learn-ink: #f6f4ef;
+    }
+    .learn-episode {
+      display: grid; justify-items: center; gap: 1.25rem;
+      padding-block: calc(var(--header-h) + 2rem) 2rem;
+    }
+    .learn-intro { max-width: 40rem; text-align: center; display: grid; gap: 0.5rem; }
+    .learn-eyebrow {
+      margin: 0; display: inline-flex; gap: 0.5rem; align-items: center; justify-self: center;
+      font: 600 var(--step--1)/1.4 var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold);
+    }
+    .learn-eyebrow::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--learn-green); }
+    .learn-title { margin: 0; font: 700 var(--step-3)/1.02 var(--font-display); letter-spacing: 0.01em; text-wrap: balance; }
+    .learn-lede { margin: 0; color: var(--muted); font-size: var(--step-0); text-wrap: pretty; }
+
+    .learn-stage {
+      position: relative; margin: 0; width: min(100%, 26rem); aspect-ratio: 9 / 16;
+      container: learn-stage / inline-size;
+      border-radius: 28px; overflow: hidden; background: #000; border: 1px solid var(--line); box-shadow: var(--shadow);
+    }
+    .learn-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    /* La bande des sous-titres, vide de toute phrase : un dégradé sombre sur le haut de l'image, le même
+       dans le film et la page. Les sous-titres de chaque langue s'y posent. */
+    .learn-scrim {
+      position: absolute; inset: 0 0 auto; height: 27%; pointer-events: none;
+      background: linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0) 100%);
+    }
+    .learn-scene text { font-family: var(--font-body); }
+    .learn-url { font-size: 17px; font-weight: 500; }
+    .learn-code { font-size: 22px; font-weight: 600; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+    .learn-badge { font-size: 15px; font-weight: 600; }
+    .learn-heart { font-size: 26px; font-weight: 600; }
+    .learn-count { font-size: 24px; font-weight: 600; }
+    .learn-token { font-size: 21px; font-weight: 600; }
+    .learn-caption {
+      position: absolute; inset-inline: 6%; top: 10%; margin: 0; text-align: center;
+      font: 600 clamp(1rem, 6.2cqi, 1.75rem)/1.12 var(--font-body); color: var(--learn-ink); text-wrap: balance;
+      text-shadow: 0 2px 0 #000, 0 0 14px #000;
+    }
+    .learn-noscript { position: absolute; inset: auto 1.25rem 1.25rem; margin: 0; color: var(--learn-ink); font-size: 1rem; }
+
+    .learn-controls { display: flex; gap: 0.5rem; width: min(100%, 26rem); }
+    .learn-controls .btn { min-height: 48px; padding: 0 16px; }
+    .learn-controls .btn--gold { flex: 1; }
+    .learn-dots { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; list-style: none; margin: 0; padding: 0; width: min(100%, 26rem); }
+    .learn-step {
+      min-height: 44px; padding: 0 0.85rem; border-radius: 999px; display: inline-flex; gap: 0.45rem; align-items: center;
+      border: 1px solid var(--line); background: transparent; color: var(--muted); font: 600 0.95rem var(--font-body);
+    }
+    .learn-step::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--dot, var(--fg)); }
+    .learn-step--green { --dot: var(--learn-green); }
+    .learn-step--red { --dot: var(--learn-red); }
+    .learn-step--blue { --dot: var(--learn-blue); }
+    .learn-step--amber { --dot: var(--learn-amber); }
+    .learn-step[aria-current="step"] { color: var(--fg); border-color: var(--fg); }
+    .learn-step:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
+    .learn-episode:not(.is-ready) .learn-controls,
+    .learn-episode:not(.is-ready) .learn-dots { display: none; }
+
+    .learn-transcript { max-width: 44rem; padding-block: 1rem 4rem; }
+    .learn-transcript h2 { font: 700 var(--step-2)/1.1 var(--font-display); margin: 0 0 1rem; }
+    .learn-lines { display: grid; gap: 0.9rem; margin: 0; padding-left: 1.4rem; }
+    .learn-lines li { padding-left: 0.3rem; font-size: var(--step-0); line-height: 1.55; }
+    .learn-lines li::marker { color: var(--gold); font-weight: 700; }
+
+    /* Le tournage (?film) : la scène seule, plein cadre, sans sous-titres ni commandes. */
+    .learn-film body { background: #000; }
+    .learn-film .site-header, .learn-film .site-footer, .learn-film .skip-link, .learn-film .learn-intro,
+    .learn-film .learn-controls, .learn-film .learn-dots, .learn-film .learn-transcript, .learn-film .learn-caption { display: none; }
+    .learn-film .learn-episode { padding: 0; }
+    .learn-film .learn-stage { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenu">[[a11y.skip]]</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="[[a11y.mainNav]]">
+      <a class="brand" href="[[@home]]" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebDev</b></span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="[[@home]]#services">[[nav.services]]</a></li>
+        <li><a href="[[@home]]#projets">[[nav.projects]]</a></li>
+        <li><a href="[[@home]]#methode">[[nav.method]]</a></li>
+        <li><a href="[[@home]]#contact">[[nav.contact]]</a></li>
+      </ul>
+      <div class="nav__tools">
+        <a class="icon-btn lang-btn" href="[[@otherHref]]" hreflang="[[@otherLang]]" lang="[[@otherLang]]">[[@otherCode]]<span class="visually-hidden"> [[page.otherLanguage]]</span></a>
+        <button class="icon-btn is-dark" type="button" data-theme-toggle aria-pressed="true" aria-label="[[nav.themeLight]]"
+          data-to-light="[[nav.themeLight]]" data-to-dark="[[nav.themeDark]]">
+          <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="moon-mask"><rect width="24" height="24" fill="#fff"/><circle class="theme-icon__mask-circle" cx="17" cy="7" r="7" fill="#000"/></mask>
+            <circle class="theme-icon__core" cx="12" cy="12" r="8" fill="currentColor" mask="url(#moon-mask)"/>
+            <g class="theme-icon__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="learn-episode container" data-learn aria-labelledby="learn-title">
+      <div class="learn-intro">
+        <p class="learn-eyebrow">[[page.series]] · [[page.episode]]</p>
+        <h1 class="learn-title" id="learn-title">[[page.title]]</h1>
+        <p class="learn-lede">[[page.lede]]</p>
+      </div>
+      <figure class="learn-stage">
+        <svg class="learn-scene" data-learn-scene aria-hidden="true" focusable="false"></svg>
+        <div class="learn-scrim" aria-hidden="true"></div>
+        <p class="learn-caption" data-learn-caption aria-hidden="true"></p>
+        <figcaption class="visually-hidden">[[page.stage]]</figcaption>
+        <noscript><p class="learn-noscript">[[page.noscript]]</p></noscript>
+      </figure>
+      <div class="learn-controls">
+        <button class="btn btn--ghost" type="button" data-learn-back><span>[[page.controls.back]]</span></button>
+        <button class="btn btn--gold" type="button" data-learn-play
+          data-play="[[page.controls.play]]" data-pause="[[page.controls.pause]]" data-replay="[[page.controls.replay]]"><span>[[page.controls.play]]</span></button>
+        <button class="btn btn--ghost" type="button" data-learn-next><span>[[page.controls.next]]</span></button>
+      </div>
+      <ol class="learn-dots" aria-label="[[page.controls.steps]]">
+        [[@dots]]
+      </ol>
+    </section>
+
+    <section class="learn-transcript container" aria-labelledby="learn-transcript">
+      <h2 id="learn-transcript">[[page.transcript]]</h2>
+      <ol class="learn-lines">
+        [[@narration]]
+      </ol>
+    </section>
+    <ol data-learn-captions hidden>
+      [[@captions]]
+    </ol>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer">
+      <a class="brand" href="[[@home]]" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebDev</b></span>
+      </a>
+      <nav aria-label="[[a11y.footerNav]]">
+        <ul class="footer__links">
+          <li><a href="[[@home]]#services">[[nav.services]]</a></li>
+          <li><a href="[[@home]]#projets">[[nav.projects]]</a></li>
+          <li><a href="[[@home]]#contact">[[nav.contact]]</a></li>
+          <li><a href="[[@legal]]"[[@legalHreflang]]>[[nav.legal]]</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 AdamRodWebDev. [[footer.copy]]</p>
+    </div>
+  </footer>
+</body>
+</html>
