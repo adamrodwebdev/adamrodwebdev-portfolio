@@ -2,6 +2,25 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.14.0] - 2026-11-15
+
+### Ajouté
+- **AdamRod Cristal, la police signature du site** (nom de travail), inventée et dessinée pour AdamRodWebDev : **exclusive, jamais vendue, tous droits réservés** (`fonts/LICENCES.md`, et les mentions du fichier lui-même). Au repos, la grandeur de la technologie : des capitales et des minuscules taillées comme du cristal, arrondis hexagonaux aux facettes de 30° (l'angle de l'hexagone du logo), bols en flèche, diagonales en pointe. Le long de son axe animé, `FRAC`, la rupture d'une humanité divisée autour d'elle : le verre se fend en éclats, le signal se perd en lignes de balayage, le mot se déchire en deux.
+- Une police variable WOFF2 de 30,6 Ko, quand Rajdhani pesait 46,5 Ko en trois fichiers : latin du français, de l'anglais, de l'espagnol et de l'italien, crénage, et des chiffres tabulaires qui font enfin agir `font-variant-numeric: tabular-nums` (l'horloge du hero et les compteurs ne tremblent plus).
+
+### Modifié
+- **Tout l'affichage passe à la signature** : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow garde le texte courant. Rajdhani est retirée.
+- **Les titres arrivent brisés et se réparent** en apparaissant, à la place des lettres tirées au hasard : l'animation joue sur l'axe de la police, le texte du DOM ne change plus (les lecteurs d'écran lisent le vrai titre) et la chasse reste la même (aucune mise en page recalculée). Le hero se brise puis se répare dès que la police est arrivée ; le logo et les titres se fissurent au survol (souris) ; les « 404 » perdent leur signal et restent brisées. Avec « réduire les animations », rien ne bouge.
+- « WebDev », les numéros de section, le titre du lecteur et les « 404 » passent du contour au remplissage doré : un contour CSS tracerait les lignes de cassure de la signature. Les numéros de section restent fêlés, immobiles.
+- Russe : la signature n'a pas de cyrillique ; les titres gardent les polices système, comme avec Rajdhani, mais le logo, le titre du hero et les numéros, en latin, restent en signature.
+
+### Performance
+- **Rien ne bouge quand la signature arrive** : elle reprend la hauteur de capitale, la boîte de ligne et les chasses de Rajdhani, et son repli calé (Arial Bold à 76,7 %, déclaré dans la feuille copiée dans chaque page) sert dès le premier affichage.
+
+### Qualité
+- `npm test` : 82 tests passés et 2 sautés, mobile et bureau sur Chromium, dont la signature chargée sans gras simulé et sans Rajdhani, les titres qui se réparent, le mouvement réduit, l'absence de contour, le russe, aucun décalage à l'arrivée de la police (mêmes hauteurs qu'avec son repli) et le hero, les titres et le logo qui tiennent dans l'écran de 320 à 2560 px.
+- Lighthouse, sur le serveur local qui applique les en-têtes de Netlify : 100 dans les quatre catégories sur chacun des trois passages mobiles de l'accueil, de `/en/` et de `/lumirift/`, et sur ordinateur. Le décalage de mise en page (CLS) tombe à 0 (il était de 0,022 sur l'accueil et de 0,026 sur Lumirift, à l'arrivée de Rajdhani).
+
 ## [1.13.1] - 2026-11-09
 
 ### Sécurité
