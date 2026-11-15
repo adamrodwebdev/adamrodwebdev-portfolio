@@ -1,4 +1,4 @@
-/* Effets d'interface : révélations, décodage de texte, curseur, inclinaison 3D,
+/* Effets d'interface : révélations, police signature qui se brise et se répare, curseur, inclinaison 3D,
    boutons magnétiques, horloge et champ d'éclats du hero. */
 
 import { languageOf } from '../i18n/languages.js';
@@ -14,33 +14,47 @@ export function initReveal() {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
       en.target.classList.add('is-in');
-      en.target.querySelectorAll('[data-scramble]').forEach(scramble);
+      en.target.querySelectorAll('[data-repair]').forEach(repair);
       io.unobserve(en.target);
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
   els.forEach((e) => io.observe(e));
 }
 
-/* ---------- Décodage de texte façon terminal ---------- */
-const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/<>[]';
-export function scramble(el) {
+/* ---------- La police signature se brise et se répare (1.14.0) ---------- */
+/* Un titre arrive brisé et se répare en apparaissant. Tout se joue sur l'axe FRAC de la police (classe
+   is-repairing, css/style.css) : le texte du DOM ne change jamais, les lecteurs d'écran lisent le vrai
+   titre, et la chasse ne bouge pas, donc la mise en page non plus. */
+export function repair(el) {
   if (reduce || el.dataset.done) return;
   el.dataset.done = '1';
-  const final = el.textContent;
-  // hauteur figée pour éviter tout décalage de mise en page
-  el.style.minHeight = el.offsetHeight + 'px';
-  const DURATION = 750, t0 = performance.now();
-  const tick = () => {
-    const progress = Math.min(1, (performance.now() - t0) / DURATION);
-    if (progress >= 1) { el.textContent = final; clearInterval(iv); return; }
-    el.textContent = [...final].map((ch, i) => {
-      if (ch === ' ' || i / final.length < progress) return ch;
-      return glyphs[(Math.random() * glyphs.length) | 0];
-    }).join('');
+  el.classList.add('is-repairing');
+  el.addEventListener('animationend', function done(event) {
+    if (event.animationName !== 'repair') return;
+    el.classList.remove('is-repairing');
+    el.removeEventListener('animationend', done);
+  });
+}
+
+/* Le hero s'affiche entier ; une fois la signature chargée et son entrée (slice-in) finie, il se brise
+   puis se répare. Sans la police, ou sans JavaScript, il reste simplement entier. */
+const SIGNATURE = 'AdamRod Cristal';
+const HERO_ENTRY_MS = 1600; // slice-in : 1,1 s, plus 0,15 s pour la seconde ligne, compté depuis la navigation
+export function initShatterHero() {
+  const lines = document.querySelectorAll('.hero [data-repair]');
+  if (reduce || !lines.length || !document.fonts) return;
+  const loaded = () => [...document.fonts].some((face) => face.family.replace(/["']/g, '') === SIGNATURE && face.status === 'loaded');
+  const start = () => {
+    const wait = Math.max(0, HERO_ENTRY_MS - performance.now());
+    lines.forEach((el, i) => setTimeout(() => el.classList.add('is-shattering'), wait + i * 160));
   };
-  // minuterie basée sur le temps réel : le texte final est garanti même si l'onglet est ralenti
-  const iv = setInterval(tick, 40);
-  tick();
+  if (loaded()) { start(); return; }
+  const onDone = () => {
+    if (!loaded()) return;
+    document.fonts.removeEventListener('loadingdone', onDone);
+    start();
+  };
+  document.fonts.addEventListener('loadingdone', onDone);
 }
 
 /* ---------- Curseur personnalisé ---------- */
@@ -177,22 +191,22 @@ export function initShards() {
   new MutationObserver(() => { readColors(); if (reduce) draw(true); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
 
-/* ---------- Effet de « glitch » au survol des titres ----------
-   Une fois par survol. L'animation découpe et décale le titre : il sort de sous la souris immobile,
-   et chaque retour relançait l'effet en boucle (1.10.1). L'effet se réarme donc seulement quand la
-   souris quitte l'en-tête de la section, dont la boîte ne bouge pas. */
-export function initGlitch() {
+/* ---------- Titres qui se fissurent au survol (1.14.0, autrefois un « glitch ») ----------
+   Une fois par survol, à la souris : la signature se fissure sur son axe FRAC puis se répare. L'effet se
+   réarme seulement quand la souris quitte l'en-tête de la section (1.10.1), et attend qu'un titre ait fini
+   de se réparer. */
+export function initCrack() {
   if (reduce || !fine) return;
   document.querySelectorAll('.section__title').forEach((title) => {
     const zone = title.closest('.section__head') ?? title.parentElement;
     let armed = true;
     title.addEventListener('pointerenter', (event) => {
-      if (!armed || event.pointerType !== 'mouse') return;
+      if (!armed || event.pointerType !== 'mouse' || title.classList.contains('is-repairing')) return;
       armed = false;
-      title.classList.add('glitch-once');
+      title.classList.add('crack-once');
     });
     title.addEventListener('animationend', (event) => {
-      if (event.animationName === 'glitch') title.classList.remove('glitch-once');
+      if (event.animationName === 'crack') title.classList.remove('crack-once');
     });
     zone.addEventListener('pointerleave', () => { armed = true; });
   });

@@ -234,21 +234,121 @@ test('titres : l’effet de survol joue une fois, même si la souris reste dessu
   await page.waitForLoadState('networkidle');
   const title = page.locator('#services-title');
   await title.scrollIntoViewIfNeeded();
+  // Le titre arrive brisé et se répare (1.14.0) : la fissure du survol attend la fin de la réparation
+  await expect(title).toHaveAttribute('data-done', '1');
+  await expect(title).not.toHaveClass(/is-repairing/, { timeout: 3000 });
   await title.evaluate((element) => {
-    window.glitches = 0;
-    new MutationObserver(() => { if (element.classList.contains('glitch-once')) window.glitches += 1; })
+    window.cracks = 0;
+    new MutationObserver(() => { if (element.classList.contains('crack-once')) window.cracks += 1; })
       .observe(element, { attributes: true, attributeFilter: ['class'] });
   });
-  // Le milieu du titre : la première image de l'effet le découpe, il sort de sous la souris immobile
   await title.hover();
   await page.waitForTimeout(1500);
-  expect(await page.evaluate(() => window.glitches), 'souris immobile sur le titre').toBe(1);
-  await expect(title).not.toHaveClass(/glitch-once/);
+  expect(await page.evaluate(() => window.cracks), 'souris immobile sur le titre').toBe(1);
+  await expect(title).not.toHaveClass(/crack-once/);
   // Sortie de l'en-tête de la section, puis retour : l'effet rejoue une fois
   await page.mouse.move(5, 5);
   await title.hover();
   await page.waitForTimeout(800);
-  expect(await page.evaluate(() => window.glitches), 'second survol').toBe(2);
+  expect(await page.evaluate(() => window.cracks), 'second survol').toBe(2);
+});
+
+// ----- La police signature (1.14.0) -----
+
+const SIGNATURE = 'AdamRod Cristal';
+const signatureLoaded = (page) => page.waitForFunction((family) =>
+  [...document.fonts].some((face) => face.family.replace(/["']/g, '') === family && face.status === 'loaded'), SIGNATURE);
+const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily);
+
+test('police signature : tout l’affichage en AdamRod Cristal, le texte courant en Barlow, plus de Rajdhani', async ({ page }) => {
+  const fonts = [];
+  page.on('request', (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); });
+  await page.goto('/');
+  await signatureLoaded(page);
+  for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^"AdamRod Cristal", "AdamRod Cristal Fallback"/);
+  }
+  expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
+  // Une seule graisse, déclarée pour toutes : le navigateur ne simule aucun gras
+  expect(await page.evaluate((family) => [...document.fonts].find((face) => face.family.replace(/["']/g, '') === family).weight, SIGNATURE)).toBe('100 900');
+  expect(fonts.some((path) => path === '/fonts/adamrod-cristal-v1.woff2')).toBe(true);
+  expect(fonts.filter((path) => path.includes('rajdhani'))).toEqual([]);
+});
+
+test('police signature : chaque titre arrive brisé et se répare, le hero se brise puis se répare', async ({ page }) => {
+  await page.goto('/');
+  await signatureLoaded(page);
+  await expect(page.locator('.hero__line').first()).toHaveClass(/is-shattering/, { timeout: 4000 });
+  const title = page.locator('#projets-title');
+  await title.scrollIntoViewIfNeeded();
+  await expect(title).toHaveClass(/is-repairing/);
+  await expect(title).not.toHaveClass(/is-repairing/, { timeout: 3000 });
+  // Entier à la fin, et le texte du titre n'a jamais changé (les lecteurs d'écran lisent le vrai titre)
+  expect(await title.evaluate((element) => getComputedStyle(element).fontVariationSettings)).toBe('normal');
+  expect(await title.textContent()).toBe(await page.evaluate(() => document.getElementById('projets-title').textContent));
+});
+
+test('police signature : avec « réduire les animations », rien ne se brise', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await signatureLoaded(page);
+  await page.waitForTimeout(2200);
+  await expect(page.locator('.hero__line.is-shattering')).toHaveCount(0);
+  const title = page.locator('#services-title');
+  await title.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await expect(title).not.toHaveClass(/is-repairing/);
+  for (const selector of ['.hero__line', '#services-title', '.brand__name']) {
+    expect(await page.locator(selector).first().evaluate((element) => getComputedStyle(element).fontVariationSettings), selector).toBe('normal');
+  }
+});
+
+test('police signature : aucun contour CSS, qui tracerait ses lignes de cassure', async ({ page }) => {
+  await page.goto('/');
+  for (const selector of ['.hero__line--gold', '.panel__index', '.sound-deck__title', '.brand__name']) {
+    const stroke = await page.locator(selector).first().evaluate((element) => getComputedStyle(element).webkitTextStrokeWidth);
+    expect(stroke, selector).toBe('0px');
+  }
+});
+
+test('police signature : en russe, le logo et le titre du hero la gardent, les titres passent aux polices système', async ({ page }) => {
+  await page.goto('/ru/');
+  expect(await fontOf(page.locator('.brand__name').first())).toMatch(/^"AdamRod Cristal"/);
+  expect(await fontOf(page.locator('.hero__title'))).toMatch(/^"AdamRod Cristal"/);
+  expect(await fontOf(page.locator('#services-title'))).toMatch(/^Bahnschrift/);
+});
+
+test('police signature : son arrivée ne décale rien (repli calé sur ses mesures)', async ({ page }) => {
+  // Les textes d'affichage écrits dans le HTML (pas ceux des îlots Vue, montés plus tard)
+  const boxes = () => page.evaluate(() => Object.fromEntries(
+    ['#accueil .hero__title', '#accueil .hero__status', '#accueil .hero__actions', '.site-header .brand__name',
+      '#services-title', '#projets-title', '#methode-title', '#bande-son-title', '#contact-title']
+      .map((selector) => [selector, Math.round(document.querySelector(selector).getBoundingClientRect().height)])));
+  // D'abord sans la signature (le repli seul), puis avec
+  await page.route('**/fonts/adamrod-cristal-*.woff2', (route) => route.abort());
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  const fallback = await boxes();
+  await page.unroute('**/fonts/adamrod-cristal-*.woff2');
+  await page.goto('/');
+  await signatureLoaded(page);
+  expect(await boxes()).toEqual(fallback);
+});
+
+test('police signature : le hero, les titres et le logo tiennent dans l’écran, de 320 à 2560 px', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'les largeurs se règlent ici à la main');
+  for (const path of ['/', '/ru/']) {
+    for (const width of [320, 360, 390, 768, 1024, 1280, 1440, 1920, 2560]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(path);
+      await signatureLoaded(page);
+      const overflow = await page.locator('.hero__line, .section__title, .site-header .brand__name').evaluateAll((elements) =>
+        elements.filter((element) => element.getClientRects().length)
+          .filter((element) => element.scrollWidth > element.clientWidth + 1 || element.getBoundingClientRect().right > innerWidth + 1)
+          .map((element) => element.className));
+      expect(overflow, `${path} à ${width} px`).toEqual([]);
+    }
+  }
 });
 
 // ----- Bande-son (1.12.0) -----
