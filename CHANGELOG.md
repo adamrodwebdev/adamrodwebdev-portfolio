@@ -2,6 +2,23 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.15.0] - 2026-11-16
+
+### Ajouté
+- **La signature parle russe** (Clivage 1.100) : les 33 lettres de l'alphabet russe, capitales et minuscules, Ё et Й compris. Les lettres que le russe partage avec le latin (А, В, Е, К, М, Н, О, Р, С, Т, Х, et а, е, о, р, с, у, х) reprennent les dessins de la signature ; les autres (Б, Г, Д, Ж, З, И, Л, П, У, Ф, Ц, Ч, Ш, Щ, Ъ, Ы, Ь, Э, Ю, Я…) sont taillées dans le même cristal, facettes de 30° et pointes, et se brisent sur le même axe. Les pages russes parlent enfin avec la même voix que les autres : menus, titres, boutons, étiquettes.
+
+### Modifié
+- **La signature tient en deux fichiers, un par alphabet**, déclarés avec leur `unicode-range` : latin (30,1 Ko) et cyrillique (20,2 Ko). Une page française, anglaise, italienne ou espagnole ne télécharge que le premier, un peu plus léger que l'unique fichier de la 1.14 (30,6 Ko) ; une page russe télécharge les deux, pour ses chiffres, sa ponctuation et le logo. Les fichiers changent de nom (`clivage-v2-latin.woff2`, `clivage-v2-cyrillic.woff2`), puisqu'ils restent un an en cache.
+- **En russe, seul le texte courant garde les polices du système** (Barlow n'a pas de cyrillique) ; la règle de la 1.14 qui y renvoyait aussi les titres disparaît.
+- **Le repli calé a son pendant cyrillique** : Arial Bold à 77,95 % pour les lettres russes (76,7 % pour le latin), mesuré sur les titres, menus et boutons russes du site. Aucune ligne ne bouge à l'arrivée de la signature, en russe comme en français.
+
+### Performance
+- **Fermé, le menu des langues n'est plus mis en page.** Le Chrome sans écran de Lighthouse met en page le contenu d'un `<details>` fermé : sur chaque page latine, il téléchargeait le fichier cyrillique pour le seul « Русский » du menu, et toute la page se recomposait à son arrivée (un passage mobile de l'accueil était tombé à 99). Le cyrillique ne vient plus qu'à l'ouverture du menu.
+
+### Qualité
+- `npm test` : 86 tests passés et 2 sautés, dont le russe entièrement en Clivage avec ses deux fichiers, une page latine qui ne charge que le fichier latin (le cyrillique seulement à l'ouverture du menu des langues) et aucun décalage à l'arrivée de la signature, en français comme en russe.
+- Lighthouse, sur le serveur local qui applique les en-têtes de Netlify : 100 dans les quatre catégories sur chacun des trois passages mobiles de l'accueil, de `/en/`, de `/ru/` et de `/lumirift/`, et sur ordinateur ; décalage de mise en page (CLS) à 0. Une page latine pèse 237 Ko, sans le fichier cyrillique (259 Ko quand le menu le faisait venir).
+
 ## [1.14.1] - 2026-11-16
 
 ### Corrigé

@@ -54,7 +54,7 @@ But : plus aucune requête vers un domaine tiers, une politique de sécurité de
 
 ## 1.14.0 : la police signature
 
-Statut : demandée le 15 novembre 2026 (« une police purement inventée et animée, notre police signature ; nous ne la vendrons pas »), réalisée sur la branche `feat/1.14-police-signature` (PR vers `dev`). Mise en ligne seulement sur décision.
+Statut : demandée le 15 novembre 2026 (« une police purement inventée et animée, notre police signature ; nous ne la vendrons pas »), réalisée sur la branche `feat/1.14-police-signature`, en ligne depuis le 16 novembre 2026.
 
 ### Ce qui a été décidé (15 novembre 2026)
 - **Le sens** : la grandeur de la technologie au repos ; le long de l'axe animé, la rupture d'une humanité divisée autour d'elle, un verre brisé mêlé à un signal perdu.
@@ -72,5 +72,21 @@ Statut : demandée le 15 novembre 2026 (« une police purement inventée et anim
 - Entrée 1.14.0 dans le CHANGELOG, README à jour.
 
 ### Ensuite
-- Enregistrer l'identifiant de fournisseur `ARWD` (gratuit, auprès de Microsoft).
-- Le cyrillique, si les pages russes doivent un jour parler avec la même voix.
+- Enregistrer l'identifiant de fournisseur `ARWD` (gratuit, auprès de Microsoft) : décidé le 16 novembre 2026, il attend le nom de la fonderie, pour demander les deux identifiants ensemble. Rien ne bloque d'ici là : la police porte déjà `ARWD`.
+- Le cyrillique : fait en 1.15.0.
+
+## 1.15.0 : la signature parle russe
+
+Statut : demandée le 16 novembre 2026 (« Enchaîne sur le cyrillique »), réalisée sur la branche `feat/1.15-cyrillique` (PR vers `dev`, après la 1.14.1). Mise en ligne seulement sur décision.
+
+### Ce qui a été décidé (16 novembre 2026)
+- **Tout l'alphabet russe** : les 33 lettres, capitales et minuscules, Ё et Й compris. Les lettres que le russe partage avec le latin reprennent les dessins de la signature (le А cyrillique est son A) ; les autres sont taillées dans le même cristal et se brisent sur le même axe.
+- **Un fichier par alphabet**, choisi par `unicode-range` : une page latine ne paie pas le cyrillique ; une page russe prend les deux (chiffres, ponctuation et logo latins).
+- **En russe, le texte courant garde les polices du système** : Barlow n'a pas de cyrillique.
+- **Le menu des langues fermé n'est pas mis en page** : sinon, le « Русский » du menu faisait venir le fichier cyrillique sur les pages latines.
+
+### Vérifications (« fini » quand)
+- Lighthouse 100 dans les quatre catégories, pire de trois passages sur mobile, plus l'ordinateur, sur `/`, `/en/` et `/ru/`.
+- Aucun décalage quand la police arrive, en français comme en russe (repli calé cyrillique, testé).
+- Captures de `/ru/` en clair et en sombre, sur téléphone et sur ordinateur, entières et brisées.
+- Entrée 1.15.0 dans le CHANGELOG, README à jour.
