@@ -2,6 +2,14 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.14.1] - 2026-11-16
+
+### Corrigé
+- **Une sélection ne couvre plus le site de pavés dorés.** Les titres et l'interface (hero, logo, menus, boutons, étiquettes, panneau HUD, numéros, lecteur de la bande-son, « 404 ») ne se sélectionnent plus, et l'appui long d'un téléphone n'y ouvre plus de menu. Les textes, l'adresse e-mail, les coordonnées et les mentions légales restent sélectionnables, pour copier, traduire ou faire lire la sélection à voix haute ; leur sélection est un voile doré qui garde la couleur du texte.
+
+### Qualité
+- `npm test` : 84 tests passés et 2 sautés, dont la sélection (styles calculés, et un vrai glisser de souris : rien sur le titre du hero, le texte du paragraphe).
+
 ## [1.14.0] - 2026-11-15
 
 ### Ajouté
