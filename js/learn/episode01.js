@@ -25,22 +25,23 @@ export const PLAN = Object.freeze([
 ]);
 
 /**
- * Les sous-titres (leurs textes sont dans les traductions de la page), placés dans leur battement.
+ * Les onze sous-titres (leurs textes sont dans les traductions de la page), placés dans leur battement.
  * Chacun reste au moins (caractères ÷ 15) + 1,5 s à l'écran, en français comme en anglais (un test le
- * vérifie) : la voix fixera les vrais temps, langue par langue.
+ * vérifie) : la voix fixera les vrais temps, langue par langue. Un sous-titre peut déborder sur le
+ * battement suivant (`to` au-delà de sa durée prévue) : le second du binaire finit sur le serveur.
  */
 export const CAPTIONS = Object.freeze([
   Object.freeze({ beat: 'ask', from: 0.4, to: 3.2 }),
-  Object.freeze({ beat: 'ask', from: 3.25, to: 6.65 }),
   Object.freeze({ beat: 'ask', from: 6.7, to: 10.4 }),
-  Object.freeze({ beat: 'internet', from: 0.3, to: 5.0 }),
-  Object.freeze({ beat: 'internet', from: 5.1, to: 10.4 }),
-  Object.freeze({ beat: 'binary', from: 0.3, to: 6.4 }),
-  Object.freeze({ beat: 'server', from: 0.3, to: 4.2 }),
-  Object.freeze({ beat: 'server', from: 4.3, to: 8.0 }),
+  Object.freeze({ beat: 'internet', from: 0.3, to: 4.3 }),
+  Object.freeze({ beat: 'internet', from: 4.4, to: 10.4 }),
+  Object.freeze({ beat: 'binary', from: 0.3, to: 3.6 }),
+  Object.freeze({ beat: 'binary', from: 3.65, to: 7.3 }),
+  Object.freeze({ beat: 'server', from: 0.8, to: 4.6 }),
+  Object.freeze({ beat: 'server', from: 4.7, to: 7.6 }),
   Object.freeze({ beat: 'server', from: 8.1, to: 12.6 }),
-  Object.freeze({ beat: 'back', from: 0.3, to: 4.0 }),
-  Object.freeze({ beat: 'back', from: 4.1, to: 8.0 }),
+  Object.freeze({ beat: 'back', from: 0.3, to: 4.2 }),
+  Object.freeze({ beat: 'back', from: 4.3, to: 8.0 }),
 ]);
 
 /**
