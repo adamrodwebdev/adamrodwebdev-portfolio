@@ -150,6 +150,10 @@ Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefe
 - **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs. Un caractère absent passe à la police suivante de la pile.
 - **La remplacer** : refaire le fichier depuis la fonderie, le déposer sous un **nouveau nom** (`clivage-v2.woff2`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
 
+## Sélection du texte (1.14.1)
+
+Les **titres et l'interface** ne se sélectionnent pas (`user-select: none`, et `-webkit-touch-callout: none` contre le menu de l'appui long d'un téléphone) : une sélection couvrait le hero et les titres de pavés dorés. Les **textes, les coordonnées et les mentions légales** restent sélectionnables, pour copier une adresse, traduire, ou faire lire la sélection à voix haute (iOS et Android) ; leur sélection (`::selection`) est un voile doré qui garde la couleur du texte. La liste des éléments d'interface est en tête de `css/style.css` ; un nouvel élément d'interface s'y ajoute, un nouveau texte n'a rien à faire. Un test le vérifie.
+
 ## Traductions (cinq langues, 1.10.0)
 
 Le site existe en français (`/`), en anglais (`/en/`), en russe (`/ru/`), en italien (`/it/`) et en espagnol (`/es/`). Un menu dans l'en-tête (un `<details>`, utilisable sans JavaScript) mène de l'une à l'autre en gardant la section affichée ; le pied de page liste aussi les autres langues.
