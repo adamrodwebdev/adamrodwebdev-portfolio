@@ -1,8 +1,8 @@
 /**
  * L'entrée de /learn/ (1.14.0), chargée une fois le premier affichage signalé : elle monte l'épisode et
  * son lecteur. Avec `?film`, la page ne montre que la scène, sans sous-titres (l'habillage du film les
- * dessine par langue), et expose `window.EPISODE` pour l'outil de tournage : la durée, `render(t)` et
- * `ready`, la promesse des polices chargées.
+ * dessine par langue), et expose `window.EPISODE` pour l'outil de tournage : la durée, les temps des
+ * sous-titres, `render(t)` et `ready`, la promesse des polices chargées.
  */
 import { cleanText, textLength } from '../input.js';
 import { Direction } from './episode01.js';
@@ -15,12 +15,20 @@ const CAPTION_MAX = 80;
 /** Les graisses que la scène emploie : le film les attend avant sa première image. */
 const FACES = Object.freeze(['500 20px Barlow', '600 20px Barlow']);
 
-/** Les sous-titres de la page, lus à la porte : du texte nettoyé, borné, sinon rien. */
+/** Les retours à la ligne et tabulations : un sous-titre tient en une phrase, il n'en a aucun. */
+const BREAKS = /[\t\n\v\f\r\u2028\u2029]/u;
+
+/**
+ * Les sous-titres de la page, lus à la porte : du texte nettoyé, borné, sinon rien. Les espaces
+ * insécables restent (« Internet : », « page ? ») : le nettoyage d'une ligne les changerait en espaces
+ * simples, et le sous-titre pourrait se couper avant ses deux-points. Le texte est donc nettoyé comme un
+ * texte de plusieurs lignes, puis refusé s'il en a plusieurs ; les espaces simples répétées n'en font qu'une.
+ */
 function readCaptions(list) {
   if (!list) return [];
   return [...list.querySelectorAll('[data-caption]')].map((item) => {
-    const text = cleanText(item.textContent ?? '');
-    return text && textLength(text) <= CAPTION_MAX ? text : '';
+    const text = cleanText(item.textContent ?? '', true).replace(/ {2,}/g, ' ');
+    return text && !BREAKS.test(text) && textLength(text) <= CAPTION_MAX ? text : '';
   });
 }
 
@@ -59,6 +67,8 @@ if (root) {
     episode.render(0);
     window.EPISODE = Object.freeze({
       duration: episode.duration,
+      // Les temps des sous-titres ({ index, start, end }, secondes) : l'habillage du film les dessine par langue.
+      captions: Object.freeze(episode.captionTimes.map((caption) => Object.freeze({ ...caption }))),
       render: (t) => episode.render(t),
       ready: fontsReady(),
     });
