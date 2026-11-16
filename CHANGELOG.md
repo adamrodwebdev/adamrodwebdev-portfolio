@@ -15,6 +15,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - Russe : la signature n'a pas de cyrillique ; les titres gardent les polices système, comme avec Rajdhani, mais le logo, le titre du hero et les numéros, en latin, restent en signature.
 
 ### Performance
+- **Les animations de la signature jouent par paliers** (une quinzaine d'états au lieu d'une image par trame) : chaque état recalcule la mise en forme des grandes lettres variables. Le travail de style et de mise en page au chargement retombe d'environ 3,5 s à 1 s (temps simulé par Lighthouse), moins qu'avant le changement de police, et la note ne flanche plus quand la machine est occupée. Par paliers, le signal saute puis se rétablit.
 - **Rien ne bouge quand la signature arrive** : elle reprend la hauteur de capitale, la boîte de ligne et les chasses de Rajdhani, et son repli calé (Arial Bold à 76,7 %, déclaré dans la feuille copiée dans chaque page) sert dès le premier affichage.
 
 ### Qualité
