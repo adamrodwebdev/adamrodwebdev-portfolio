@@ -91,9 +91,21 @@
   font-family: "Clivage Fallback";
   src: local("Arial Bold"), local("Arial-BoldMT");
   font-weight: 100 900;
+  unicode-range: U+0000-03FF, U+0460-FFFF;
   size-adjust: 76.7%;
   ascent-override: 121.25%;
   descent-override: 45.11%;
+  line-gap-override: 0%;
+}
+/* Le russe (1.15.0) : ses propres mesures, calculées sur les titres, menus et boutons russes du site */
+@font-face {
+  font-family: "Clivage Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 100 900;
+  unicode-range: U+0400-045F;
+  size-adjust: 77.95%;
+  ascent-override: 119.31%;
+  descent-override: 44.39%;
   line-gap-override: 0%;
 }
 
@@ -1055,6 +1067,10 @@ span.sound-deck__viz {
   display: grid; background: var(--bg); border: 1px solid var(--line);
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
+/* Fermé, le menu des langues n'est pas mis en page (1.15.0). Un navigateur qui met en page le contenu d'un
+   <details> fermé (le Chrome sans écran de Lighthouse le fait) téléchargeait la signature cyrillique pour le
+   seul « Русский », et la page entière se recomposait à son arrivée. Elle ne vient plus qu'à l'ouverture. */
+.lang-menu:not([open]) .lang-menu__list { display: none; }
 .lang-menu__list a {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 0 12px;
   text-decoration: none; color: var(--fg); font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: 0.04em;
@@ -1090,9 +1106,8 @@ span.sound-deck__viz {
   .burger { display: grid; }
 }
 
-/* Russe : la signature et Barlow n'ont pas de cyrillique. Polices système qui en ont, plutôt qu'un mélange au
-   hasard ; le logo, le titre du hero et les numéros, en latin, gardent la signature (--font-signature). */
+/* Russe : la signature parle russe (1.15.0), l'affichage la garde. Barlow n'a pas de cyrillique : le texte
+   courant prend des polices système qui en ont, plutôt qu'un mélange au hasard. */
 :root:lang(ru) {
-  --font-display: "Bahnschrift", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
 }

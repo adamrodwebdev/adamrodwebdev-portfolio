@@ -300,8 +300,26 @@ test('police signature : tout l’affichage en Clivage, le texte courant en Barl
   expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
   // Une seule graisse, déclarée pour toutes : le navigateur ne simule aucun gras
   expect(await page.evaluate((family) => [...document.fonts].find((face) => face.family.replace(/["']/g, '') === family).weight, SIGNATURE)).toBe('100 900');
-  expect(fonts.some((path) => path === '/fonts/clivage-v1.woff2')).toBe(true);
+  expect(fonts.some((path) => path === '/fonts/clivage-v2-latin.woff2')).toBe(true);
+  // Une page latine ne télécharge pas le fichier cyrillique (1.15.0)
+  expect(fonts.filter((path) => path.includes('cyrillic'))).toEqual([]);
   expect(fonts.filter((path) => path.includes('rajdhani'))).toEqual([]);
+});
+
+test('police signature : le menu des langues fermé n’est pas mis en page, le cyrillique ne vient qu’à son ouverture (1.15.0)', async ({ page }) => {
+  const fonts = [];
+  page.on('request', (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  const list = page.locator('#nav-app .lang-menu__list');
+  // Sans boîte, « Русский » ne demande aucune police (Lighthouse mettait en page le <details> fermé)
+  expect(await list.evaluate((element) => getComputedStyle(element).display)).toBe('none');
+  expect(fonts.filter((path) => path.includes('cyrillic'))).toEqual([]);
+  await page.locator('#nav-app .lang-menu summary').click();
+  const russian = list.getByRole('link', { name: 'Русский' });
+  await expect(russian).toBeVisible();
+  await expect.poll(() => fonts.includes('/fonts/clivage-v2-cyrillic.woff2')).toBe(true);
+  expect(await fontOf(russian)).toMatch(/^Clivage, "Clivage Fallback"/);
 });
 
 test('police signature : chaque titre arrive brisé et se répare, le hero se brise puis se répare', async ({ page }) => {
@@ -340,12 +358,20 @@ test('police signature : aucun contour CSS, qui tracerait ses lignes de cassure'
   }
 });
 
-test('police signature : en russe, le logo et le titre du hero la gardent, les titres passent aux polices système', async ({ page }) => {
+test('police signature : en russe aussi, tout l’affichage en Clivage, ses deux fichiers chargés (1.15.0)', async ({ page }) => {
+  const fonts = [];
+  page.on('request', (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); });
   await page.goto('/ru/');
   await page.waitForLoadState('networkidle');
-  expect(await fontOf(page.locator('.brand__name').first())).toMatch(/^Clivage,/);
-  expect(await fontOf(page.locator('.hero__title'))).toMatch(/^Clivage,/);
-  expect(await fontOf(page.locator('#services-title'))).toMatch(/^Bahnschrift/);
+  await page.evaluate(() => document.fonts.ready);
+  for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, "Clivage Fallback"/);
+  }
+  // Barlow n'a pas de cyrillique : le texte courant russe garde les polices système
+  expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^"Segoe UI"/);
+  expect(fonts.filter((path) => path.startsWith('/fonts/clivage-')).sort()).toEqual(['/fonts/clivage-v2-cyrillic.woff2', '/fonts/clivage-v2-latin.woff2']);
+  const faces = await page.evaluate(() => [...document.fonts].filter((face) => face.family.replace(/["']/g, '') === 'Clivage').map((face) => face.status));
+  expect(faces).toEqual(['loaded', 'loaded']);
 });
 
 test('police signature : son arrivée ne décale rien (repli calé sur ses mesures)', async ({ page }) => {
@@ -354,15 +380,18 @@ test('police signature : son arrivée ne décale rien (repli calé sur ses mesur
     ['#accueil .hero__title', '#accueil .hero__status', '#accueil .hero__actions', '.site-header .brand__name',
       '#services-title', '#projets-title', '#methode-title', '#bande-son-title', '#contact-title']
       .map((selector) => [selector, Math.round(document.querySelector(selector).getBoundingClientRect().height)])));
-  // D'abord sans la signature (le repli seul), puis avec
-  await page.route('**/fonts/clivage-*.woff2', (route) => route.abort());
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  const fallback = await boxes();
-  await page.unroute('**/fonts/clivage-*.woff2');
-  await page.goto('/');
-  await signatureLoaded(page);
-  expect(await boxes()).toEqual(fallback);
+  // D'abord sans la signature (le repli seul), puis avec ; en latin et en russe (1.15.0)
+  for (const path of ['/', '/ru/']) {
+    await page.route('**/fonts/clivage-*.woff2', (route) => route.abort());
+    await page.goto(path);
+    await page.waitForLoadState('networkidle');
+    const fallback = await boxes();
+    await page.unroute('**/fonts/clivage-*.woff2');
+    await page.goto(path);
+    await page.waitForLoadState('networkidle');
+    await page.evaluate(() => document.fonts.ready);
+    expect(await boxes(), path).toEqual(fallback);
+  }
 });
 
 test('police signature : le hero, les titres et le logo tiennent dans l’écran, de 320 à 2560 px', async ({ page, isMobile }) => {
