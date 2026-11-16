@@ -62,6 +62,37 @@ export const SERVER = Object.freeze({ x: 600, y: 320, width: 160, height: 200, u
 /** Le fond déborde largement du monde : la caméra peut reculer au-delà pour le plan large. */
 export const GROUND = Object.freeze({ x: -600, y: -600, width: 2100, height: 2800 });
 
+/**
+ * Internet quand le globe s'ouvre (épisode 1) : des téléphones, des ordinateurs portables et des
+ * serveurs, reliés par des câbles (des traits) ; les téléphones parlent aussi par ondes radio (des arcs).
+ * Dans le coin sombre entre le serveur et le téléphone, à droite du plan.
+ */
+export const NETWORK = Object.freeze({
+  nodes: Object.freeze([
+    Object.freeze({ id: 'a', kind: 'laptop', x: 548, y: 612 }),
+    Object.freeze({ id: 'b', kind: 'phone', x: 650, y: 590 }),
+    Object.freeze({ id: 'c', kind: 'rack', x: 734, y: 650 }),
+    Object.freeze({ id: 'd', kind: 'phone', x: 612, y: 704 }),
+    Object.freeze({ id: 'e', kind: 'laptop', x: 722, y: 752 }),
+    Object.freeze({ id: 'f', kind: 'phone', x: 520, y: 716 }),
+  ]),
+  /** Les câbles, de nœud à nœud ; « globe » est le globe d'Internet. */
+  links: Object.freeze([
+    ['globe', 'a'], ['a', 'b'], ['b', 'c'], ['a', 'd'], ['d', 'e'], ['c', 'e'], ['d', 'f'], ['f', 'globe'],
+  ]),
+  /** Les appareils qui parlent par ondes radio (Wi-Fi, 4G). */
+  waves: Object.freeze(['b', 'd', 'f']),
+});
+
+/** Le jour et la nuit au-dessus du serveur : il reste allumé. */
+export const DAY_NIGHT = Object.freeze({ x: 680, y: 284, r: 17 });
+
+/** Le plateau du serveur, sous la baie : il y pose les trois documents, comme un serveur au restaurant. */
+export const TRAY = Object.freeze({ x: 610, y: 566, width: 140 });
+
+/** Un document : sa largeur et sa hauteur, le coin plié. */
+export const DOC = Object.freeze({ width: 30, height: 40, fold: 9 });
+
 /** Le téléphone, son écran, la barre du navigateur et la zone de la page. */
 export const PHONE = Object.freeze({ x: 180, y: 740, width: 300, height: 500, radius: 40 });
 export const SCREEN = Object.freeze({ x: 192, y: 752, width: 276, height: 476, radius: 30 });

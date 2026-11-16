@@ -3,9 +3,34 @@
  * serveur, téléphone et son navigateur), puis un état appliqué à chaque image. Elle ne décide rien :
  * la mise en scène (episode01.js) calcule l'état à partir du temps, la scène le peint.
  */
-import { BAR, GLOBE, GROUND, INK, LINES, PAGE, PHONE, SCREEN, SERVER, STATIONS, WORLD, linePoints, pointAlong, polylineLength } from './world.js';
+import { BAR, DAY_NIGHT, DOC, GLOBE, GROUND, INK, LINES, NETWORK, PAGE, PHONE, SCREEN, SERVER, STATIONS, TRAY, WORLD, linePoints, pointAlong, polylineLength } from './world.js';
 import { fixed, svg, svgText } from './svg.js';
 import { lerp } from './ease.js';
+
+/**
+ * L'écran du téléphone quand une mise en scène n'en dit rien : tout caché. Chaque épisode ne donne que
+ * ce qu'il montre (`{ ...SCREEN_DEFAULTS, links: 1 }`).
+ */
+export const SCREEN_DEFAULTS = Object.freeze({
+  links: 0,
+  ripple: Object.freeze({ r: 0, opacity: 0 }),
+  loading: 0,
+  wait: 0,
+  spin: 0,
+  received: Object.freeze([0, 0, 0]),
+  file: 0,
+  code: Object.freeze([0, 0, 0, 0]),
+  page: 0,
+  boxes: Object.freeze([{ shown: 0 }, { shown: 0 }, { shown: 0 }, { shown: 0 }]),
+  dress: 0,
+  badges: 0,
+  badge: 'html',
+  pop: 0,
+  likes: 0,
+});
+
+/** La couleur d'un document, celle de la ligne qui le porte. */
+const DOC_COLOURS = Object.freeze({ html: '#ff4b44', css: '#4d86ff', js: '#ffb400' });
 
 /** Les boîtes de la page qui se construit, dans la zone de la page. */
 const BOXES = Object.freeze([
@@ -41,9 +66,95 @@ export class Scene {
     this.lines = Object.fromEntries(LINES.map((line) => [line.key, this.#line(line)]));
     this.stations = this.#stations();
     this.#globe();
+    this.network = this.#network();
     this.server = this.#server();
+    this.dayNight = this.#dayNight();
+    this.tray = this.#tray();
     this.phone = this.#phone();
+    this.docs = this.#docs();
     this.token = this.#token();
+  }
+
+  /** Un document : une feuille au coin plié, de la couleur de sa ligne, deux traits pour son texte. Centré sur 0. */
+  #document(parent, colour) {
+    const { width: w, height: h, fold: f } = DOC;
+    const group = svg('g', {}, parent);
+    svg('path', { d: `M${-w / 2} ${-h / 2}h${w - f}l${f} ${f}v${h - f}h${-w}Z`, fill: colour, stroke: INK.ground, 'stroke-width': 3, 'stroke-linejoin': 'round' }, group);
+    svg('path', { d: `M${w / 2 - f} ${-h / 2}v${f}h${f}`, fill: 'none', stroke: INK.ground, 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, group);
+    for (const [y, length] of [[-3, 18], [6, 12]]) svg('line', { x1: -w / 2 + 6, y1: y, x2: -w / 2 + 6 + length, y2: y, stroke: INK.ground, 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-opacity': 0.55 }, group);
+    return group;
+  }
+
+  /**
+   * Internet, ouvert : des appareils (téléphones, portables, serveurs) reliés par des câbles que la
+   * plume trace, des ondes radio autour des téléphones, et des messages qui filent sur les câbles.
+   */
+  #network() {
+    const group = svg('g', { opacity: 0 }, this.root);
+    const at = (id) => (id === 'globe' ? { x: GLOBE.x, y: GLOBE.y } : NETWORK.nodes.find((node) => node.id === id));
+    const links = NETWORK.links.map(([from, to]) => {
+      const a = at(from);
+      const b = at(to);
+      const length = Math.hypot(b.x - a.x, b.y - a.y);
+      const line = svg('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: INK.cream, 'stroke-width': 3, 'stroke-opacity': 0.55, 'stroke-dasharray': `${fixed(length)} ${fixed(length)}`, 'stroke-dashoffset': fixed(length) }, group);
+      const pulse = svg('circle', { r: 5, fill: '#22c37b', opacity: 0 }, group);
+      return { a, b, length, line, pulse };
+    });
+    const waves = NETWORK.waves.map((id) => {
+      const node = at(id);
+      const arcs = svg('g', { fill: 'none', stroke: INK.cream, 'stroke-width': 3, 'stroke-linecap': 'round', opacity: 0 }, group);
+      for (const r of [16, 26]) svg('path', { d: `M${node.x + r * 0.7} ${node.y - 22 - r * 0.7}a${r} ${r} 0 0 1 0 ${fixed(r * 1.4)}`, transform: `rotate(-45 ${node.x} ${node.y - 22})` }, arcs);
+      return arcs;
+    });
+    const nodes = NETWORK.nodes.map((node) => {
+      const item = svg('g', { transform: `translate(${node.x} ${node.y})` }, group);
+      const draw = { fill: INK.groundGlow, stroke: INK.cream, 'stroke-width': 3, 'stroke-linejoin': 'round' };
+      if (node.kind === 'phone') {
+        svg('rect', { x: -10, y: -17, width: 20, height: 34, rx: 5, ...draw }, item);
+      } else if (node.kind === 'laptop') {
+        svg('rect', { x: -17, y: -13, width: 34, height: 22, rx: 3, ...draw }, item);
+        svg('path', { d: 'M-23 12h46', stroke: INK.cream, 'stroke-width': 4, 'stroke-linecap': 'round' }, item);
+      } else {
+        svg('rect', { x: -14, y: -19, width: 28, height: 38, rx: 4, ...draw }, item);
+        for (const y of [-9, 1, 11]) svg('line', { x1: -7, y1: y, x2: 7, y2: y, stroke: INK.muted, 'stroke-width': 2.5, 'stroke-linecap': 'round' }, item);
+      }
+      return item;
+    });
+    return { group, links, waves, nodes };
+  }
+
+  /** Le jour et la nuit au-dessus du serveur : un soleil qui devient une lune, et revient. */
+  #dayNight() {
+    const { x, y, r } = DAY_NIGHT;
+    const group = svg('g', { opacity: 0 }, this.root);
+    const sun = svg('g', {}, group);
+    svg('circle', { cx: x, cy: y, r: r * 0.62, fill: '#ffb400' }, sun);
+    for (let k = 0; k < 8; k++) {
+      const angle = (k * Math.PI) / 4;
+      svg('line', { x1: fixed(x + Math.cos(angle) * r * 0.9), y1: fixed(y + Math.sin(angle) * r * 0.9), x2: fixed(x + Math.cos(angle) * r * 1.3), y2: fixed(y + Math.sin(angle) * r * 1.3), stroke: '#ffb400', 'stroke-width': 3, 'stroke-linecap': 'round' }, sun);
+    }
+    // Un croissant : le demi-cercle de gauche, refermé par un arc plus plat ; il s'ouvre vers la droite.
+    const flat = r * 1.35;
+    const moon = svg('path', { d: `M${x} ${y - r}A${r} ${r} 0 0 0 ${x} ${y + r}A${fixed(flat)} ${fixed(flat)} 0 0 1 ${x} ${y - r}Z`, fill: INK.cream }, group);
+    return { group, sun, moon };
+  }
+
+  /** Le plateau du serveur et ses trois documents, qui glissent hors de la baie. */
+  #tray() {
+    const group = svg('g', { opacity: 0 }, this.root);
+    svg('path', { d: `M${TRAY.x} ${TRAY.y}h${TRAY.width}`, stroke: INK.gold, 'stroke-width': 5, 'stroke-linecap': 'round' }, group);
+    svg('path', { d: `M${TRAY.x + 8} ${TRAY.y + 2}l10 10h${TRAY.width - 36}l10 -10`, fill: 'none', stroke: INK.gold, 'stroke-width': 3, 'stroke-linejoin': 'round' }, group);
+    const docs = ['html', 'css', 'js'].map((key) => this.#document(group, DOC_COLOURS[key]));
+    return { group, docs };
+  }
+
+  /** Les trois documents qui reviennent au téléphone, chacun sur sa ligne (rouge, bleue, ambre), sans nom encore. */
+  #docs() {
+    return Object.fromEntries(['html', 'css', 'js'].map((key) => {
+      const group = svg('g', { opacity: 0 }, this.root);
+      this.#document(group, DOC_COLOURS[key]);
+      return [key, group];
+    }));
   }
 
   #defs() {
@@ -145,9 +256,21 @@ export class Scene {
       progress,
       links: this.#links(screen),
       wait: this.#wait(screen),
+      received: this.#received(screen),
       file: this.#file(screen),
       boxes: this.#boxes(screen),
     };
+  }
+
+  /** Les trois documents arrivés sur l'écran (fin de l'épisode 1) : pas encore ouverts. */
+  #received(parent) {
+    const cy = PAGE.y + PAGE.height / 2;
+    return ['html', 'css', 'js'].map((key, k) => {
+      const group = svg('g', { opacity: 0 }, parent);
+      const inner = svg('g', { transform: `translate(${PAGE.x + PAGE.width / 2 + (k - 1) * 70} ${cy}) scale(1.9)` }, group);
+      this.#document(inner, DOC_COLOURS[key]);
+      return group;
+    });
   }
 
   /** Avant la demande : une page de liens, et le doigt qui touche le premier. */
@@ -254,8 +377,71 @@ export class Scene {
       station.halo.setAttribute('fill-opacity', fixed(0.22 * state.flash[key]));
     }
     this.server.leds.forEach((led, k) => led.setAttribute('opacity', fixed(state.server.leds[k] ?? 0.35)));
-    this.#applyToken(state.token);
-    this.#applyScreen(state.screen);
+    // Les parties qu'un épisode n'emploie pas restent cachées : chaque mise en scène ne donne que les siennes.
+    this.#applyNetwork(state.network ?? null);
+    this.#applyDayNight(state.dayNight ?? null);
+    this.#applyTray(state.tray ?? null);
+    this.#applyDocs(state.docs ?? {});
+    this.#applyToken(state.token ?? null);
+    this.#applyScreen({ ...SCREEN_DEFAULTS, ...state.screen });
+  }
+
+  /** Internet ouvert : apparition des appareils, câbles tracés, ondes, et messages qui filent sur les câbles. */
+  #applyNetwork(network) {
+    const { group, links, waves, nodes } = this.network;
+    group.setAttribute('opacity', fixed(network ? network.shown : 0));
+    if (!network) return;
+    links.forEach((link, k) => {
+      link.line.setAttribute('stroke-dashoffset', fixed(link.length * (1 - network.drawn)));
+      // Un message par câble, décalé d'un câble à l'autre : il va et vient tant que le réseau est ouvert.
+      const f = (network.flow + k * 0.37) % 1;
+      const along = f < 0.5 ? f * 2 : 2 - f * 2;
+      link.pulse.setAttribute('cx', fixed(lerp(link.a.x, link.b.x, along)));
+      link.pulse.setAttribute('cy', fixed(lerp(link.a.y, link.b.y, along)));
+      link.pulse.setAttribute('opacity', fixed(network.drawn >= 1 ? network.shown : 0));
+    });
+    waves.forEach((arcs) => arcs.setAttribute('opacity', fixed(network.waves)));
+    nodes.forEach((node, k) => {
+      const s = Math.min(1, Math.max(0, network.drawn * 1.6 - k * 0.1));
+      node.setAttribute('opacity', fixed(s));
+    });
+  }
+
+  /** Le soleil et la lune au-dessus du serveur : `night` va de 0 (jour) à 1 (nuit). */
+  #applyDayNight(dayNight) {
+    const { group, sun, moon } = this.dayNight;
+    group.setAttribute('opacity', fixed(dayNight ? dayNight.shown : 0));
+    if (!dayNight) return;
+    sun.setAttribute('opacity', fixed(1 - dayNight.night));
+    moon.setAttribute('opacity', fixed(dayNight.night));
+  }
+
+  /** Le plateau : chaque document glisse de la baie (au-dessus) jusqu'à sa place sur le plateau. */
+  #applyTray(tray) {
+    const { group, docs } = this.tray;
+    group.setAttribute('opacity', fixed(tray ? tray.shown : 0));
+    if (!tray) return;
+    docs.forEach((doc, k) => {
+      const f = tray.docs[k] ?? 0;
+      const x = TRAY.x + 30 + k * 40;
+      const y = lerp(SERVER.y + SERVER.height - 40, TRAY.y - DOC.height / 2 - 3, f);
+      doc.setAttribute('transform', `translate(${fixed(x)} ${fixed(y)})`);
+      doc.setAttribute('opacity', fixed(Math.min(1, f * 3)));
+    });
+  }
+
+  /** Les documents qui reviennent au téléphone, chacun sur sa ligne. */
+  #applyDocs(docs) {
+    for (const [key, group] of Object.entries(this.docs)) {
+      const doc = docs[key];
+      if (!doc) {
+        group.setAttribute('opacity', 0);
+        continue;
+      }
+      const [x, y] = pointAlong(this.lines[key].points, doc.along);
+      group.setAttribute('opacity', fixed(Math.min(1, doc.scale * 1.5)));
+      group.setAttribute('transform', `translate(${fixed(x)} ${fixed(y)}) scale(${fixed(doc.scale)})`);
+    }
   }
 
   #applyToken(token) {
@@ -276,7 +462,12 @@ export class Scene {
   }
 
   #applyScreen(screen) {
-    const { links, wait, file, boxes, dressedPage, progress } = this.phone;
+    const { links, wait, received, file, boxes, dressedPage, progress } = this.phone;
+    received.forEach((doc, k) => {
+      const f = screen.received[k] ?? 0;
+      doc.setAttribute('opacity', fixed(Math.min(1, f * 1.5)));
+      doc.setAttribute('transform', `translate(0 ${fixed(18 * (1 - f))})`);
+    });
     links.group.setAttribute('opacity', fixed(screen.links));
     links.ripple.setAttribute('r', fixed(screen.ripple.r));
     links.ripple.setAttribute('opacity', fixed(screen.ripple.opacity));

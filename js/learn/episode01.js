@@ -1,75 +1,78 @@
 /**
- * La mise en scène de l'épisode 1, « Que se passe-t-il quand on ouvre une page web ? » (1.14.0) :
- * l'état de la scène à chaque instant, calculé à partir du temps seulement (aucune horloge, aucun
- * hasard). Le film image par image et la page interactive appellent la même fonction.
+ * La mise en scène de l'épisode 1, « Le voyage d'une page » (1.14.0) : l'état de la scène à chaque
+ * instant, calculé à partir du temps seulement (aucune horloge, aucun hasard). Le film image par image
+ * et la page interactive appellent la même fonction.
  *
- * Six battements : demander, répondre, construire, habiller, réveiller, fini. Chaque moment est écrit
- * en secondes « prévues » dans son battement ; quand la voix fixe la vraie durée d'un battement, ses
- * moments s'étirent avec lui.
+ * On part du principe que la personne qui écoute ne connaît rien : chaque mot de la voix est défini
+ * avant d'être employé, et l'image montre ce que la voix définit. Six battements, sur les cinq phrases
+ * de la voix : le lien et le message ; Internet ; le binaire ; le serveur (et le restaurant) ; le
+ * retour des trois documents ; la fin. Chaque moment est écrit en secondes « prévues » dans son
+ * battement ; quand la voix fixe la vraie durée d'un battement, ses moments s'étirent avec lui.
  */
 import { EASE, clamp, phase, pulse } from './ease.js';
 import { Shots } from './camera.js';
 import { Timeline } from './timeline.js';
 import { LINES, STATIONS, fractionNear, linePoints, pointAlong } from './world.js';
 
-/**
- * Les battements tels que prévus avant la voix (secondes) : 43,3 s. L'image suit la langue la plus longue
- * à chaque battement, le français d'ordinaire ; ces durées laissent déjà ses sous-titres assez longtemps.
- */
+/** Les battements tels que prévus avant la voix (secondes) : 50,7 s, calés sur le français. */
 export const PLAN = Object.freeze([
-  Object.freeze({ id: 'ask', seconds: 7 }),
-  Object.freeze({ id: 'answer', seconds: 7.5 }),
-  Object.freeze({ id: 'build', seconds: 6 }),
-  Object.freeze({ id: 'dress', seconds: 8 }),
-  Object.freeze({ id: 'wake', seconds: 7 }),
-  Object.freeze({ id: 'done', seconds: 7.8 }),
+  Object.freeze({ id: 'ask', seconds: 10.5 }),
+  Object.freeze({ id: 'internet', seconds: 10.5 }),
+  Object.freeze({ id: 'binary', seconds: 6.5 }),
+  Object.freeze({ id: 'server', seconds: 12.7 }),
+  Object.freeze({ id: 'back', seconds: 8 }),
+  Object.freeze({ id: 'done', seconds: 2.5 }),
 ]);
 
 /**
- * Les dix sous-titres (leurs textes sont dans les traductions de la page), placés dans leur battement.
+ * Les sous-titres (leurs textes sont dans les traductions de la page), placés dans leur battement.
  * Chacun reste au moins (caractères ÷ 15) + 1,5 s à l'écran, en français comme en anglais (un test le
  * vérifie) : la voix fixera les vrais temps, langue par langue.
  */
 export const CAPTIONS = Object.freeze([
-  Object.freeze({ beat: 'ask', from: 0.3, to: 3.1 }),
-  Object.freeze({ beat: 'ask', from: 3.2, to: 6.9 }),
-  Object.freeze({ beat: 'answer', from: 0.2, to: 3.1 }),
-  Object.freeze({ beat: 'answer', from: 3.3, to: 7.4 }),
-  Object.freeze({ beat: 'build', from: 0.3, to: 5.9 }),
-  Object.freeze({ beat: 'dress', from: 0.3, to: 4.2 }),
-  Object.freeze({ beat: 'dress', from: 4.3, to: 7.95 }),
-  Object.freeze({ beat: 'wake', from: 0.3, to: 6.9 }),
-  Object.freeze({ beat: 'done', from: 0.1, to: 3.7 }),
-  Object.freeze({ beat: 'done', from: 3.8, to: 7.75 }),
+  Object.freeze({ beat: 'ask', from: 0.4, to: 3.2 }),
+  Object.freeze({ beat: 'ask', from: 3.25, to: 6.65 }),
+  Object.freeze({ beat: 'ask', from: 6.7, to: 10.4 }),
+  Object.freeze({ beat: 'internet', from: 0.3, to: 5.0 }),
+  Object.freeze({ beat: 'internet', from: 5.1, to: 10.4 }),
+  Object.freeze({ beat: 'binary', from: 0.3, to: 6.4 }),
+  Object.freeze({ beat: 'server', from: 0.3, to: 4.2 }),
+  Object.freeze({ beat: 'server', from: 4.3, to: 8.0 }),
+  Object.freeze({ beat: 'server', from: 8.1, to: 12.6 }),
+  Object.freeze({ beat: 'back', from: 0.3, to: 4.0 }),
+  Object.freeze({ beat: 'back', from: 4.1, to: 8.0 }),
 ]);
-
-/** La règle de lecture : un texte reste au moins (caractères ÷ 15) + 1,5 s entièrement à l'écran. */
-export const readSeconds = (text) => [...text].length / 15 + 1.5;
-
-/** Les voyages : chaque ligne tracée par sa plume, son jeton derrière elle (secondes prévues dans le battement). */
-const TRAVELS = Object.freeze([
-  Object.freeze({ line: 'request', beat: 'ask', from: 1.8, to: 4.8, label: '?' }),
-  Object.freeze({ line: 'html', beat: 'answer', from: 1.0, to: 4.2, label: 'index.html' }),
-  Object.freeze({ line: 'css', beat: 'dress', from: 0.8, to: 3.4, label: 'style.css' }),
-  Object.freeze({ line: 'js', beat: 'wake', from: 0.8, to: 3.2, label: 'script.js' }),
-]);
-
-/** Le jeton suit sa plume de ce retard (s) ; il apparaît et s'efface en ce temps (s). */
-const TOKEN_LAG = 0.3;
-const TOKEN_FADE = 0.25;
 
 /**
- * Les cadrages fixes { cx, cy, width } du monde. L'écran du téléphone (476 de haut) reste entre 24 % et
- * 78 % de la hauteur de l'image : la bande des sous-titres en haut garde le fond noir derrière elle, et
- * la légende des applis ne couvre pas la page. D'où une largeur de 500 au moins pour un plan de l'écran.
+ * Le message en binaire, tel qu'il voyage : « page? » en ASCII, huit bits par lettre. Le jeton en
+ * montre une fenêtre de huit chiffres qui défile ; ce sont de vrais bits, pas un décor.
+ */
+const BITS = [...'page?'].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
+const BITS_SHOWN = 8;
+/** Chiffres défilés par seconde. */
+const BITS_PER_SECOND = 9;
+
+/** Le jeton suit sa plume de ce retard (s) ; il apparaît et s'efface en ce temps (s). */
+const LAG = 0.3;
+const FADE = 0.25;
+
+/**
+ * Les cadrages fixes { cx, cy, width } du monde. Ceux de l'écran gardent le téléphone entre 24 % et
+ * 78 % de la hauteur (la bande des sous-titres au-dessus, la légende des applis en dessous).
  */
 const FRAMES = Object.freeze({
   screen: Object.freeze({ cx: 330, cy: 990, width: 520 }),
-  screenClose: Object.freeze({ cx: 330, cy: 994, width: 500 }),
-  server: Object.freeze({ cx: 630, cy: 460, width: 460 }),
-  // Tout le plan, du haut du serveur (320) au bas du téléphone (1240), entre 26 % et 78 % de la hauteur.
+  network: Object.freeze({ cx: 600, cy: 650, width: 560 }),
+  server: Object.freeze({ cx: 640, cy: 470, width: 480 }),
   wide: Object.freeze({ cx: 450, cy: 780, width: 1000 }),
 });
+
+/** Les trois documents qui reviennent : leur ligne, et leur départ décalé (secondes prévues dans « back »). */
+const RETURNS = Object.freeze([
+  Object.freeze({ line: 'html', from: 0.3, to: 3.6 }),
+  Object.freeze({ line: 'css', from: 0.6, to: 3.9 }),
+  Object.freeze({ line: 'js', from: 0.9, to: 4.2 }),
+]);
 
 export class Direction {
   /** @param {Timeline} timeline les vrais battements (par défaut, ceux prévus) */
@@ -80,8 +83,15 @@ export class Direction {
       if (!this.planned.has(beat.id)) throw new RangeError(`Battement inconnu de l'épisode 1 : ${beat.id}`);
     }
     this.paths = Object.fromEntries(LINES.map((line) => [line.key, linePoints(line)]));
-    this.internetAt = Object.fromEntries(LINES.map((line) => [line.key, fractionNear(this.paths[line.key], STATIONS.internet)]));
-    this.travels = TRAVELS.map((travel) => ({ ...travel, start: this.at(travel.beat, travel.from), end: this.at(travel.beat, travel.to) }));
+    this.internetAt = fractionNear(this.paths.request, STATIONS.internet);
+    // La demande en deux étapes : jusqu'au globe (fin de « ask »), puis du globe au serveur (« binary »).
+    this.request = {
+      start: this.at('ask', 6.8),
+      atGlobe: this.at('ask', 10.2),
+      leave: this.at('binary', 0.6),
+      arrive: this.at('binary', 5.4),
+    };
+    this.returns = RETURNS.map((item) => ({ ...item, start: this.at('back', item.from), end: this.at('back', item.to) }));
     this.camera = new Shots(this.#shots());
   }
 
@@ -100,27 +110,50 @@ export class Direction {
     return CAPTIONS.map((caption, index) => ({ index, start: this.at(caption.beat, caption.from), end: this.at(caption.beat, caption.to) }));
   }
 
-  /** Ce que la plume d'une ligne a tracé (0 à 1). */
+  /** Ce que la plume d'une ligne a tracé (0 à 1). La demande s'arrête au globe le temps d'Internet. */
   drawn(key, t) {
-    const travel = this.travels.find((candidate) => candidate.line === key);
-    return EASE.inOut(phase(t, travel.start, travel.end));
+    if (key === 'request') {
+      const { start, atGlobe, leave, arrive } = this.request;
+      if (t < leave) return EASE.inOut(phase(t, start, atGlobe)) * this.internetAt;
+      return this.internetAt + EASE.inOut(phase(t, leave, arrive)) * (1 - this.internetAt);
+    }
+    const item = this.returns.find((candidate) => candidate.line === key);
+    return EASE.inOut(phase(t, item.start, item.end));
   }
 
-  /** Le jeton en route au temps `t`, ou null. */
+  /** Le jeton de la demande : « ? », puis ses bits qui défilent une fois sorti d'Internet ; null hors de son voyage. */
   token(t) {
-    const travel = this.travels.find((candidate) => t >= candidate.start && t <= candidate.end + TOKEN_LAG + TOKEN_FADE);
-    if (!travel) return null;
-    const along = EASE.inOut(phase(t - TOKEN_LAG, travel.start, travel.end));
-    const appear = phase(t, travel.start, travel.start + TOKEN_FADE);
-    const leave = 1 - phase(t, travel.end + TOKEN_LAG, travel.end + TOKEN_LAG + TOKEN_FADE);
-    return { line: travel.line, label: travel.label, along, scale: EASE.out(Math.min(appear, leave)) };
+    const { start, arrive } = this.request;
+    if (t < start || t > arrive + LAG + FADE) return null;
+    const along = this.drawn('request', t - LAG);
+    const appear = phase(t, start, start + FADE);
+    const leave = 1 - phase(t, arrive + LAG, arrive + LAG + FADE);
+    const binary = t >= this.at('binary', 0.4);
+    const offset = Math.floor(t * BITS_PER_SECOND) % (BITS.length - BITS_SHOWN);
+    return {
+      line: 'request',
+      label: binary ? BITS.slice(offset, offset + BITS_SHOWN) : '?',
+      along,
+      scale: EASE.out(Math.min(appear, leave)),
+    };
   }
 
-  /** Le cadrage qui suit le jeton de la ligne `key` (avant le départ : sa gare de départ). */
+  /** Les trois documents en route vers le téléphone. */
+  docs(t) {
+    return Object.fromEntries(this.returns.map((item) => {
+      if (t < item.start || t > item.end + LAG + FADE) return [item.line, null];
+      const along = EASE.inOut(phase(t - LAG, item.start, item.end));
+      const appear = phase(t, item.start, item.start + FADE);
+      const leave = 1 - phase(t, item.end + LAG, item.end + LAG + FADE);
+      return [item.line, { along, scale: EASE.out(Math.min(appear, leave)) }];
+    }));
+  }
+
+  /** Le cadrage qui suit un point mobile d'une ligne (la demande, ou le premier document du retour). */
   #ride(key, width) {
-    const travel = this.travels.find((candidate) => candidate.line === key);
     return (t) => {
-      const [cx, cy] = pointAlong(this.paths[key], EASE.inOut(phase(t - TOKEN_LAG, travel.start, travel.end)));
+      const along = key === 'request' ? this.drawn('request', t - LAG) : EASE.inOut(phase(t - LAG, this.returns[0].start, this.returns[0].end));
+      const [cx, cy] = pointAlong(this.paths[key], along);
       return { cx, cy, width };
     };
   }
@@ -130,78 +163,82 @@ export class Direction {
     const at = (id, seconds) => this.at(id, seconds);
     return [
       { at: 0, blend: 0, frame: still(FRAMES.screen) },
-      { at: at('ask', 1.6), blend: 0.9, frame: this.#ride('request', 470) },
-      { at: at('ask', 4.7), blend: 1.0, frame: still(FRAMES.server) },
-      { at: at('answer', 1.0), blend: 0.8, frame: this.#ride('html', 470) },
-      { at: at('answer', 4.2), blend: 0.9, frame: still(FRAMES.screen) },
-      { at: at('build', 0), blend: 1.2, frame: still(FRAMES.screenClose) },
-      { at: at('dress', 0.3), blend: 0.8, frame: this.#ride('css', 560) },
-      { at: at('dress', 3.4), blend: 0.9, frame: still(FRAMES.screen) },
-      { at: at('wake', 0.3), blend: 0.8, frame: this.#ride('js', 560) },
-      { at: at('wake', 3.2), blend: 0.9, frame: still(FRAMES.screenClose) },
-      { at: at('done', 0), blend: 1.8, frame: still(FRAMES.wide) },
+      { at: at('ask', 6.5), blend: 1.0, frame: this.#ride('request', 470) },
+      { at: at('internet', 0.3), blend: 1.4, frame: still(FRAMES.network) },
+      { at: at('binary', 0.2), blend: 1.0, frame: this.#ride('request', 470) },
+      { at: at('server', 0.2), blend: 1.0, frame: still(FRAMES.server) },
+      { at: at('back', 0.3), blend: 1.0, frame: this.#ride('html', 560) },
+      { at: at('back', 4.4), blend: 1.0, frame: still(FRAMES.screen) },
+      { at: at('done', 0), blend: 1.6, frame: still(FRAMES.wide) },
     ];
   }
 
   /** Les stations allumées (0 à 1) et leurs éclats d'arrivée. */
   #stations(t) {
-    const request = this.drawn('request', t);
-    const responses = this.travels.filter((travel) => travel.line !== 'request');
-    const passed = (key) => clamp((this.drawn(key, t) - this.internetAt[key]) * 10);
+    const { start, atGlobe, arrive } = this.request;
     const flashAt = (times) => Math.max(0, ...times.map((time) => pulse(t, time + 0.15, 0.7)));
-    const reqTravel = this.travels[0];
-    const passTimes = this.travels.map((travel) => travel.start + (travel.end - travel.start) * this.internetAt[travel.line]);
     return {
       lit: {
-        phone: clamp(phase(t, reqTravel.start, reqTravel.start + 0.3)),
-        internet: Math.max(...LINES.map((line) => passed(line.key))),
-        server: clamp((request - 0.96) * 25),
+        phone: phase(t, start, start + 0.3),
+        internet: phase(t, atGlobe - 0.2, atGlobe + 0.1),
+        server: phase(t, arrive - 0.15, arrive + 0.15),
       },
       flash: {
-        phone: flashAt(responses.map((travel) => travel.end)),
-        internet: flashAt(passTimes),
-        server: flashAt([reqTravel.end]),
+        phone: flashAt(this.returns.map((item) => item.end)),
+        internet: flashAt([atGlobe]),
+        server: flashAt([arrive]),
       },
     };
   }
 
-  /** Les voyants du serveur : ils clignotent quand il prépare sa réponse et envoie ses fichiers. */
+  /** Les voyants du serveur : toujours allumés ; ils clignotent quand la demande arrive et quand il envoie. */
   #leds(t) {
-    const at = (id, seconds) => this.at(id, seconds);
-    const busy = [[at('ask', 4.6), at('answer', 1.2)], [at('dress', 0.4), at('dress', 1.0)], [at('wake', 0.4), at('wake', 1.0)]]
-      .some(([from, to]) => t >= from && t <= to);
-    return Array.from({ length: 6 }, (_, k) => (busy ? ((Math.floor(t * 9) + k * 2) % 3 === 0 ? 1 : 0.25) : 0.35));
+    const busy = [[this.request.arrive, this.at('server', 1.5)], [this.at('back', 0), this.at('back', 1.2)]].some(([from, to]) => t >= from && t <= to);
+    return Array.from({ length: 6 }, (_, k) => (busy ? ((Math.floor(t * 9) + k * 2) % 3 === 0 ? 1 : 0.35) : 0.9));
   }
 
-  /** L'écran du téléphone : liens, attente, fichier, puis la page qui se construit, s'habille et vit. */
-  #screen(t) {
-    const at = (id, seconds) => this.at(id, seconds);
-    const fade = (from, to) => phase(t, at(...from), at(...to));
-    const tap = at('ask', 0.7);
-    const tapping = phase(t, tap, tap + 0.6);
-    const loadingWindows = [
-      [at('ask', 1.4), at('build', 0.4), at('build', 0.8)],
-      [at('dress', 0.8), at('dress', 3.6), at('dress', 4.0)],
-      [at('wake', 0.8), at('wake', 3.4), at('wake', 3.8)],
-    ];
-    const loading = loadingWindows.reduce((value, [from, full, gone]) => (t >= from && t < gone ? Math.max(value, phase(t, from, full)) : value), 0);
-    const pops = [4.4, 5.3, 6.1].map((seconds) => at('wake', seconds));
-    const badge = t >= this.travels[3].end ? 'js' : t >= this.travels[2].end ? 'css' : 'html';
+  /** Internet ouvert : le globe s'ouvre sur les appareils, puis se referme quand le message repart. */
+  #network(t) {
+    const at = (seconds) => this.at('internet', seconds);
+    const shown = phase(t, at(0.2), at(1.0)) * (1 - phase(t, this.at('binary', 0.2), this.at('binary', 1.0)));
+    if (shown <= 0) return null;
     return {
-      links: 1 - fade(['ask', 1.4], ['ask', 1.7]),
+      shown,
+      drawn: EASE.inOut(phase(t, at(0.8), at(3.6))),
+      waves: phase(t, at(3.6), at(4.2)),
+      flow: (t * 0.45) % 1,
+    };
+  }
+
+  /** Le jour et la nuit au-dessus du serveur, le temps de dire qu'il reste allumé. */
+  #dayNight(t) {
+    const at = (seconds) => this.at('server', seconds);
+    const shown = phase(t, at(1.4), at(2.0)) * (1 - phase(t, at(7.0), at(7.6)));
+    if (shown <= 0) return null;
+    return { shown, night: 0.5 - Math.cos(2 * Math.PI * phase(t, at(2.4), at(6.6))) / 2 };
+  }
+
+  /** Le plateau : « tu demandes, il te l'apporte » ; il disparaît quand les documents partent. */
+  #tray(t) {
+    const at = (seconds) => this.at('server', seconds);
+    const shown = phase(t, at(7.4), at(8.0)) * (1 - phase(t, this.at('back', 0.3), this.at('back', 0.6)));
+    if (shown <= 0) return null;
+    return { shown, docs: [8.2, 8.7, 9.2].map((seconds) => EASE.snap(phase(t, at(seconds), at(seconds + 0.6)))) };
+  }
+
+  /** L'écran du téléphone : la page de liens, l'attente, puis les trois documents reçus. */
+  #screen(t) {
+    const tap = this.at('ask', 0.8);
+    const tapping = phase(t, tap, tap + 0.6);
+    const sent = this.request.start;
+    const arrived = this.returns.at(-1).end + LAG;
+    return {
+      links: 1 - phase(t, sent - 0.3, sent),
       ripple: { r: 34 * EASE.out(tapping), opacity: t >= tap ? 0.9 * (1 - tapping) : 0 },
-      loading,
-      wait: fade(['ask', 1.4], ['ask', 1.7]) * (1 - fade(['answer', 4.4], ['answer', 4.7])),
+      loading: t >= sent && t < arrived + 0.4 ? 0.92 * phase(t, sent, this.returns[0].end) + 0.08 * phase(t, arrived - 0.2, arrived) : 0,
+      wait: phase(t, sent - 0.3, sent) * (1 - phase(t, this.returns[0].end, this.returns[0].end + 0.3)),
       spin: (t * 432) % 360,
-      file: fade(['answer', 4.4], ['answer', 4.8]) * (1 - fade(['build', 0.3], ['build', 0.6])),
-      code: [4.8, 5.3, 5.8, 6.3].map((seconds) => phase(t, at('answer', seconds), at('answer', seconds + 0.25))),
-      page: fade(['build', 0.2], ['build', 0.5]),
-      boxes: [0.6, 1.4, 2.2, 3.0].map((seconds) => ({ shown: EASE.snap(phase(t, at('build', seconds), at('build', seconds + 0.45))) })),
-      dress: EASE.inOut(fade(['dress', 4.0], ['dress', 5.6])),
-      badges: 1 - fade(['done', 0], ['done', 0.8]),
-      badge,
-      pop: Math.max(0, ...pops.map((time) => pulse(t, time + 0.12, 0.36))),
-      likes: pops.filter((time) => t >= time).length,
+      received: this.returns.map((item) => EASE.snap(phase(t, item.end + LAG, item.end + LAG + 0.45))),
     };
   }
 
@@ -214,6 +251,10 @@ export class Direction {
       stations: stations.lit,
       flash: stations.flash,
       server: { leds: this.#leds(t) },
+      network: this.#network(t),
+      dayNight: this.#dayNight(t),
+      tray: this.#tray(t),
+      docs: this.docs(t),
       token: this.token(t),
       screen: this.#screen(t),
     };

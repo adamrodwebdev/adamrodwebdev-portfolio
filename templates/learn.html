@@ -110,6 +110,7 @@
     .learn-step--red { --dot: var(--learn-red); }
     .learn-step--blue { --dot: var(--learn-blue); }
     .learn-step--amber { --dot: var(--learn-amber); }
+    .learn-step--gold { --dot: var(--gold); }
     .learn-step[aria-current="step"] { color: var(--fg); border-color: var(--fg); }
     .learn-step:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     .learn-episode:not(.is-ready) .learn-controls,
@@ -120,6 +121,12 @@
     .learn-lines { display: grid; gap: 0.9rem; margin: 0; padding-left: 1.4rem; }
     .learn-lines li { padding-left: 0.3rem; font-size: var(--step-0); line-height: 1.55; }
     .learn-lines li::marker { color: var(--gold); font-weight: 700; }
+    .learn-glossary { max-width: 44rem; padding-block: 0 4rem; }
+    .learn-glossary h2 { font: 700 var(--step-2)/1.1 var(--font-display); margin: 0 0 1rem; }
+    .learn-words { display: grid; gap: 0.75rem; margin: 0; }
+    .learn-words div { display: grid; gap: 0.15rem; padding: 0.75rem 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .learn-words dt { font-weight: 700; color: var(--gold); }
+    .learn-words dd { margin: 0; line-height: 1.5; }
 
     /* Le tournage (?film) : la scène seule, plein cadre, sans sous-titres ni commandes. */
     .learn-film body { background: #000; }
@@ -190,6 +197,13 @@
       <ol class="learn-lines">
         [[@narration]]
       </ol>
+    </section>
+
+    <section class="learn-glossary container" aria-labelledby="learn-glossary">
+      <h2 id="learn-glossary">[[page.glossaryTitle]]</h2>
+      <dl class="learn-words">
+        [[@glossary]]
+      </dl>
     </section>
     <ol data-learn-captions hidden>
       [[@captions]]

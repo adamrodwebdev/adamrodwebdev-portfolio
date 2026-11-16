@@ -112,8 +112,8 @@ const LUMIRIFT = {
 const LEARN = {
   languages: ['fr', 'en'],
   entry: '/js/learn/main.js',
-  // La pastille de chaque battement prend la couleur de la ligne de métro qu'il emprunte.
-  beatColours: ['green', 'red', 'red', 'blue', 'amber', ''],
+  // La pastille de chaque battement prend la couleur de la ligne de métro qu'il emprunte (or : le serveur).
+  beatColours: ['green', 'green', 'green', 'gold', 'red', ''],
   // Classes que le module de la page ajoute lui-même : leurs règles restent dans la feuille copiée.
   runtimeClasses: ['is-dark', 'is-ready', 'learn-film'],
 };
@@ -248,6 +248,7 @@ export async function buildPages({ root, out, imports }) {
         .map((name, i) => `<li><button class="learn-step${LEARN.beatColours[i] ? ` learn-step--${LEARN.beatColours[i]}` : ''}" type="button" data-learn-dot>${escape(name)}</button></li>`)
         .join('\n        '),
       narration: page.narration.map((line) => `<li>${escape(line)}</li>`).join('\n        '),
+      glossary: page.glossary.map(([term, meaning]) => `<div><dt>${escape(term)}</dt><dd>${escape(meaning)}</dd></div>`).join('\n        '),
       captions: page.captions.map((caption) => `<li data-caption>${escape(caption)}</li>`).join('\n      '),
     }, `learn-${code}`);
     const css = purgeCss(siteCss, pageNames(html, LEARN.runtimeClasses), html);
