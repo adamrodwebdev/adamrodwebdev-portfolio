@@ -1,4 +1,4 @@
-// Tests unitaires de « Comment marche le Web » (1.14.0) : les parties pures de l'épisode, sans navigateur
+// Tests unitaires de « Comment marche le Web » (1.14.0) : les parties pures des épisodes, sans navigateur
 // (node --test). La scène, qui dessine dans le DOM, est vérifiée par les tests Playwright et le tournage.
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
@@ -6,7 +6,9 @@ import { EASE, clamp, phase, pulse } from '../../js/learn/ease.js';
 import { Timeline } from '../../js/learn/timeline.js';
 import { ASPECT, FOCUS, Shots, viewBoxOf } from '../../js/learn/camera.js';
 import { LINES, ROUTE, STATIONS, fractionNear, linePoints, offsetPath, pointAlong, polylineLength } from '../../js/learn/world.js';
-import { CAPTIONS, Direction, PLAN, readSeconds } from '../../js/learn/episode01.js';
+import { CAPTION_MAX, readSeconds } from '../../js/learn/captions.js';
+import { CAPTIONS, Direction, PLAN } from '../../js/learn/episode01.js';
+import { Direction as LanguagesBase } from '../../js/learn/episode02.js';
 import { learnPage } from '../../js/i18n/messages.js';
 
 const near = (a, b, epsilon = 1e-6) => Math.abs(a - b) <= epsilon;
@@ -94,21 +96,22 @@ describe('la caméra', () => {
   });
 });
 
-describe("la mise en scène de l'épisode 1", () => {
+describe("l'épisode 1, « Le voyage d'une page »", () => {
   const direction = new Direction();
+  const at = (id, seconds) => direction.at(id, seconds);
 
   it('dure ses battements prévus', () => {
     assert.ok(near(direction.duration, PLAN.reduce((sum, beat) => sum + beat.seconds, 0)));
   });
 
   it("dessine le même état pour le même instant, dans n'importe quel ordre (le film se tourne en désordre)", () => {
-    const times = [31.7, 0.9, 17.4, 4.0, 12.6];
+    const times = [40.1, 0.9, 17.0, 4.0, 30.5, 24.2];
     const first = times.map((t) => JSON.stringify(direction.state(t)));
     const again = [...times].reverse().map((t) => JSON.stringify(direction.state(t))).reverse();
     assert.deepEqual(again, first);
   });
 
-  it('trace chaque ligne une fois, sans jamais reculer', () => {
+  it('trace chaque ligne une fois, sans jamais reculer, et la finit', () => {
     for (const line of LINES) {
       let last = 0;
       for (let t = 0; t <= direction.duration; t += 0.1) {
@@ -120,25 +123,47 @@ describe("la mise en scène de l'épisode 1", () => {
     }
   });
 
-  it('montre un seul jeton à la fois, et aucun avant la demande ni à la fin', () => {
-    assert.equal(direction.token(0.5), null);
-    assert.equal(direction.token(direction.duration), null);
-    assert.equal(direction.token(direction.at('ask', 3)).label, '?');
-    assert.equal(direction.token(direction.at('answer', 2.5)).label, 'index.html');
+  it("arrête la demande au globe pendant qu'Internet s'ouvre", () => {
+    const atGlobe = direction.drawn('request', at('internet', 0.5));
+    assert.ok(near(direction.drawn('request', at('internet', 9.5)), atGlobe), 'immobile pendant Internet');
+    assert.ok(atGlobe > 0.3 && atGlobe < 0.75, `au globe : ${atGlobe}`);
   });
 
-  it('compte trois « j’aime » à la fin, et enlève les étiquettes de la page finie', () => {
-    const end = direction.state(direction.duration).screen;
-    assert.equal(end.likes, 3);
-    assert.equal(end.badges, 0);
-    assert.equal(end.dress, 1);
+  it('montre « ? » au départ, puis seulement des 0 et des 1 une fois dans le binaire', () => {
+    assert.equal(direction.token(at('ask', 1)), null, 'pas de message avant le lien touché');
+    assert.equal(direction.token(at('ask', 8)).label, '?');
+    for (let s = 0.5; s < 5.4; s += 0.37) {
+      const { label } = direction.token(at('binary', s));
+      assert.match(label, /^[01]{8}$/, `binaire à ${s.toFixed(2)} s`);
+    }
+    assert.equal(direction.token(direction.duration), null);
+  });
+
+  it('ouvre le réseau pour Internet seulement', () => {
+    assert.equal(direction.state(at('ask', 5)).network, null);
+    assert.ok(direction.state(at('internet', 5)).network.shown > 0.99);
+    assert.equal(direction.state(at('server', 5)).network, null);
+  });
+
+  it('fait passer le serveur du jour à la nuit et retour, puis sort trois documents sur le plateau', () => {
+    const cycle = (s) => direction.state(at('server', s)).dayNight.night;
+    assert.ok(cycle(2.4) < 0.01 && cycle(4.5) > 0.99 && cycle(6.6) < 0.01);
+    const tray = direction.state(at('server', 10.5)).tray;
+    assert.deepEqual(tray.docs.map((doc) => near(doc, 1, 1e-6)), [true, true, true]);
+  });
+
+  it('ramène les trois documents au téléphone, et les montre arrivés à la fin', () => {
+    assert.deepEqual(Object.values(direction.docs(at('ask', 3))), [null, null, null]);
+    const middle = direction.docs(at('back', 2));
+    assert.ok(['html', 'css', 'js'].every((key) => middle[key] && middle[key].along > 0 && middle[key].along < 1));
+    assert.deepEqual(direction.state(direction.duration).screen.received.map((f) => near(f, 1)), [true, true, true]);
   });
 
   it('étire ses moments avec la voix : un battement deux fois plus long garde son déroulé', () => {
-    const longer = new Direction(new Timeline(PLAN.map((beat) => ({ id: beat.id, seconds: beat.id === 'answer' ? beat.seconds * 2 : beat.seconds }))));
-    const half = direction.drawn('html', direction.at('answer', 2.6));
-    assert.ok(near(longer.drawn('html', longer.at('answer', 2.6)), half));
-    assert.ok(near(longer.at('answer', 7.5) - longer.at('answer', 0), 15));
+    const longer = new Direction(new Timeline(PLAN.map((beat) => ({ id: beat.id, seconds: beat.id === 'internet' ? beat.seconds * 2 : beat.seconds }))));
+    const net = (d) => d.state(d.at('internet', 2.2)).network.drawn;
+    assert.ok(near(net(longer), net(direction)));
+    assert.ok(near(longer.at('internet', 10.5) - longer.at('internet', 0), 21));
   });
 
   it('refuse une ligne de temps dont un battement lui est inconnu', () => {
@@ -150,10 +175,10 @@ describe("la mise en scène de l'épisode 1", () => {
     assert.equal(times.length, CAPTIONS.length);
     for (const lang of ['fr', 'en']) {
       const texts = learnPage[lang].captions;
-      assert.equal(texts.length, CAPTIONS.length, `${lang} : dix sous-titres`);
+      assert.equal(texts.length, CAPTIONS.length, `${lang} : autant de sous-titres que de places`);
       for (const { index, start, end } of times) {
         assert.ok(end - start >= readSeconds(texts[index]) - 1e-9, `${lang} n° ${index + 1} « ${texts[index]} » : ${(end - start).toFixed(2)} s pour ${readSeconds(texts[index]).toFixed(2)} s`);
-        assert.ok([...texts[index]].length <= 35, `${lang} n° ${index + 1} dépasse 35 caractères`);
+        assert.ok([...texts[index]].length <= CAPTION_MAX, `${lang} n° ${index + 1} dépasse ${CAPTION_MAX} caractères`);
       }
     }
   });
@@ -161,5 +186,19 @@ describe("la mise en scène de l'épisode 1", () => {
   it('ne fait jamais se chevaucher deux sous-titres', () => {
     const times = direction.captions();
     for (let k = 1; k < times.length; k++) assert.ok(times[k].start >= times[k - 1].end, `n° ${k} et ${k + 1}`);
+  });
+
+  it('a, dans chaque langue, autant de phrases de voix et de mots expliqués', () => {
+    assert.equal(learnPage.fr.narration.length, learnPage.en.narration.length);
+    assert.equal(learnPage.fr.glossary.length, learnPage.en.glossary.length);
+    assert.equal(learnPage.fr.beats.length, PLAN.length);
+    assert.equal(learnPage.en.beats.length, PLAN.length);
+  });
+});
+
+describe("la base de l'épisode 2 (pas encore branchée)", () => {
+  it('dessine toujours le même état pour le même instant', () => {
+    const base = new LanguagesBase();
+    assert.equal(JSON.stringify(base.state(20)), JSON.stringify(base.state(20)));
   });
 });
