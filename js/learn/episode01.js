@@ -99,6 +99,24 @@ export class Direction {
     this.camera = new Shots(this.#shots());
   }
 
+  /**
+   * La mise en scène sur des battements venus de l'extérieur (l'outil de tournage, d'après la voix), lus à
+   * la porte : les battements de l'épisode, tous et dans leur ordre ; chaque durée, la ligne de temps la
+   * vérifie (un nombre fini, plus de 0 et 120 s au plus, jamais converti).
+   * @param {unknown} beats
+   */
+  static retimed(beats) {
+    if (!Array.isArray(beats) || beats.length !== PLAN.length) {
+      throw new TypeError(`L'épisode 1 a ${PLAN.length} battements`);
+    }
+    return new Direction(new Timeline(beats.map((beat, i) => {
+      if (beat === null || typeof beat !== 'object' || beat.id !== PLAN[i].id) {
+        throw new TypeError(`Battement n° ${i + 1} : « ${PLAN[i].id} » attendu`);
+      }
+      return { id: beat.id, seconds: beat.seconds };
+    })));
+  }
+
   get duration() {
     return this.timeline.duration;
   }

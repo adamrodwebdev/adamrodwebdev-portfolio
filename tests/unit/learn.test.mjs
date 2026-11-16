@@ -178,6 +178,25 @@ describe("l'épisode 1, « Le voyage d'une page »", () => {
     assert.throws(() => new Direction(new Timeline([{ id: 'intro', seconds: 3 }])), RangeError);
   });
 
+  it('prend les battements fixés par la voix : tous, dans leur ordre, chacun une vraie durée', () => {
+    const voiced = PLAN.map((beat) => ({ id: beat.id, seconds: beat.id === 'server' ? 14 : beat.seconds }));
+    const retimed = Direction.retimed(voiced);
+    assert.ok(near(retimed.duration, direction.duration + 14 - 12.7));
+    assert.ok(near(retimed.at('server', 12.7) - retimed.at('server', 0), 14), 'le serveur étiré à 14 s');
+  });
+
+  it('refuse des battements venus de dehors qui manquent, changent d’ordre ou de nature', () => {
+    const plan = PLAN.map(({ id, seconds }) => ({ id, seconds }));
+    const swapped = [plan[1], plan[0], ...plan.slice(2)];
+    assert.throws(() => Direction.retimed(plan.slice(1)), TypeError);
+    assert.throws(() => Direction.retimed(swapped), TypeError);
+    assert.throws(() => Direction.retimed('ask'), TypeError);
+    assert.throws(() => Direction.retimed([null, ...plan.slice(1)]), TypeError);
+    for (const seconds of ['10', Number.NaN, 0, -1, 121, Infinity]) {
+      assert.throws(() => Direction.retimed([{ id: 'ask', seconds }, ...plan.slice(1)]), RangeError, String(seconds));
+    }
+  });
+
   it('laisse chaque sous-titre assez longtemps pour le lire, en français et en anglais (prévu avant la voix)', () => {
     const times = direction.captions();
     assert.equal(times.length, CAPTIONS.length);

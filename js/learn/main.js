@@ -2,7 +2,8 @@
  * L'entrée de /learn/ (1.14.0), chargée une fois le premier affichage signalé : elle monte l'épisode et
  * son lecteur. Avec `?film`, la page ne montre que la scène, sans sous-titres (l'habillage du film les
  * dessine par langue), et expose `window.EPISODE` pour l'outil de tournage : la durée, les temps des
- * sous-titres, `render(t)` et `ready`, la promesse des polices chargées.
+ * sous-titres, `render(t)`, `retime(beats)` (les battements fixés par la voix) et `ready`, la promesse
+ * des polices chargées.
  */
 import { cleanText, textLength } from '../input.js';
 import { Direction } from './episode01.js';
@@ -66,10 +67,16 @@ if (root) {
     document.documentElement.classList.add('learn-film');
     episode.render(0);
     window.EPISODE = Object.freeze({
-      duration: episode.duration,
+      get duration() {
+        return episode.duration;
+      },
       // Les temps des sous-titres ({ index, start, end }, secondes) : l'habillage du film les dessine par langue.
-      captions: Object.freeze(episode.captionTimes.map((caption) => Object.freeze({ ...caption }))),
+      get captions() {
+        return Object.freeze(episode.captionTimes.map((caption) => Object.freeze({ ...caption })));
+      },
       render: (t) => episode.render(t),
+      // Les battements fixés par la voix ([{ id, seconds }], dans l'ordre) : la même scène, chaque moment étiré.
+      retime: (beats) => episode.retime(Direction.retimed(beats)),
       ready: fontsReady(),
     });
   } else {

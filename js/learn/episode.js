@@ -29,6 +29,13 @@ export class Episode {
     return this.direction.timeline.beats;
   }
 
+  /** Le même épisode sur d'autres battements (la voix les fixe) : la scène reste, la mise en scène change. */
+  retime(direction) {
+    this.direction = direction;
+    this.captionTimes = direction.captions();
+    this.shown = -2;
+  }
+
   /** Dessine l'instant `t` (secondes), ramené dans la durée de l'épisode. */
   render(t) {
     const time = Math.min(Math.max(Number.isFinite(t) ? t : 0, 0), this.duration);
