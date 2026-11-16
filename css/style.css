@@ -784,18 +784,33 @@ body::before {
 @keyframes redact { 0%, 92% { opacity: 1; } 94% { opacity: 0.3; } 96% { opacity: 1; } }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 /* Une « 404 » perd son signal et reste brisée (pages écrites à la main) */
-@keyframes lost-signal { from { font-variation-settings: "FRAC" 0; } to { font-variation-settings: "FRAC" 72; } }
+@keyframes lost-signal {
+  from { font-variation-settings: "FRAC" 0; animation-timing-function: steps(8, end); }
+  to { font-variation-settings: "FRAC" 72; }
+}
 .slide:not(.is-active) .art-anim, .slide:not(.is-active) .art-anim * { animation-play-state: paused !important; }
 
 /* La police signature s'anime sur son axe FRAC (1.14.0) : 100 brisée, 0 entière. La chasse ne bouge pas,
-   la ligne non plus. Rien de tout cela avec « réduire les animations » (règle en fin de feuille). */
-@keyframes repair { from { font-variation-settings: "FRAC" 100; } to { font-variation-settings: "FRAC" 0; } }
+   la ligne non plus. Rien de tout cela avec « réduire les animations » (règle en fin de feuille).
+   Toujours par paliers (steps) : chaque état recalcule la mise en forme des lettres variables, alors qu'une
+   valeur qui ne change pas d'une trame à l'autre ne coûte rien. Le signal saute, puis se rétablit. */
+@keyframes repair {
+  from { font-variation-settings: "FRAC" 100; animation-timing-function: steps(10, end); }
+  to { font-variation-settings: "FRAC" 0; }
+}
+/* Le hero se brise par paliers (1.14.0) : une quinzaine d'états au lieu d'une image par trame. Chaque état
+   recalcule la mise en forme des grandes lettres variables ; en continu, l'animation chargeait le fil
+   principal pendant le chargement de la page. Par paliers, le signal saute puis se rétablit. */
 @keyframes shatter {
-  0% { font-variation-settings: "FRAC" 0; }
-  16% { font-variation-settings: "FRAC" 100; }
+  0% { font-variation-settings: "FRAC" 0; animation-timing-function: steps(3, end); }
+  16% { font-variation-settings: "FRAC" 100; animation-timing-function: steps(12, end); }
   100% { font-variation-settings: "FRAC" 0; }
 }
-@keyframes crack { 0%, 100% { font-variation-settings: "FRAC" 0; } 35% { font-variation-settings: "FRAC" 60; } }
+@keyframes crack {
+  0% { font-variation-settings: "FRAC" 0; animation-timing-function: steps(3, end); }
+  35% { font-variation-settings: "FRAC" 60; animation-timing-function: steps(6, end); }
+  100% { font-variation-settings: "FRAC" 0; }
+}
 /* Un titre arrive brisé et se répare en apparaissant ; le hero se brise puis se répare quand la police est là */
 .is-repairing { animation: repair 1.1s var(--ease-out) both; }
 .hero__line.is-shattering { animation: shatter 1.8s var(--ease-out) both; }
