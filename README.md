@@ -61,7 +61,7 @@ js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, c
 js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
 assets/                 Favicons, icônes PWA, image Open Graph
-fonts/                  Clivage (la police signature, exclusive), Barlow, Unbounded (titre de Lumirift) : WOFF2, latin
+fonts/                  Clivage (la police signature, exclusive : latin et cyrillique), Barlow, Unbounded (titre de Lumirift) : WOFF2
 lumirift/               Médias de la page du jeu Lumirift
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
 robots.txt, sitemap.xml, manifest.webmanifest
@@ -146,9 +146,10 @@ Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefe
 - **Une police variable à un axe, `FRAC`** : 0 entière, 100 brisée (le verre se fend, le signal se perd, le mot se déchire en deux). La chasse ne change jamais sur l'axe : l'animer ne déplace rien.
 - **Les animations** (`css/style.css`, `js/fx/effects.js`) : un titre arrive brisé et se répare en apparaissant (`data-repair`, classe `is-repairing`) ; le hero se brise puis se répare une fois la police chargée (`is-shattering`) ; le logo et les titres se fissurent au survol à la souris (`crack-once`) ; les pages 404 perdent leur signal (`lost-signal`). Rien avec « réduire les animations ». **Toujours par paliers** (`steps()`) : chaque état recalcule la mise en forme des lettres variables ; en continu, l'animation des grands titres chargeait le fil principal au chargement (Lighthouse tombait à 90 dès que la machine travaillait).
 - **Jamais de `-webkit-text-stroke` sur la signature** : la lettre est faite d'éclats jointifs, un contour CSS tracerait leurs lignes de cassure. Pour un effet doré, remplir (`background-clip: text`) ; un test le vérifie.
-- **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`Clivage Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive.
-- **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs. Un caractère absent passe à la police suivante de la pile.
-- **La remplacer** : refaire le fichier depuis la fonderie, le déposer sous un **nouveau nom** (`clivage-v2.woff2`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
+- **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`Clivage Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive. Le russe a son propre repli (77,95 %), calculé sur ses titres, menus et boutons.
+- **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs, et **cyrillique du russe** (1.15.0). Un caractère absent passe à la police suivante de la pile.
+- **Deux fichiers** : `clivage-v2-latin.woff2` (30 Ko) et `clivage-v2-cyrillic.woff2` (20 Ko), découpés dans la même police variable et déclarés avec leur `unicode-range` : une page ne télécharge que les lettres qu'elle affiche (le russe prend les deux, pour ses chiffres, sa ponctuation et le logo). Le menu des langues fermé n'est pas mis en page (`display: none`) : sans quoi le « Русский » de ce menu ferait venir le cyrillique sur les pages latines, ce que fait le Chrome de Lighthouse avec un `<details>` fermé. Le cyrillique n'arrive qu'à l'ouverture du menu.
+- **La remplacer** : refaire la police depuis la fonderie, la découper en deux (`fontTools.subset`, mêmes plages que dans `css/fonts.css`, toutes les fonctions OpenType gardées), compresser en WOFF2, déposer les fichiers sous un **nouveau nom** (`clivage-v3-…`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
 
 ## Sélection du texte (1.14.1)
 
@@ -163,7 +164,7 @@ Le site existe en français (`/`), en anglais (`/en/`), en russe (`/ru/`), en it
 - **Chaque page ne charge que sa langue** : `js/i18n/index.js` importe `locales/<code>.js`, que la génération précharge avec les îlots Vue. `js/i18n/messages.js` réunit toutes les langues pour la génération et les tests ; le navigateur ne le demande pas.
 - Les accueils de `dist/` sont **générés** à partir de `templates/index.html` par `npm run build`, avec les liens `hreflang` des cinq langues et `x-default` vers le français.
 - Les pages 404 et de confirmation existent dans chaque langue (`ru/404.html`, `ru/thank-you.html`…). Les mentions légales n'existent qu'en français (version légale) et en anglais : les autres langues mènent à l'anglaise, et le lien le dit.
-- **Russe** : la police signature et Barlow n'ont pas de cyrillique ; la page russe utilise des polices système qui en ont (`:root:lang(ru)` dans `css/style.css`). Le logo, le titre du hero et les numéros de section, en latin, gardent la signature (`--font-signature`).
+- **Russe** : la police signature parle russe (1.15.0) et garde tout l'affichage ; Barlow n'a pas de cyrillique, le texte courant russe prend des polices système qui en ont (`:root:lang(ru)` dans `css/style.css`). Les textes russes méritent la relecture d'un lecteur natif, la police aussi.
 - Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @) ; le test le contrôle.
 - Registre : *vous* en français, *you* en anglais, *вы* en russe, *tu* en italien, *tú* en espagnol (Espagne). Les textes italiens et espagnols méritent une relecture par une personne de langue maternelle avant d'être mis en avant.
 
