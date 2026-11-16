@@ -121,6 +121,73 @@ export const learnPage = {
 };
 
 /**
+ * L'épisode 2 de la série, « Trois langages » (texte final du 16 novembre 2026, validé par l'utilisateur) :
+ * sa voix et ses dix-sept sous-titres, en français et en anglais. Pas encore branché : sa mise en scène
+ * (js/learn/episode02.js) sera réécrite sur ce texte, avec la silhouette (le squelette, les vêtements et
+ * la coiffure, le cerveau).
+ */
+export const learnEpisode2 = {
+  fr: {
+    title: 'Trois langages',
+    narration: [
+      'Une machine ne comprend que le binaire : des 0 et des 1. Mais cette page arrive en trois fichiers, écrits en trois langages : des mots et des signes que les humains savent lire. Ton navigateur, l’appli qui affiche les pages, les traduit pour la machine.',
+      'D’abord le HTML : HyperText Markup Language, en français langage de balisage hypertexte. Hypertexte : du texte avec des liens. Balisage : des étiquettes, appelées balises, qui disent « ceci est un titre ». Le navigateur en fait des boîtes : c’est le squelette de la page, comme les os d’une personne.',
+      'Puis le CSS : Cascading Style Sheets, feuilles de style en cascade. Des règles de couleurs, de tailles, d’espaces : l’apparence, comme les vêtements et la coiffure. En cascade : si plusieurs règles visent la même boîte, la plus précise gagne.',
+      'Enfin le JavaScript, un langage de programmation : il sert à écrire un script, des instructions que le navigateur suit pas à pas. C’est le cerveau de la page : il fait les calculs. Grâce à ce script, le bouton réagit quand tu le touches.',
+      'Trois langages pour les humains, traduits en 0 et en 1 pour la machine. Et la page s’affiche.',
+    ],
+    captions: [
+      'Une machine : que des 0 et des 1',
+      'Trois fichiers, trois langages',
+      'Des mots que les humains lisent',
+      'Le navigateur traduit',
+      'HTML : HyperText Markup Language',
+      'Hypertexte : texte avec des liens',
+      'Balises : des étiquettes',
+      'Le squelette de la page',
+      'CSS : Cascading Style Sheets',
+      'L’apparence : vêtements, coiffure',
+      'La règle la plus précise gagne',
+      'JavaScript : un script',
+      'des instructions, pas à pas',
+      'Le cerveau : il fait les calculs',
+      'Le bouton réagit',
+      'Trois langages pour les humains',
+      'traduits en 0 et en 1',
+    ],
+  },
+  en: {
+    title: 'Three languages',
+    narration: [
+      'A machine only understands binary: 0s and 1s. But this page arrives in three files, written in three languages: words and symbols that humans can read. Your browser, the app that shows web pages, translates them for the machine.',
+      'First, HTML: HyperText Markup Language. Hypertext: text with links. Markup: labels, called tags, that say “this is a title”. The browser turns them into boxes: the page’s skeleton, like the bones of a person.',
+      'Then CSS: Cascading Style Sheets. Rules for colours, sizes and spacing: the look, like clothes and a hairstyle. Cascading: when several rules aim at the same box, the most specific one wins.',
+      'Last, JavaScript, a programming language: it’s used to write a script, instructions the browser follows step by step. It’s the page’s brain: it does the calculations. Thanks to this script, the button reacts when you tap it.',
+      'Three languages for humans, translated into 0s and 1s for the machine. And the page appears.',
+    ],
+    captions: [
+      'A machine: only 0s and 1s',
+      'Three files, three languages',
+      'Words and symbols for humans',
+      'Your browser translates',
+      'HTML: HyperText Markup Language',
+      'Hypertext: text with links',
+      'Markup: labels, called tags',
+      'The page’s skeleton',
+      'CSS: Cascading Style Sheets',
+      'The look: clothes, hairstyle',
+      'The most specific rule wins',
+      'JavaScript: a script',
+      'instructions, step by step',
+      'The brain: it does calculations',
+      'The button reacts',
+      'Three languages for humans',
+      'translated into 0s and 1s',
+    ],
+  },
+};
+
+/**
  * La page du jeu, /lumirift/ (version 1.8.0), en anglais seulement : scripts/build-pages.mjs la
  * génère à partir de templates/lumirift.html, avec les textes de l'en-tête et du pied de page
  * anglais ci-dessus. Hors de vue-i18n (la page n'a pas d'îlot Vue) : aucune clé à doubler en

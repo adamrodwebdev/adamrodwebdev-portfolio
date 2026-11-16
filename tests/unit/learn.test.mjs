@@ -9,7 +9,7 @@ import { LINES, ROUTE, STATIONS, fractionNear, linePoints, offsetPath, pointAlon
 import { CAPTION_MAX, readSeconds } from '../../js/learn/captions.js';
 import { BYTES, CAPTIONS, Direction, PLAN } from '../../js/learn/episode01.js';
 import { Direction as LanguagesBase } from '../../js/learn/episode02.js';
-import { learnPage } from '../../js/i18n/messages.js';
+import { learnEpisode2, learnPage } from '../../js/i18n/messages.js';
 
 const near = (a, b, epsilon = 1e-6) => Math.abs(a - b) <= epsilon;
 
@@ -208,5 +208,13 @@ describe("la base de l'épisode 2 (pas encore branchée)", () => {
   it('dessine toujours le même état pour le même instant', () => {
     const base = new LanguagesBase();
     assert.equal(JSON.stringify(base.state(20)), JSON.stringify(base.state(20)));
+  });
+
+  it('garde son texte final : cinq phrases et dix-sept sous-titres par langue, 35 caractères au plus', () => {
+    for (const lang of ['fr', 'en']) {
+      assert.equal(learnEpisode2[lang].narration.length, 5, `${lang} : cinq phrases`);
+      assert.equal(learnEpisode2[lang].captions.length, 17, `${lang} : dix-sept sous-titres`);
+      for (const caption of learnEpisode2[lang].captions) assert.ok([...caption].length <= CAPTION_MAX, `${lang} « ${caption} »`);
+    }
   });
 });
