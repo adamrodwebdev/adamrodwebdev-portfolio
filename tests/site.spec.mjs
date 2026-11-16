@@ -528,6 +528,17 @@ test('marque : AdamRodWebTech sur chaque page, plus jamais AdamRodWebDev (1.17.0
   await expect(page).toHaveTitle(/^AdamRodWebTech \|/);
 });
 
+test('épisode : les sous-titres gardent leurs espaces insécables, « Internet : » ne se coupe pas avant ses deux-points', async ({ page }) => {
+  await page.goto('/learn/');
+  await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
+  // Le battement d'Internet, puis lecture : son premier sous-titre arrive 0,3 s après.
+  await page.locator('[data-learn-dot]').nth(1).click();
+  await page.locator('[data-learn-play]').click();
+  const caption = page.locator('[data-learn-caption]');
+  await expect(caption).toContainText('Internet');
+  expect(await caption.textContent()).toContain('Internet\u00a0:');
+});
+
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
