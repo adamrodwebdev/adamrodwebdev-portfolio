@@ -51,3 +51,26 @@ But : plus aucune requête vers un domaine tiers, une politique de sécurité de
 ## 1.10.0 : le formulaire vers l'espace client
 - Le formulaire de contact envoie ses données à l'API d'espace.adamrodwebdev.com au lieu de Netlify Forms ; `connect-src` et `form-action` s'ouvrent à ce seul domaine.
 - Mentions légales : OVH (France) remplace Netlify pour les messages.
+
+## 1.14.0 : la police signature
+
+Statut : demandée le 15 novembre 2026 (« une police purement inventée et animée, notre police signature ; nous ne la vendrons pas »), réalisée sur la branche `feat/1.14-police-signature` (PR vers `dev`). Mise en ligne seulement sur décision.
+
+### Ce qui a été décidé (15 novembre 2026)
+- **Le sens** : la grandeur de la technologie au repos ; le long de l'axe animé, la rupture d'une humanité divisée autour d'elle, un verre brisé mêlé à un signal perdu.
+- **La piste** : Cristal (le verre d'abord), choisie entre deux esquisses animées ; Monolithe (le signal d'abord) écartée.
+- **Le rôle** : tout l'affichage (Rajdhani retirée) ; Barlow garde le texte courant.
+- **Les caractères** : le latin des cinq langues ; le russe garde les polices système pour ses titres, la signature reste sur le logo, le titre du hero et les numéros.
+- **L'animation** : les titres se réparent en apparaissant (à la place des lettres aléatoires), le hero se brise puis se répare au chargement, le logo se fissure au survol ; rien avec « réduire les animations ».
+- **Le nom** : Clivage (le plan selon lequel un cristal se fend net, et la fracture qui divise une société), choisi parmi des noms vérifiés dans douze catalogues de polices ; aucune police ne le porte.
+- **L'exclusivité** : la police n'est jamais vendue ni réutilisée dans une famille à vendre. Servie par le site, elle reste téléchargeable par qui inspecte la page : ses mentions (copyright, licence, `fsType` « aperçu et impression ») disent qu'aucune utilisation n'est permise ailleurs.
+
+### Vérifications (« fini » quand)
+- Lighthouse 100 dans les quatre catégories, pire de trois passages sur mobile, plus l'ordinateur, sur le serveur local qui applique les en-têtes de Netlify.
+- Aucun décalage quand la police arrive (repli calé, testé), aucun défilement horizontal de 320 à 2560 px.
+- Captures en clair et en sombre, sur téléphone et sur ordinateur.
+- Entrée 1.14.0 dans le CHANGELOG, README à jour.
+
+### Ensuite
+- Enregistrer l'identifiant de fournisseur `ARWD` (gratuit, auprès de Microsoft).
+- Le cyrillique, si les pages russes doivent un jour parler avec la même voix.
