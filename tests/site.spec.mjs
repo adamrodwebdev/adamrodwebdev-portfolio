@@ -159,6 +159,33 @@ test('curseur : la flèche sur le contenu, la main sur ce qui se clique, la barr
 // ----- Langues (1.10.0) -----
 
 /** Les textes à plat : chemin de clé → valeur (les tableaux restent des valeurs). */
+test('sélection : les titres et l’interface ne se sélectionnent pas, les textes si (1.14.1)', async ({ page, isMobile }) => {
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  const userSelect = (selector) => page.locator(selector).first().evaluate((element) => getComputedStyle(element).userSelect);
+  for (const selector of ['.hero__title', '.hero__status', '#services-title', '.brand__name', '.nav__link', '.btn', '.hud-panel', '.panel__index']) {
+    expect(await userSelect(selector), selector).toBe('none');
+  }
+  // Les textes, l'adresse e-mail et les champs se copient (traduction, lecture à voix haute de la sélection)
+  for (const selector of ['.hero__lead', '.section__intro', '.aug__text', '.contact__mail']) {
+    expect(await userSelect(selector), selector).not.toBe('none');
+  }
+  if (isMobile) return; // le glisser de souris se vérifie sur ordinateur
+  const drag = async (selector) => {
+    await page.evaluate(() => window.getSelection().removeAllRanges());
+    // Le long de la première ligne : au milieu d'un paragraphe, la souris tomberait dans un interligne
+    const box = await page.locator(selector).first().boundingBox();
+    const y = box.y + Math.min(14, box.height / 4);
+    await page.mouse.move(box.x + 2, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.8, y, { steps: 12 });
+    await page.mouse.up();
+    return page.evaluate(() => window.getSelection().toString().trim());
+  };
+  expect(await drag('.hero__title'), 'glisser sur le titre du hero').toBe('');
+  expect((await drag('.hero__lead')).length, 'glisser sur le paragraphe du hero').toBeGreaterThan(0);
+});
+
 const flatten = (object, prefix = '') => Object.entries(object).flatMap(([key, value]) =>
   value && typeof value === 'object' && !Array.isArray(value) ? flatten(value, `${prefix}${key}.`) : [[`${prefix}${key}`, value]]);
 const placeholders = (text) => (String(text).match(/\{\w+\}/g) ?? []).sort().join(' ');
