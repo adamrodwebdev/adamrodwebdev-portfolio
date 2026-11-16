@@ -53,8 +53,11 @@ export const STATIONS = Object.freeze({
   server: Object.freeze({ x: 600, y: 420 }),
 });
 
-/** Le globe d'Internet, à côté de sa correspondance. */
-export const GLOBE = Object.freeze({ x: 470, y: 548, r: 30 });
+/**
+ * Le globe d'Internet, à côté de sa correspondance, du côté vide du plan (à gauche de la diagonale) :
+ * quand il s'ouvre sur le réseau, le plan d'Internet n'a pas le serveur dans son cadre.
+ */
+export const GLOBE = Object.freeze({ x: 300, y: 470, r: 30 });
 
 /** Le serveur : une baie de trois unités, son port sur le flanc gauche. */
 export const SERVER = Object.freeze({ x: 600, y: 320, width: 160, height: 200, units: 3 });
@@ -65,23 +68,24 @@ export const GROUND = Object.freeze({ x: -600, y: -600, width: 2100, height: 280
 /**
  * Internet quand le globe s'ouvre (épisode 1) : des téléphones, des ordinateurs portables et des
  * serveurs, reliés par des câbles (des traits) ; les téléphones parlent aussi par ondes radio (des arcs).
- * Dans le coin sombre entre le serveur et le téléphone, à droite du plan.
+ * Dans le coin sombre à gauche de la diagonale, au-dessus du téléphone : loin du serveur, qui reste
+ * hors du cadre et hors de la bande des sous-titres.
  */
 export const NETWORK = Object.freeze({
   nodes: Object.freeze([
-    Object.freeze({ id: 'a', kind: 'laptop', x: 548, y: 612 }),
-    Object.freeze({ id: 'b', kind: 'phone', x: 650, y: 590 }),
-    Object.freeze({ id: 'c', kind: 'rack', x: 734, y: 650 }),
-    Object.freeze({ id: 'd', kind: 'phone', x: 612, y: 704 }),
-    Object.freeze({ id: 'e', kind: 'laptop', x: 722, y: 752 }),
-    Object.freeze({ id: 'f', kind: 'phone', x: 520, y: 716 }),
+    Object.freeze({ id: 'a', kind: 'phone', x: 196, y: 372 }),
+    Object.freeze({ id: 'b', kind: 'laptop', x: 96, y: 430 }),
+    Object.freeze({ id: 'c', kind: 'rack', x: 70, y: 566 }),
+    Object.freeze({ id: 'd', kind: 'phone', x: 188, y: 528 }),
+    Object.freeze({ id: 'e', kind: 'laptop', x: 104, y: 690 }),
+    Object.freeze({ id: 'f', kind: 'phone', x: 248, y: 640 }),
   ]),
   /** Les câbles, de nœud à nœud ; « globe » est le globe d'Internet. */
   links: Object.freeze([
-    ['globe', 'a'], ['a', 'b'], ['b', 'c'], ['a', 'd'], ['d', 'e'], ['c', 'e'], ['d', 'f'], ['f', 'globe'],
+    ['globe', 'a'], ['a', 'b'], ['b', 'c'], ['a', 'd'], ['d', 'c'], ['d', 'f'], ['f', 'e'], ['e', 'c'], ['globe', 'd'],
   ]),
   /** Les appareils qui parlent par ondes radio (Wi-Fi, 4G). */
-  waves: Object.freeze(['b', 'd', 'f']),
+  waves: Object.freeze(['a', 'd', 'f']),
 });
 
 /** Le jour et la nuit au-dessus du serveur : il reste allumé. */

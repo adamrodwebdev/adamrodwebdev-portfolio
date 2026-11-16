@@ -7,7 +7,7 @@ import { Timeline } from '../../js/learn/timeline.js';
 import { ASPECT, FOCUS, Shots, viewBoxOf } from '../../js/learn/camera.js';
 import { LINES, ROUTE, STATIONS, fractionNear, linePoints, offsetPath, pointAlong, polylineLength } from '../../js/learn/world.js';
 import { CAPTION_MAX, readSeconds } from '../../js/learn/captions.js';
-import { CAPTIONS, Direction, PLAN } from '../../js/learn/episode01.js';
+import { BYTES, CAPTIONS, Direction, PLAN } from '../../js/learn/episode01.js';
 import { Direction as LanguagesBase } from '../../js/learn/episode02.js';
 import { learnPage } from '../../js/i18n/messages.js';
 
@@ -137,6 +137,14 @@ describe("l'épisode 1, « Le voyage d'une page »", () => {
       assert.match(label, /^[01]{8}$/, `binaire à ${s.toFixed(2)} s`);
     }
     assert.equal(direction.token(direction.duration), null);
+  });
+
+  it('montre des octets entiers : chaque image arrêtée se lit comme une lettre de « page? »', () => {
+    assert.equal(BYTES.join(''), [...'page?'].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')).join(''));
+    for (let s = 0.5; s < 5.4; s += 0.13) {
+      const letter = String.fromCharCode(Number.parseInt(direction.token(at('binary', s)).label, 2));
+      assert.ok('page?'.includes(letter), `à ${s.toFixed(2)} s : « ${letter} »`);
+    }
   });
 
   it('ouvre le réseau pour Internet seulement', () => {

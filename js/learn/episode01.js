@@ -32,26 +32,27 @@ export const PLAN = Object.freeze([
  */
 export const CAPTIONS = Object.freeze([
   Object.freeze({ beat: 'ask', from: 0.4, to: 3.2 }),
+  Object.freeze({ beat: 'ask', from: 3.25, to: 6.65 }),
   Object.freeze({ beat: 'ask', from: 6.7, to: 10.4 }),
   Object.freeze({ beat: 'internet', from: 0.3, to: 4.3 }),
   Object.freeze({ beat: 'internet', from: 4.4, to: 10.4 }),
   Object.freeze({ beat: 'binary', from: 0.3, to: 3.6 }),
   Object.freeze({ beat: 'binary', from: 3.65, to: 7.3 }),
   Object.freeze({ beat: 'server', from: 0.8, to: 4.6 }),
-  Object.freeze({ beat: 'server', from: 4.7, to: 7.6 }),
-  Object.freeze({ beat: 'server', from: 8.1, to: 12.6 }),
+  Object.freeze({ beat: 'server', from: 4.7, to: 8.4 }),
+  Object.freeze({ beat: 'server', from: 8.5, to: 12.6 }),
   Object.freeze({ beat: 'back', from: 0.3, to: 4.2 }),
   Object.freeze({ beat: 'back', from: 4.3, to: 8.0 }),
 ]);
 
 /**
- * Le message en binaire, tel qu'il voyage : « page? » en ASCII, huit bits par lettre. Le jeton en
- * montre une fenêtre de huit chiffres qui défile ; ce sont de vrais bits, pas un décor.
+ * Le message en binaire, tel qu'il voyage : « page? » en ASCII, huit bits par lettre. Le jeton montre
+ * une lettre à la fois, ses huit bits entiers (01110000 pour p) : chaque image arrêtée se lit, ce sont
+ * de vrais bits, pas un décor.
  */
-const BITS = [...'page?'].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
-const BITS_SHOWN = 8;
-/** Chiffres défilés par seconde. */
-const BITS_PER_SECOND = 9;
+export const BYTES = Object.freeze([...'page?'].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')));
+/** Lettres montrées par seconde. */
+const BYTES_PER_SECOND = 3;
 
 /** Le jeton suit sa plume de ce retard (s) ; il apparaît et s'efface en ce temps (s). */
 const LAG = 0.3;
@@ -63,8 +64,10 @@ const FADE = 0.25;
  */
 const FRAMES = Object.freeze({
   screen: Object.freeze({ cx: 330, cy: 990, width: 520 }),
-  network: Object.freeze({ cx: 600, cy: 650, width: 560 }),
-  server: Object.freeze({ cx: 640, cy: 470, width: 480 }),
+  // Le réseau à gauche de la diagonale, avec la correspondance où attend le message ; le serveur hors cadre.
+  network: Object.freeze({ cx: 230, cy: 560, width: 560 }),
+  // Serré sur le jour et la nuit (y 267), la baie et le plateau (y 580) : ils tiennent entre 27 % et 78 %.
+  server: Object.freeze({ cx: 680, cy: 424, width: 360 }),
   wide: Object.freeze({ cx: 450, cy: 780, width: 1000 }),
 });
 
@@ -129,11 +132,11 @@ export class Direction {
     const along = this.drawn('request', t - LAG);
     const appear = phase(t, start, start + FADE);
     const leave = 1 - phase(t, arrive + LAG, arrive + LAG + FADE);
-    const binary = t >= this.at('binary', 0.4);
-    const offset = Math.floor(t * BITS_PER_SECOND) % (BITS.length - BITS_SHOWN);
+    const binaryFrom = this.at('binary', 0.4);
+    const letter = Math.floor(Math.max(0, t - binaryFrom) * BYTES_PER_SECOND) % BYTES.length;
     return {
       line: 'request',
-      label: binary ? BITS.slice(offset, offset + BITS_SHOWN) : '?',
+      label: t >= binaryFrom ? BYTES[letter] : '?',
       along,
       scale: EASE.out(Math.min(appear, leave)),
     };
