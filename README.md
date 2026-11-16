@@ -61,7 +61,7 @@ js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, c
 js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
 assets/                 Favicons, icônes PWA, image Open Graph
-fonts/                  Rajdhani, Barlow, Unbounded (titre de Lumirift) : WOFF2, sous-ensemble latin
+fonts/                  Clivage (la police signature, exclusive), Barlow, Unbounded (titre de Lumirift) : WOFF2, latin
 lumirift/               Médias de la page du jeu Lumirift
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
 robots.txt, sitemap.xml, manifest.webmanifest
@@ -139,6 +139,17 @@ Ses médias sont dans `lumirift/` :
 
 Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. Le titre utilise Unbounded, réduite aux lettres du titre (`fonts/unbounded-900-title.woff2`, 1,5 Ko) : si le titre change de lettres, refaites ce fichier.
 
+## La police signature (1.14.0)
+
+**Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebDev et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici. Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
+
+- **Une police variable à un axe, `FRAC`** : 0 entière, 100 brisée (le verre se fend, le signal se perd, le mot se déchire en deux). La chasse ne change jamais sur l'axe : l'animer ne déplace rien.
+- **Les animations** (`css/style.css`, `js/fx/effects.js`) : un titre arrive brisé et se répare en apparaissant (`data-repair`, classe `is-repairing`) ; le hero se brise puis se répare une fois la police chargée (`is-shattering`) ; le logo et les titres se fissurent au survol à la souris (`crack-once`) ; les pages 404 perdent leur signal (`lost-signal`). Rien avec « réduire les animations ».
+- **Jamais de `-webkit-text-stroke` sur la signature** : la lettre est faite d'éclats jointifs, un contour CSS tracerait leurs lignes de cassure. Pour un effet doré, remplir (`background-clip: text`) ; un test le vérifie.
+- **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`Clivage Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive.
+- **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs. Un caractère absent passe à la police suivante de la pile.
+- **La remplacer** : refaire le fichier depuis la fonderie, le déposer sous un **nouveau nom** (`clivage-v2.woff2`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
+
 ## Traductions (cinq langues, 1.10.0)
 
 Le site existe en français (`/`), en anglais (`/en/`), en russe (`/ru/`), en italien (`/it/`) et en espagnol (`/es/`). Un menu dans l'en-tête (un `<details>`, utilisable sans JavaScript) mène de l'une à l'autre en gardant la section affichée ; le pied de page liste aussi les autres langues.
@@ -148,7 +159,7 @@ Le site existe en français (`/`), en anglais (`/en/`), en russe (`/ru/`), en it
 - **Chaque page ne charge que sa langue** : `js/i18n/index.js` importe `locales/<code>.js`, que la génération précharge avec les îlots Vue. `js/i18n/messages.js` réunit toutes les langues pour la génération et les tests ; le navigateur ne le demande pas.
 - Les accueils de `dist/` sont **générés** à partir de `templates/index.html` par `npm run build`, avec les liens `hreflang` des cinq langues et `x-default` vers le français.
 - Les pages 404 et de confirmation existent dans chaque langue (`ru/404.html`, `ru/thank-you.html`…). Les mentions légales n'existent qu'en français (version légale) et en anglais : les autres langues mènent à l'anglaise, et le lien le dit.
-- **Russe** : Rajdhani et Barlow n'ont pas de cyrillique ; la page russe utilise des polices système qui en ont (`:root:lang(ru)` dans `css/style.css`).
+- **Russe** : la police signature et Barlow n'ont pas de cyrillique ; la page russe utilise des polices système qui en ont (`:root:lang(ru)` dans `css/style.css`). Le logo, le titre du hero et les numéros de section, en latin, gardent la signature (`--font-signature`).
 - Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @) ; le test le contrôle.
 - Registre : *vous* en français, *you* en anglais, *вы* en russe, *tu* en italien, *tú* en espagnol (Espagne). Les textes italiens et espagnols méritent une relecture par une personne de langue maternelle avant d'être mis en avant.
 

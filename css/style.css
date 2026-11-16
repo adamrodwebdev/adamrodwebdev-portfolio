@@ -22,7 +22,9 @@
   --danger: #ff6b5e;
   --shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
 
-  --font-display: "Rajdhani", "Bahnschrift", "DIN Alternate", "Arial Narrow", system-ui, sans-serif;
+  /* La police signature (1.14.0) : Clivage pour tout l'affichage, son repli calé juste après */
+  --font-signature: "Clivage", "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  --font-display: var(--font-signature);
   --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
 
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.92rem);
@@ -80,6 +82,19 @@
   --danger: #b3261e;
   --shadow: 0 30px 80px -40px rgba(60, 45, 10, 0.45);
   color-scheme: light;
+}
+
+/* Repli de la police signature (1.14.0) : Arial Bold, mise à la taille de Clivage (mêmes largeurs
+   sur les titres, les menus et les boutons du site) et à sa boîte de ligne. Déclaré ici, dans la feuille
+   copiée dans chaque page, il sert dès le premier affichage : rien ne bouge quand la signature arrive. */
+@font-face {
+  font-family: "Clivage Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 100 900;
+  size-adjust: 76.7%;
+  ascent-override: 121.25%;
+  descent-override: 45.11%;
+  line-gap-override: 0%;
 }
 
 /* ---------- Base ---------- */
@@ -197,7 +212,7 @@ body::before {
 .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--fg); }
 .brand__mark { flex: none; width: 38px; height: 38px; color: var(--gold); transition: transform 0.6s var(--ease-out); }
 .brand:hover .brand__mark { transform: rotate(60deg); }
-.brand__name { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.04em; }
+.brand__name { font-family: var(--font-signature); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.04em; }
 .brand__name b { color: var(--gold); font-weight: 700; }
 .nav__links { display: flex; gap: clamp(12px, 2.4vw, 36px); }
 .nav__links a, .nav__link {
@@ -285,13 +300,14 @@ body::before {
 }
 .pulse-dot { width: 8px; height: 8px; background: var(--gold-hi); border-radius: 50%; box-shadow: 0 0 0 0 var(--glow); animation: pulse 2s infinite; }
 .hero__title {
-  font-size: var(--step-4); font-weight: 700; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.88;
+  font-family: var(--font-signature); font-size: var(--step-4); font-weight: 700; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.88;
   display: grid;
 }
 .hero__line { display: block; animation: slice-in 1.1s var(--ease-out) both; }
 .hero__line:nth-child(2) { animation-delay: 0.15s; }
-.hero__line--outline {
-  color: transparent; -webkit-text-stroke: 2px var(--gold);
+/* L'or de « WebDev » remplit la lettre : un contour tracerait les lignes de cassure de la signature. */
+.hero__line--gold {
+  color: transparent;
   background: linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-hi) 40%, var(--gold) 60%, var(--gold-deep) 100%);
   background-size: 250% 100%; -webkit-background-clip: text; background-clip: text;
   animation: slice-in 1.1s var(--ease-out) 0.15s both, gold-sheen 6s linear 1.4s infinite;
@@ -402,9 +418,10 @@ body::before {
 .panel__index {
   position: absolute; z-index: -1; top: 0; right: max(var(--gutter), (100% - 1240px) / 2 + var(--gutter));
   translate: 0 -18%; pointer-events: none; user-select: none;
-  font-family: var(--font-display); font-weight: 700; font-size: clamp(5.5rem, 3rem + 12vw, 15rem); line-height: 0.8; letter-spacing: -0.02em;
-  color: transparent; -webkit-text-stroke: 1px var(--line);
-  background: linear-gradient(180deg, var(--line-soft), transparent 75%); -webkit-background-clip: text; background-clip: text;
+  font-family: var(--font-signature); font-weight: 700; font-size: clamp(5.5rem, 3rem + 12vw, 15rem); line-height: 0.8; letter-spacing: -0.02em;
+  font-variation-settings: "FRAC" 35; /* un numéro fêlé, immobile : un décor */
+  color: transparent;
+  background: linear-gradient(180deg, var(--line) 0%, var(--line-soft) 45%, transparent 80%); -webkit-background-clip: text; background-clip: text;
 }
 .panel__index::before { content: attr(data-index); }
 .panel--fall .panel__index { right: auto; left: max(var(--gutter), (100% - 1240px) / 2 + var(--gutter)); }
@@ -766,14 +783,28 @@ body::before {
 @keyframes eq { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
 @keyframes redact { 0%, 92% { opacity: 1; } 94% { opacity: 0.3; } 96% { opacity: 1; } }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes glitch {
-  0%, 100% { clip-path: inset(0 0 0 0); transform: none; }
-  20% { clip-path: inset(10% 0 60% 0); transform: translateX(-4px); }
-  40% { clip-path: inset(50% 0 20% 0); transform: translateX(4px); }
-  60% { clip-path: inset(30% 0 40% 0); transform: translateX(-2px); }
-}
+/* Une « 404 » perd son signal et reste brisée (pages écrites à la main) */
+@keyframes lost-signal { from { font-variation-settings: "FRAC" 0; } to { font-variation-settings: "FRAC" 72; } }
 .slide:not(.is-active) .art-anim, .slide:not(.is-active) .art-anim * { animation-play-state: paused !important; }
-.glitch-once { animation: glitch 0.35s steps(2) 1; }
+
+/* La police signature s'anime sur son axe FRAC (1.14.0) : 100 brisée, 0 entière. La chasse ne bouge pas,
+   la ligne non plus. Rien de tout cela avec « réduire les animations » (règle en fin de feuille). */
+@keyframes repair { from { font-variation-settings: "FRAC" 100; } to { font-variation-settings: "FRAC" 0; } }
+@keyframes shatter {
+  0% { font-variation-settings: "FRAC" 0; }
+  16% { font-variation-settings: "FRAC" 100; }
+  100% { font-variation-settings: "FRAC" 0; }
+}
+@keyframes crack { 0%, 100% { font-variation-settings: "FRAC" 0; } 35% { font-variation-settings: "FRAC" 60; } }
+/* Un titre arrive brisé et se répare en apparaissant ; le hero se brise puis se répare quand la police est là */
+.is-repairing { animation: repair 1.1s var(--ease-out) both; }
+.hero__line.is-shattering { animation: shatter 1.8s var(--ease-out) both; }
+.hero__line--gold.is-shattering { animation: shatter 1.8s var(--ease-out) both, gold-sheen 6s linear 1.4s infinite; }
+/* Au survol : un titre se fissure une fois (souris seulement), le logo aussi */
+.crack-once { animation: crack 0.8s var(--ease-in-out) 1; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .brand:hover .brand__name, .brand:focus-visible .brand__name { animation: crack 0.8s var(--ease-in-out) 1; }
+}
 
 /* ---------- Bande-son (1.12.0) ---------- */
 /* L'interrupteur de l'en-tête : ondes quand la musique joue, croix quand elle est coupée */
@@ -809,7 +840,7 @@ span.sound-deck__viz {
 .sound-deck__id { min-width: 0; }
 .sound-deck__title {
   font-family: var(--font-display); font-weight: 700; font-size: var(--step-3); line-height: 1; text-transform: uppercase; letter-spacing: 0.04em;
-  color: transparent; -webkit-text-stroke: 1.5px var(--gold);
+  color: transparent;
   background: linear-gradient(100deg, var(--gold-deep), var(--gold-hi) 45%, var(--gold) 60%, var(--gold-deep)); -webkit-background-clip: text; background-clip: text;
 }
 .sound-deck__facts { margin-top: 8px; color: var(--muted); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem; }
@@ -897,7 +928,6 @@ span.sound-deck__viz {
   .aug-grid, .protocol { grid-template-columns: minmax(0, 1fr); }
   .cform { grid-template-columns: minmax(0, 1fr); }
   .hero { min-height: auto; padding-bottom: calc(120px + var(--overlap)); }
-  .hero__line--outline { -webkit-text-stroke-width: 1.5px; }
   .hud-panel { right: 0; }
   /* Carrousel : piste plate, cartes presque pleine largeur, textes resserrés */
   .swiper__viewport { min-height: 0; }
@@ -1033,7 +1063,8 @@ span.sound-deck__viz {
   .burger { display: grid; }
 }
 
-/* Russe : Rajdhani et Barlow n'ont pas de cyrillique. Polices système qui en ont, plutôt qu'un mélange au hasard. */
+/* Russe : la signature et Barlow n'ont pas de cyrillique. Polices système qui en ont, plutôt qu'un mélange au
+   hasard ; le logo, le titre du hero et les numéros, en latin, gardent la signature (--font-signature). */
 :root:lang(ru) {
   --font-display: "Bahnschrift", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
   --font-body: "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
