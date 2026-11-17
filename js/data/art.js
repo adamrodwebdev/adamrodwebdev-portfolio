@@ -254,4 +254,123 @@ const plumb = (id, t) => {
 </svg>`;
 };
 
-export const art = { catapult, bastion, darts, plumb, marbles, lumirift, classified };
+const cordeau = (id, t) => {
+  // La GT Aplomb Cordeau de profil sur une route mouillée : roues qui tournent, marquage qui défile,
+  // un reflet qui glisse sur la carrosserie (découpé par sa silhouette) et le bandeau lumineux qui pulse.
+  // Au repos (mouvement réduit), la voiture est à l’arrêt et le reflet hors du cadre.
+  const body = 'M150 282L148 252Q150 238 172 233L232 226C276 210 300 184 346 178L456 176C490 178 510 196 532 210L640 222Q668 226 670 246L666 274Q664 284 650 286H575A40 40 0 0 0 495 286H285A40 40 0 0 0 205 286H162Q150 286 150 282Z';
+  const wheel = (cx) => {
+    const spokes = Array.from({ length: 5 }, (_, i) => {
+      const a = (i * 72 * Math.PI) / 180;
+      return `M${cx} 278L${(cx + Math.cos(a) * 19).toFixed(1)} ${(278 + Math.sin(a) * 19).toFixed(1)}`;
+    }).join('');
+    return `
+    <circle cx="${cx}" cy="278" r="29" class="a-line a-soft-fill"/>
+    <g class="a-wheel art-anim"><circle cx="${cx}" cy="278" r="19" class="a-soft"/><path d="${spokes}" class="a-line"/></g>
+    <circle cx="${cx}" cy="278" r="4" class="a-fill"/>`;
+  };
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.cordeauAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <defs><clipPath id="c-${id}"><path d="${body}"/></clipPath></defs>
+  <path d="M0 308H760" class="a-line"/>
+  <path d="M60 326H700" class="a-soft a-dash-static"/>
+  <path d="M760 346H0" class="a-line a-dash art-anim" pathLength="1"/>
+  <path d="${body}" class="a-line a-soft-fill"/>
+  <g clip-path="url(#c-${id})"><path d="M-140 150h60l-40 160h-60Z" class="a-sweep a-shine art-anim"/></g>
+  <path d="M262 228C298 208 322 192 352 190L452 188C478 190 494 202 508 214Z" class="a-line"/>
+  <path d="M402 189L404 221M404 222L406 284M506 216L500 284M300 226L292 284M180 244L640 236" class="a-soft"/>
+  <path d="M614 228L666 236L665 241L613 233Z" class="a-fill a-pulse art-anim"/>
+  <path d="M150 250L178 244V248L150 254Z" class="a-fill"/>
+  ${wheel(245)}
+  ${wheel(535)}
+  <text x="40" y="56" class="a-text">${esc(t('art.configurator'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.realtime'))}</text>
+</svg>`;
+};
+
+const cocorico = (id, t) => {
+  // La basse-cour de Cocorico : un coq qui chante, une poule et un poussin qui picorent, un œuf,
+  // et la jauge de l’accueil (« 9 semaines sur 12 »). Traits fins quel que soit l’agrandissement.
+  const n = 'vector-effect="non-scaling-stroke"';
+  const bird = ({ x, s, kind }) => {
+    const rooster = kind === 'rooster';
+    const hy = rooster ? -84 : -74; // hauteur de la tête : le coq la lève pour chanter
+    const tail = rooster
+      ? `<path d="M-34 -40C-60 -60-70-100-46-118M-34 -36C-70 -50-86-86-70-104M-34 -32C-74 -36-92-62-88-80" class="a-line" ${n}/>`
+      : kind === 'hen' ? `<path d="M-34 -36L-50 -70L-22 -50Z" class="a-line" ${n}/>` : '';
+    const comb = rooster
+      ? `<path d="M18 ${hy - 8}Q20 ${hy - 20} 25 ${hy - 10}Q28 ${hy - 22} 32 ${hy - 11}Q36 ${hy - 20} 38 ${hy - 8}Z" class="a-fill"/>`
+      : kind === 'hen' ? `<path d="M21 ${hy - 9}q3 -7 6 0q3 -7 6 0" class="a-line" ${n}/>` : '';
+    const beak = rooster
+      ? `<path d="M38 ${hy - 3}L52 ${hy - 8}L40 ${hy + 1}ZM38 ${hy + 3}L50 ${hy + 6}L39 ${hy + 5}Z" class="a-fill"/>`
+      : `<path d="M38 ${hy - 3}L49 ${hy + 1}L38 ${hy + 4}Z" class="a-fill"/>`;
+    return `
+  <g transform="translate(${x} 318) scale(${s})"><g class="${rooster ? 'a-bird' : `a-bird a-peck art-anim${kind === 'chick' ? ' a-peck--late' : ''}`}">
+    ${tail}
+    <path d="M-38 -34C-40 -62-6 -72 18 -60C34 -52 40 -36 32 -22C24 -8 4 -4-14 -8C-30 -12-38 -22-38 -34Z" class="a-line a-soft-fill" ${n}/>
+    <path d="M-20 -42C-6 -50 12 -44 16 -32C2 -26-12 -30-20 -42Z" class="a-soft" ${n}/>
+    <path d="M16 -58L24 ${hy + 8}" class="a-line" ${n}/>
+    <circle cx="28" cy="${hy}" r="11" class="a-line a-soft-fill" ${n}/>
+    ${comb}${beak}
+    ${kind === 'chick' ? '' : `<path d="M36 ${hy + 8}q3 7-3 8" class="a-line" ${n}/>`}
+    <circle cx="31" cy="${hy - 2}" r="1.8" class="a-fill"/>
+    <path d="M-6 -7V0M8 -7V0M-12 0H0M2 0H15" class="a-line" ${n}/>
+  </g></g>`;
+  };
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.cocoricoAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <path d="M60 318V258M220 318V258M380 318V258M540 318V258M700 318V258M40 272H720M40 296H720" class="a-soft"/>
+  <path d="M0 318H760" class="a-line"/>
+  <path d="M0 330H760" class="a-soft a-dash-static"/>
+  ${bird({ x: 255, s: 1.55, kind: 'rooster' })}
+  <g class="a-crow"><path d="M350 172Q360 185 350 198" class="a-line art-anim"/><path d="M364 164Q379 185 364 206" class="a-line art-anim"/><path d="M378 156Q398 185 378 214" class="a-line art-anim"/></g>
+  ${bird({ x: 470, s: 1.05, kind: 'hen' })}
+  ${bird({ x: 566, s: 0.6, kind: 'chick' })}
+  <ellipse cx="640" cy="299" rx="15" ry="19" class="a-fill a-pulse art-anim"/>
+  <text x="40" y="56" class="a-text">${esc(t('art.flock'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.weeks'))}</text>
+  <path d="M40 92h120" class="a-soft"/>
+  <path d="M40 92h90" class="a-line a-thick art-anim a-meter"/>
+</svg>`;
+};
+
+const reel = (id, t) => {
+  // Short Reel : la maison est une bande de film. Les ciseaux coupent une image (marquée de coins blancs),
+  // qui sort de la bande, glisse et se recolle deux images plus loin, puis la bande se rembobine.
+  const fx = (i) => 60 + i * 108;
+  const holes = Array.from({ length: 28 }, (_, i) => `M${48 + i * 24} 156h12v8h-12ZM${48 + i * 24} 256h12v8h-12Z`).join('');
+  // Le contenu de chaque image : une porte, un escalier, une fenêtre…, comme les pièces de la maison
+  const scenes = [
+    (x) => `M${x + 38} 238v-40h24v40`,
+    (x) => `M${x + 14} 238h18v-14h18v-14h18v-14h18`,
+    (x) => `M${x + 30} 190h40v32h-40ZM${x + 50} 190v32M${x + 30} 206h40`,
+    (x) => `M${x + 20} 238q30 -50 60 0`,
+    null,
+    (x) => `M${x + 14} 238h72M${x + 50} 238v-46l-16 14M${x + 50} 192l16 14`,
+  ];
+  const frame = (i) => `<rect x="${fx(i)}" y="172" width="100" height="76" class="a-line"/><path d="${scenes[i](fx(i))}" class="a-soft"/>`;
+  const ticks = (x) => `M${x + 4} 184v-8h8M${x + 88} 176h8v8M${x + 4} 236v8h8M${x + 96} 236v8h-8`;
+  return `
+<svg viewBox="0 0 760 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(t('art.reelAlt'))}">
+  ${grid.replaceAll('{id}', id)}
+  <rect x="40" y="150" width="680" height="120" class="a-line a-soft-fill"/>
+  <path d="${holes}" class="a-soft"/>
+  ${[0, 1, 3, 5].map(frame).join('')}
+  <rect x="${fx(2)}" y="172" width="100" height="76" class="a-soft a-dash-static"/>
+  <rect x="${fx(4)}" y="172" width="100" height="76" class="a-soft a-dash-static"/>
+  <g class="a-splice art-anim">
+    ${frame(2)}
+    <path d="${ticks(fx(2))}" class="a-line a-thick"/>
+  </g>
+  <g class="a-shears">
+    <g class="art-anim"><path d="M368 120L390 196" class="a-line a-thick"/><circle cx="365" cy="111" r="9" class="a-line"/></g>
+    <g class="art-anim"><path d="M392 120L370 196" class="a-line a-thick"/><circle cx="395" cy="111" r="9" class="a-line"/></g>
+  </g>
+  <text x="40" y="56" class="a-text">${esc(t('art.directorsCut'))}</text>
+  <text x="40" y="80" class="a-text">${esc(t('art.jamDays'))}</text>
+</svg>`;
+};
+
+export const art = { catapult, bastion, darts, plumb, cordeau, marbles, lumirift, reel, cocorico, classified };
