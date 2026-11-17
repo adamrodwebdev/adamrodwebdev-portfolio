@@ -3,11 +3,12 @@ import { useI18n } from 'vue-i18n';
 import { useTheme } from '../composables/useTheme.js';
 import { languages, locale } from '../i18n/index.js';
 
+// L'offre d'abord (1.17.0) ; la méthode et la bande-son restent dans la page et le pied de page
 const links = [
+  { id: 'offres', key: 'nav.offers' },
   { id: 'services', key: 'nav.services' },
   { id: 'projets', key: 'nav.projects' },
-  { id: 'methode', key: 'nav.method' },
-  { id: 'bande-son', key: 'nav.soundtrack' },
+  { id: 'creations', key: 'nav.creations' },
   { id: 'contact', key: 'nav.contact' },
 ];
 
@@ -84,7 +85,7 @@ export default {
   <nav class="nav container" :aria-label="t('a11y.mainNav')">
     <a class="brand" href="#accueil" :aria-label="t('a11y.brandHome')" @click="go">
       <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
-      <span class="brand__name">AdamRod<b>WebDev</b></span>
+      <span class="brand__name">AdamRod<b>WebTech</b></span>
     </a>
     <ul class="nav__links">
       <li v-for="l in links" :key="l.id">

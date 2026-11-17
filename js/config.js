@@ -10,4 +10,11 @@ export const config = {
   formMode: 'netlify',
   formEndpoint: '',               // ex. 'https://formspree.io/f/xxxxxxx'
   contactEmail: 'contact@adamrodwebdev.com', // adresse affichée en secours
+  // Liens sortants (1.17.0), vides tant que le compte n'existe pas : le bouton ou la ligne n'est alors pas
+  // généré. Simples liens (aucun widget, rien chargé d'un autre domaine) ; vérifiés à la génération.
+  bookingUrl: '',                 // agenda de prise de rendez-vous, ex. 'https://cal.com/adamrodwebtech/15min'
+  maltUrl: '',                    // profil Malt, ex. 'https://www.malt.fr/profile/…'
 };
+
+/** Les seuls domaines admis pour ces liens : un lien vers un autre site fait échouer la génération. */
+export const OUTBOUND_HOSTS = Object.freeze({ bookingUrl: ['cal.com'], maltUrl: ['www.malt.fr', 'malt.fr'] });

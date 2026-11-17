@@ -113,7 +113,7 @@ export function createSoundtrack({
     if (typeof MediaMetadata !== 'undefined' && !mediaSession.metadata) {
       mediaSession.metadata = new MediaMetadata({
         title: TITLE,
-        artist: 'AdamRodWebDev',
+        artist: 'AdamRodWebTech',
         artwork: [{ src: '/assets/icon-512.png', sizes: '512x512', type: 'image/png' }],
       });
     }

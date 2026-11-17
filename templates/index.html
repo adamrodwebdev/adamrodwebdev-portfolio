@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>[[meta.title]]</title>
   <meta name="description" content="[[meta.description]]">
-  <meta name="author" content="AdamRodWebDev">
+  <meta name="author" content="AdamRodWebTech">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="[[@url]]">
   [[@alternates]]
@@ -22,7 +22,7 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="[[meta.ogLocale]]">
   [[@ogAltLocales]]
-  <meta property="og:site_name" content="AdamRodWebDev">
+  <meta property="og:site_name" content="AdamRodWebTech">
   <meta property="og:title" content="[[meta.ogTitle]]">
   <meta property="og:description" content="[[meta.ogDescription]]">
   <meta property="og:url" content="[[@url]]">
@@ -66,12 +66,13 @@
       {
         "@type": "ProfessionalService",
         "@id": "[[@origin]]/#entreprise",
-        "name": "AdamRodWebDev",
+        "name": "AdamRodWebTech",
         "url": "[[@url]]",
         "logo": "[[@origin]]/assets/icon-512.png",
         "image": "[[@origin]]/assets/og-image.png",
         "description": "[[meta.ldDescription]]",
         "areaServed": { "@type": "Country", "name": "France" },
+        "makesOffer": [[@ldOffers]],
         "knowsAbout": ["Vue.js", "TypeScript", "JavaScript", "PHP", "Symfony", "REST API", "HTML", "CSS", "SEO", "Web accessibility", "Web performance"],
         "sameAs": [
           "https://www.tiktok.com/@adamrodwebdev",
@@ -84,7 +85,7 @@
         "@type": "WebSite",
         "@id": "[[@origin]]/#site",
         "url": "[[@origin]]/",
-        "name": "AdamRodWebDev",
+        "name": "AdamRodWebTech",
         "inLanguage": [[@inLanguage]],
         "publisher": { "@id": "[[@origin]]/#entreprise" }
       },
@@ -108,13 +109,13 @@
       <nav class="nav container" aria-label="[[a11y.mainNav]]">
         <a class="brand" href="#accueil" aria-label="[[a11y.brandHome]]">
           <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
-          <span class="brand__name">AdamRod<b>WebDev</b></span>
+          <span class="brand__name">AdamRod<b>WebTech</b></span>
         </a>
         <ul class="nav__links">
+          <li><a href="#offres">[[nav.offers]]</a></li>
           <li><a href="#services">[[nav.services]]</a></li>
           <li><a href="#projets">[[nav.projects]]</a></li>
-          <li><a href="#methode">[[nav.method]]</a></li>
-          <li><a href="#bande-son">[[nav.soundtrack]]</a></li>
+          <li><a href="#creations">[[nav.creations]]</a></li>
           <li><a href="#contact">[[nav.contact]]</a></li>
         </ul>
         <div class="nav__tools">
@@ -134,12 +135,12 @@
           <p class="hero__status"><span class="pulse-dot" aria-hidden="true"></span>[[hero.status]]</p>
           <h1 id="hero-title" class="hero__title">
             <span class="hero__line" data-repair>AdamRod</span>
-            <span class="hero__line hero__line--gold" data-repair>WebDev</span>
+            <span class="hero__line hero__line--gold" data-repair>WebTech</span>
           </h1>
           <p class="hero__lead">[[hero.lead]]</p>
           <div class="hero__actions">
-            <a class="btn btn--gold magnetic" href="#projets"><span>[[hero.ctaProjects]]</span></a>
-            <a class="btn btn--ghost magnetic" href="#contact"><span>[[hero.ctaContact]]</span></a>
+            <a class="btn btn--gold magnetic" href="#offres"><span>[[hero.ctaOffers]]</span></a>
+            [[@heroSecondCta]]
           </div>
         </div>
 
@@ -165,11 +166,27 @@
         </div>
       </div>
 
-      <a class="hero__scroll" href="#services" aria-label="[[a11y.scrollDown]]"><span></span></a>
+      <a class="hero__scroll" href="#offres" aria-label="[[a11y.scrollDown]]"><span></span></a>
     </section>
 
-    <section id="services" class="section panel panel--rise" aria-labelledby="services-title">
+    <section id="offres" class="section panel panel--rise" aria-labelledby="offres-title">
       <span class="panel__index" data-index="01" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">[[offers.tag]]</p>
+          <h2 id="offres-title" class="section__title" data-repair>[[offers.title]]</h2>
+          <p class="section__intro">[[offers.intro]]</p>
+        </header>
+
+        [[@offersPanel]]
+        [[@testimonials]]
+      </div>
+    </section>
+
+    <section id="services" class="section panel panel--fall" aria-labelledby="services-title">
+      <span class="panel__index" data-index="02" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
@@ -232,8 +249,8 @@
       </div>
     </section>
 
-    <section id="projets" class="section section--projects panel panel--fall" aria-labelledby="projets-title">
-      <span class="panel__index" data-index="02" aria-hidden="true"></span>
+    <section id="projets" class="section section--projects panel panel--rise" aria-labelledby="projets-title">
+      <span class="panel__index" data-index="03" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
@@ -245,22 +262,17 @@
       </div>
       <div id="projects-app" class="projects-app">
         <ul class="projects-static container" role="list">
-          <li><h3>Catapulte Mania</h3><p>[[projects.catapulte-mania.staticText]] <a href="[[@playCatapulte]]">[[projects.catapulte-mania.staticLink]]</a></p></li>
-          <li><h3>Bastion</h3><p>[[projects.bastion.staticText]] <a href="[[@playBastion]]">[[projects.bastion.staticLink]]</a></p></li>
           <li><h3>Skull Darts 71</h3><p>[[projects.skull-darts-71.staticText]] <a href="https://skulldarts71.fr">[[projects.skull-darts-71.staticLink]]</a></p></li>
           <li><h3>Plumb</h3><p>[[projects.plumb.staticText]] <a href="https://adamrodwebdev.github.io/plumb-darts/">[[projects.plumb.staticLink]]</a></p></li>
           <li><h3>Aplomb Cordeau</h3><p>[[projects.aplomb-cordeau.staticText]] <a href="https://adamrodwebdev.github.io/aplomb-cordeau/">[[projects.aplomb-cordeau.staticLink]]</a></p></li>
-          <li><h3>Ballmania</h3><p>[[projects.ballmania.staticText]] [[projects.ballmania.staticSoon]]</p></li>
-          <li><h3>Lumirift</h3><p>[[projects.lumirift.staticText]] <a href="/lumirift/">[[projects.lumirift.staticLink]]</a></p></li>
-          <li><h3>Short Reel</h3><p>[[projects.short-reel.staticText]] <a href="https://adamrodwebtech.itch.io/short-reel">[[projects.short-reel.staticLink]]</a></p></li>
           <li><h3>Cocorico</h3><p>[[projects.cocorico.staticText]]</p></li>
           <li><h3>[[projectsSection.upcomingTitle]]</h3><p>[[projectsSection.upcomingText]]</p></li>
         </ul>
       </div>
     </section>
 
-    <section id="methode" class="section panel panel--rise" aria-labelledby="methode-title">
-      <span class="panel__index" data-index="03" aria-hidden="true"></span>
+    <section id="methode" class="section panel panel--fall" aria-labelledby="methode-title">
+      <span class="panel__index" data-index="04" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
@@ -308,8 +320,30 @@
       <p class="visually-hidden">[[tools.hidden]]</p>
     </section>
 
+    <section id="creations" class="section section--projects panel panel--rise" aria-labelledby="creations-title">
+      <span class="panel__index" data-index="05" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
+      <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">[[creationsSection.tag]]</p>
+          <h2 id="creations-title" class="section__title" data-repair>[[creationsSection.title]]</h2>
+          <p class="section__intro">[[creationsSection.intro]]</p>
+        </header>
+      </div>
+      <div id="creations-app" class="projects-app">
+        <ul class="projects-static container" role="list">
+          <li><h3>Catapulte Mania</h3><p>[[projects.catapulte-mania.staticText]] <a href="[[@playCatapulte]]">[[projects.catapulte-mania.staticLink]]</a></p></li>
+          <li><h3>Bastion</h3><p>[[projects.bastion.staticText]] <a href="[[@playBastion]]">[[projects.bastion.staticLink]]</a></p></li>
+          <li><h3>Ballmania</h3><p>[[projects.ballmania.staticText]] [[projects.ballmania.staticSoon]]</p></li>
+          <li><h3>Lumirift</h3><p>[[projects.lumirift.staticText]] <a href="/lumirift/">[[projects.lumirift.staticLink]]</a></p></li>
+          <li><h3>Short Reel</h3><p>[[projects.short-reel.staticText]] <a href="https://adamrodwebtech.itch.io/short-reel">[[projects.short-reel.staticLink]]</a></p></li>
+        </ul>
+      </div>
+    </section>
+
     <section id="bande-son" class="section panel panel--fall" aria-labelledby="bande-son-title">
-      <span class="panel__index" data-index="04" aria-hidden="true"></span>
+      <span class="panel__index" data-index="06" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container">
@@ -326,7 +360,7 @@
     </section>
 
     <section id="contact" class="section section--contact panel panel--rise" aria-labelledby="contact-title">
-      <span class="panel__index" data-index="05" aria-hidden="true"></span>
+      <span class="panel__index" data-index="07" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--near" aria-hidden="true"></span>
       <span class="panel__shard panel__shard--far" aria-hidden="true"></span>
       <div class="container contact">
@@ -334,11 +368,13 @@
           <p class="section__tag">[[contactSection.tag]]</p>
           <h2 id="contact-title" class="section__title" data-repair>[[contactSection.title]]</h2>
           <p class="section__intro">[[contactSection.intro]]</p>
+          [[@contactBooking]]
           <dl class="contact__facts">
             <div><dt>[[contactSection.factEmail]]</dt><dd><a class="contact__mail" href="mailto:[[@contactEmail]]">[[@contactEmail]]</a></dd></div>
             <div><dt>[[contactSection.factDelay]]</dt><dd>[[contactSection.factDelayValue]]</dd></div>
             <div><dt>[[contactSection.factZone]]</dt><dd>[[contactSection.factZoneValue]]</dd></div>
             <div><dt>[[contactSection.factQuote]]</dt><dd>[[contactSection.factQuoteValue]]</dd></div>
+            [[@maltFact]]
           </dl>
         </div>
 
@@ -367,20 +403,22 @@
     <div class="container footer">
       <a class="brand" href="#accueil" aria-label="[[a11y.brandTop]]">
         <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
-        <span class="brand__name">AdamRod<b>WebDev</b></span>
+        <span class="brand__name">AdamRod<b>WebTech</b></span>
       </a>
       <nav aria-label="[[a11y.footerNav]]">
         <ul class="footer__links">
+          <li><a href="#offres">[[nav.offers]]</a></li>
           <li><a href="#services">[[nav.services]]</a></li>
           <li><a href="#projets">[[nav.projects]]</a></li>
           <li><a href="#methode">[[nav.method]]</a></li>
+          <li><a href="#creations">[[nav.creations]]</a></li>
           <li><a href="#bande-son">[[nav.soundtrack]]</a></li>
           <li><a href="#contact">[[nav.contact]]</a></li>
           <li><a href="[[@legal]]"[[@legalHreflang]]>[[nav.legal]]</a></li>
           [[@footerLangs]]
         </ul>
       </nav>
-      <p class="footer__copy">© <span data-year>2026</span> AdamRodWebDev. [[footer.copy]]</p>
+      <p class="footer__copy">© <span data-year>2026</span> AdamRodWebTech. [[footer.copy]]</p>
     </div>
   </footer>
 

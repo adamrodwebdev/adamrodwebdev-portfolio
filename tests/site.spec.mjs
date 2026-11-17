@@ -378,7 +378,7 @@ test('police signature : son arrivée ne décale rien (repli calé sur ses mesur
   // Les textes d'affichage écrits dans le HTML (pas ceux des îlots Vue, montés plus tard)
   const boxes = () => page.evaluate(() => Object.fromEntries(
     ['#accueil .hero__title', '#accueil .hero__status', '#accueil .hero__actions', '.site-header .brand__name',
-      '#services-title', '#projets-title', '#methode-title', '#bande-son-title', '#contact-title']
+      '#offres-title', '#services-title', '#projets-title', '#methode-title', '#creations-title', '#bande-son-title', '#contact-title']
       .map((selector) => [selector, Math.round(document.querySelector(selector).getBoundingClientRect().height)])));
   // D'abord sans la signature (le repli seul), puis avec ; en latin et en russe (1.15.0)
   for (const path of ['/', '/ru/']) {
@@ -455,8 +455,88 @@ test('bande-son : chaque partie se joue depuis son début, et s’allume', async
   await expect(page.locator('#nav-app .sound-btn')).toHaveAttribute('aria-pressed', 'false');
 });
 
+// ----- Offre commerciale (1.17.0) -----
+
+test('offres : trois formules, la maintenance et le pré-audit, aux prix de la langue (1.17.0)', async ({ page }) => {
+  const { messages } = await import('../js/i18n/messages.js');
+  const { plans, care, audit } = await import('../js/data/offers.js');
+  for (const [path, lang] of [['/', 'fr'], ['/en/', 'en'], ['/ru/', 'ru'], ['/it/', 'it'], ['/es/', 'es']]) {
+    await page.goto(path);
+    const locale = messages[lang].meta.ldLanguage;
+    const { euros } = await import('../scripts/offers.mjs');
+    const price = (amount) => euros(amount, locale);
+    const offers = page.locator('#offres .offer');
+    await expect(offers).toHaveCount(plans.length);
+    await expect(page.locator('#offres .offer--pick')).toHaveCount(1);
+    await expect(offers.first().locator('.offer__price')).toContainText(price(plans[0].price));
+    await expect(page.locator('#offres .care__tiers li')).toHaveCount(care.length);
+    await expect(page.locator('#offres .care__price').first()).toContainText(price(care[0].monthly));
+    await expect(page.locator('#offres .audit .offer__price')).toContainText(price(audit.price));
+    await expect(page.locator('#offres .offers__legal')).toHaveText(messages[lang].offers.legal);
+  }
+});
+
+test('offres : chaque bouton choisit son type de projet dans le formulaire (1.17.0)', async ({ page }) => {
+  const { messages } = await import('../js/i18n/messages.js');
+  const { PROJECT_TYPES } = await import('../js/data/offers.js');
+  const types = messages.fr.form.types;
+  await page.goto('/');
+  await expect(page.locator('#contact-app form[aria-busy]')).toHaveCount(1);
+  for (const [selector, key] of [['#offres .care__more a', 'care'], ['#offres .audit .btn', 'audit'], ['#offres .offer:nth-child(3) .offer__cta', 'app']]) {
+    // Clic sans souris : une vraie souris qui bouge pendant le défilement fait planter Chromium sans écran
+    // sur ordinateur, déjà en 1.15.0 (2 passages sur 10) ; ce test vérifie le lien bouton → type, pas le survol.
+    await page.locator(selector).dispatchEvent('click');
+    await expect(page.locator('#f-type')).toHaveValue(types[PROJECT_TYPES[key]]);
+  }
+  // Le budget le plus bas existe maintenant
+  await expect(page.locator('#contact-app .chips')).toContainText(messages.fr.form.budgets[0]);
+});
+
+test('accueil : l’offre d’abord, les sites puis les jeux, chacun son carrousel (1.17.0)', async ({ page }) => {
+  const { projectsOf } = await import('../js/data/projects.js');
+  await page.goto('/');
+  const ids = await page.locator('main > section[id]').evaluateAll((sections) => sections.map((s) => s.id));
+  expect(ids).toEqual(['accueil', 'offres', 'services', 'projets', 'methode', 'creations', 'bande-son', 'contact']);
+  const indexes = await page.locator('main .panel__index').evaluateAll((spans) => spans.map((s) => s.dataset.index));
+  expect(indexes).toEqual(['01', '02', '03', '04', '05', '06', '07']);
+  await expect(page.locator('#projects-app .slide')).toHaveCount(projectsOf('work').length);
+  // Le carrousel des créations se monte à l'approche de sa section : la liste statique tient jusque-là
+  await expect(page.locator('#creations-app .projects-static')).toHaveCount(1);
+  await page.locator('#creations').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
+  await expect(page.locator('#creations-app .slide')).toHaveCount(projectsOf('lab').length);
+  const links = await page.locator('.site-header .nav__links a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+  expect(links).toEqual(['#offres', '#services', '#projets', '#creations', '#contact']);
+});
+
+test('témoignages, réservation et Malt : absents tant que leur donnée manque (1.17.0)', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.testimonials, .contact__booking')).toHaveCount(0);
+  await expect(page.locator('a[href*="cal.com"], a[href*="malt"]')).toHaveCount(0);
+  await expect(page.locator('.hero__actions a').nth(1)).toHaveAttribute('href', '#contact');
+});
+
+test('marque : AdamRodWebTech sur chaque page, plus jamais AdamRodWebDev (1.17.0)', async ({ page }) => {
+  for (const path of PAGES) {
+    await page.goto(path);
+    const html = await page.content();
+    expect(html, path).not.toContain('AdamRodWebDev');
+    if (!path.startsWith('/lumirift/')) expect(html, path).toContain('AdamRodWebTech');
+  }
+  await page.goto('/');
+  await expect(page.locator('.site-header .brand__name')).toHaveText('AdamRodWebTech');
+  await expect(page).toHaveTitle(/^AdamRodWebTech \|/);
+});
+
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
+
+  test('offres : les formules, leurs prix et les deux listes de projets restent lisibles (1.17.0)', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#offres .offer')).toHaveCount(3);
+    await expect(page.locator('#offres .care__tiers li')).toHaveCount(3);
+    await expect(page.locator('#projects-app .projects-static li')).toHaveCount(5);
+    await expect(page.locator('#creations-app .projects-static li')).toHaveCount(5);
+  });
 
   test('bande-son : les cinq parties et la note restent lisibles', async ({ page }) => {
     const { messages } = await import('../js/i18n/messages.js');
