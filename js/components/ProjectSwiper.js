@@ -1,6 +1,6 @@
-import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { projects } from '../data/projects.js';
+import { projectsOf } from '../data/projects.js';
 import { playLinks } from '../data/platforms.js';
 import { art } from '../data/art.js';
 
@@ -20,6 +20,8 @@ export default {
   name: 'ProjectSwiper',
   setup() {
     const { t, te, tm, rt } = useI18n();
+    /** Le groupe de projets de ce carrousel (1.17.0) : 'work' (réalisations) ou 'lab' (créations). */
+    const group = inject('projectGroup', 'work');
     /** Les liens d'une fiche : une plateforme où jouer chacun, sinon l'adresse du projet. */
     const linksFor = (p, title) => {
       const links = p.play
@@ -27,7 +29,7 @@ export default {
         : p.url ? [{ url: p.url, label: te(`projects.${p.id}.link`) ? t(`projects.${p.id}.link`) : t('swiper.discover', { title }) }] : [];
       return links.map((link) => ({ ...link, newTab: p.newTab || link.url.startsWith('http') }));
     };
-    const slides = projects.map((p) => {
+    const slides = projectsOf(group).map((p) => {
       const k = `projects.${p.id}`;
       const title = t(`${k}.title`);
       return {
@@ -73,6 +75,9 @@ export default {
         return {
           transform: `translateX(calc(${o} * (100% + ${GAP}px) - ${Math.sign(o) * (1 - s) * 50}%)) scale(${s})`,
           opacity: a < 1 ? 1 - a * 0.55 : Math.max(0, 0.45 * (2 - a)),
+          // Une carte transparente n'est plus peinte du tout (1.17.0) : chacune a son calque, et onze cartes
+          // peintes pour rien occupaient le fil principal au chargement
+          visibility: a >= 2 ? 'hidden' : 'visible',
           zIndex: 100 - Math.round(a * 10),
           pointerEvents: a > 0.5 ? 'none' : 'auto',
         };
@@ -80,6 +85,7 @@ export default {
       return {
         transform: `translateX(${o * SPREAD}%) translateZ(${-a * 220}px) rotateY(${-o * 28}deg) scale(${1 - Math.min(a, 2) * 0.08})`,
         opacity: a > 2.2 ? 0 : 1 - a * 0.42,
+        visibility: a > 2.2 ? 'hidden' : 'visible',
         zIndex: 100 - Math.round(a * 10),
         filter: a > 0.5 ? `grayscale(.6) brightness(${1 - Math.min(a, 1.5) * 0.3})` : 'none',
         pointerEvents: a > 0.5 ? 'none' : 'auto',
@@ -225,14 +231,14 @@ export default {
     const styles = computed(() => slides.map((_, i) => styleFor(i)));
 
     return {
-      slides, count, index, dragging, paused, running, autoplay, expanded, clamped, timerKey, root, viewport, styles,
+      group, visible, slides, count, index, dragging, paused, running, autoplay, expanded, clamped, timerKey, root, viewport, styles,
       go: take(go), next: take(next), prev: take(prev), toggle,
       onDown, onMove, onUp, onCancel, onKey, onClickCapture, AUTOPLAY_MS, t,
       pad: (n) => String(n).padStart(2, '0'),
     };
   },
   template: `
-  <div ref="root" class="swiper" role="region" :aria-roledescription="t('swiper.roledescription')" :aria-label="t('swiper.region')"
+  <div ref="root" class="swiper" :class="{ 'is-offscreen': !visible }" role="region" :aria-roledescription="t('swiper.roledescription')" :aria-label="t('swiper.regions.' + group)"
        @mouseenter="paused = true" @mouseleave="paused = false" @focusin="paused = true" @focusout="paused = false">
     <div ref="viewport" class="swiper__viewport" :class="{ 'is-dragging': dragging }" tabindex="0" role="group"
          :aria-label="t('swiper.viewport')"

@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { config } from '../config.js';
 import { burst } from '../fx/particles.js';
 import { TEXT_LIMITS, cleanText, textLength } from '../input.js';
+import { PROJECT_TYPES } from '../data/offers.js';
 
 const MAX = TEXT_LIMITS.message;
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -107,6 +108,19 @@ export default {
       nextTick(() => formEl.value?.querySelector('input')?.focus());
     }
     onBeforeUnmount(() => stopBurst?.());
+
+    // Un bouton d'offre (1.17.0) choisit le type de projet : sa clé est lue dans la liste fermée PROJECT_TYPES,
+    // jamais prise telle quelle dans la page ; une clé inconnue ne change rien.
+    const pickType = (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a[data-project-type]') : null;
+      if (!link) return;
+      const key = link.getAttribute('data-project-type');
+      if (!Object.hasOwn(PROJECT_TYPES, key)) return;
+      const label = types[PROJECT_TYPES[key]];
+      if (typeof label === 'string') form.type = label;
+    };
+    document.addEventListener('click', pickType);
+    onBeforeUnmount(() => document.removeEventListener('click', pickType));
 
     return { form, touched, errors, show, state, step, stepLabels, submit, reset, formEl, canvas, successTitle, shaking, errorMsg, ticket, demo, types, budgets, MAX, LIMITS: TEXT_LIMITS, email: config.contactEmail, t };
   },

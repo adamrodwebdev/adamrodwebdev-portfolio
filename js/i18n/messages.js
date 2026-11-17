@@ -30,7 +30,7 @@ export const lumiriftPage = {
     ogImageAlt: 'Lumirift Blocks: the Eye of the Tower glares over a glass tower of gem blocks',
   },
   stage: {
-    eyebrow: 'A free browser game by AdamRodWebDev',
+    eyebrow: 'A free browser game by AdamRodWebTech',
     promise:
       'A falling sand puzzle where the blocks fight back. Pieces crumble into sand that burns, shocks and grows, and four Guardians rise to stop you.',
     facts: 'No download · phone and desktop',
@@ -62,7 +62,7 @@ export const lumiriftPage = {
   },
   maker: {
     title: 'Made in public',
-    line: 'Built by AdamRodWebDev, a full-stack web developer in France. The bugs, fixes and tricks behind it go out every week.',
+    line: 'Built by AdamRodWebTech, a full-stack web developer in France. The bugs, fixes and tricks behind it go out every week.',
     proofs: {
       size: 'Starts in under 300 KB',
       lighthouse: 'Lighthouse 100',
@@ -75,7 +75,7 @@ export const lumiriftPage = {
       instagram: 'Instagram',
       hire: 'Hire me',
     },
-    credits: 'Designed and directed by AdamRodWebDev, built with AI coding assistants.',
+    credits: 'Designed and directed by AdamRodWebTech, built with AI coding assistants.',
   },
   ld: {
     description:

@@ -75,6 +75,30 @@ Statut : demandée le 15 novembre 2026 (« une police purement inventée et anim
 - Enregistrer l'identifiant de fournisseur `ARWD` (gratuit, auprès de Microsoft) : décidé le 16 novembre 2026, il attend le nom de la fonderie, pour demander les deux identifiants ensemble. Rien ne bloque d'ici là : la police porte déjà `ARWD`.
 - Le cyrillique : fait en 1.15.0.
 
+## 1.17.0 : l'offre commerciale
+
+Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excellente techniquement, mais elle ne vend pas »), maquette validée le même jour, réalisée sur la branche `feat/1.17-offre` (PR vers `dev`). Mise en ligne seulement sur décision. But de l'entreprise : au moins 300 € par mois de revenus récurrents.
+
+### Ce qui a été décidé (17 novembre 2026)
+- **L'offre en tête de l'accueil**, avant les services : trois formules (vitrine essentiel dès 1 200 €, vitrine complet dès 2 200 €, application web sur devis), la maintenance et l'hébergement (Veille 49 €, Suivi 79 €, Partenaire 99 € par mois) et un pré-audit d'accessibilité WCAG 2.2 à 390 €. Prix nets (TVA non applicable), légèrement sous le marché freelance de 2026 (1 500 à 3 000 € pour un site vitrine), « à partir de » et ouverts à la discussion.
+- **Le pré-audit cite l'Acte européen sur l'accessibilité seulement pour ceux qu'il concerne** (sites marchands des entreprises de 10 salariés ou plus) : les micro-entreprises en sont exemptées pour les services, la cible du site l'est presque toujours.
+- **Réalisations et créations séparées** : un carrousel pour les sites et applications, un autre pour les jeux, plus bas. Le menu : Offres, Services, Réalisations, Créations, Contact.
+- **Le nom commercial partout** : AdamRodWebTech (logo, titres, données structurées, image de partage, pages annexes).
+- **Contact rapide** : un appel vidéo de 15 minutes réservé sur Cal.com, aucun numéro de téléphone exposé ; le bouton n'existe qu'une fois l'adresse donnée. Même règle pour le profil Malt.
+- **Témoignages** : une place prête, vide tant qu'aucun vrai avis n'existe. Rien n'est inventé.
+- **Abandonné** : l'étude de cas chiffrée de Skull Darts 71.
+
+### Vérifications (« fini » quand)
+- Les cinq langues ont les mêmes clés ; prix écrits à la façon de chaque langue.
+- `npm test` passe : tests unitaires (liens sortants hostiles, échappement, données structurées) et Playwright (offres, boutons qui choisissent le type de projet, ordre de l'accueil, deux carrousels, blocs absents, marque, sans JavaScript).
+- Lighthouse 100 dans les quatre catégories, pire de trois passages sur mobile, plus l'ordinateur.
+- Captures en clair et en sombre, sur téléphone et sur ordinateur.
+- Entrée 1.17.0 dans le CHANGELOG, README et feuille de route à jour.
+
+### Ensuite
+- Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
+- Demander un avis écrit aux premiers clients.
+
 ## 1.15.0 : la signature parle russe
 
 Statut : demandée le 16 novembre 2026 (« Enchaîne sur le cyrillique »), réalisée sur la branche `feat/1.15-cyrillique` (PR vers `dev`, après la 1.14.1). Mise en ligne seulement sur décision.
