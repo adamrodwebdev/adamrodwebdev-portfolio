@@ -2,7 +2,7 @@
  * « Sfumato » — la partition du thème du site (1.12.0) : des données seulement, sans son ni Vue.
  * Le moteur (sfumato.js) la joue, le lecteur et la génération des pages y lisent la durée et les parties.
  *
- * Composition originale d'AdamRodWebDev. Mi mineur, 116 BPM joués en demi-temps, 4/4, 96 mesures.
+ * Composition originale d'AdamRodWebTech. Mi mineur, 116 BPM joués en demi-temps, 4/4, 96 mesures.
  * Couleur : la sixte napolitaine (fa majeur, accord de ♭II) et la dominante majeure (si), d'où son
  * clair-obscur doré.
  */

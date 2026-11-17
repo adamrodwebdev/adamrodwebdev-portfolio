@@ -2,6 +2,36 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.17.0] - 2026-11-17
+
+### Ajouté
+- **L'offre commerciale en tête de l'accueil**, juste après le titre : trois formules (vitrine essentiel dès 1 200 €, vitrine complet dès 2 200 €, recommandée, application web sur devis), la maintenance et l'hébergement (Veille 49 €, Suivi 79 €, Partenaire 99 € par mois) et un pré-audit d'accessibilité WCAG 2.2 à 390 €. Prix nets, TVA non applicable, « à partir de » et ouverts à la discussion ; devis gratuit. Chaque langue écrit les prix à sa façon (« 1 200 € », « €1,200 », « 1200 € »). Tout est rendu à la génération (`scripts/offers.mjs`, prix dans `js/data/offers.js`) : la section se lit sans JavaScript.
+- **Le pré-audit cite l'Acte européen sur l'accessibilité pour ceux qu'il concerne seulement** : les sites marchands des entreprises de 10 salariés ou plus (les micro-entreprises en sont exemptées pour les services).
+- **Les boutons des offres choisissent le type de projet du formulaire** (lu dans une liste fermée, jamais pris tel quel dans la page).
+- **Formulaire** : les types « Maintenance mensuelle » et « Pré-audit d'accessibilité », les budgets « Moins de 1 000 € » et « 1 000 à 2 000 € ».
+- **Témoignages** : une place prête (`js/data/testimonials.js`), absente du site tant qu'aucun vrai avis n'existe. Rien n'est inventé.
+- **Appel vidéo et profil Malt** : `bookingUrl` (Cal.com) et `maltUrl` dans `js/config.js`. Tant qu'ils sont vides, ni bouton ni ligne ne sont générés ; une fois renseignés, ce sont de simples liens vers un nouvel onglet, aucun widget. Seules les adresses https de `cal.com` et `malt.fr` sont admises, sinon la génération échoue.
+- **Les offres dans les données structurées** (`makesOffer` du `ProfessionalService`).
+- **Tests unitaires** (`npm run test:unit`, node:test) : prix dans chaque langue, liens sortants et leur table d'entrées hostiles (http, autre domaine, identifiants dans l'adresse, `javascript:`, valeurs qui ne sont pas des chaînes), témoignages échappés, données structurées. `npm test` les lance avant Playwright.
+
+### Modifié
+- **L'accueil réordonné pour un artisan ou un commerçant** : Offres, Services, Réalisations, Méthode, Créations, Bande-son, Contact (panneaux 01 à 07). Le carrousel est coupé en deux : les sites et applications (Skull Darts 71, Plumb, Aplomb Cordeau, Cocorico), puis les jeux dans « Créations ». Le menu : Offres, Services, Réalisations, Créations, Contact ; la méthode et la bande-son restent dans la page et le pied de page.
+- **Le nom commercial partout : AdamRodWebTech** (logo, titre, titres de pages, données structurées, manifeste, pages 404 et de remerciement, mentions légales, crédits). Le domaine, l'e-mail et les comptes restent en « adamrodwebdev ». L'image de partage est refaite au nouveau nom, dans la police signature (156 Ko au lieu de 256).
+- **Le titre d'accueil parle aux entreprises** (« Des sites rapides, clairs et bien référencés pour les artisans, commerçants et indépendants… »), son premier bouton mène aux offres ; localisation « Saône-et-Loire, partout à distance ». Titres et descriptions des pages citent les sites vitrines et leurs prix d'appel.
+- La carte Performance des services annonce « Lighthouse 100 dans les quatre catégories » (au lieu de « Objectif 95 et plus »).
+
+### Performance
+- **Les cartes invisibles des carrousels ne sont plus peintes** (`visibility: hidden` au-delà de deux cartes de distance), et l'illustration active d'un carrousel hors de l'écran ne s'anime plus. La 1.16.0, en passant de 8 à 11 cartes, avait alourdi le chargement sans que ce soit mesuré (sa mesure Lighthouse avait été remise à plus tard, machine trop chaude).
+- **Le carrousel des créations se monte à l'approche de sa section** (une fois et demie la hauteur de la fenêtre avant), hors de la vue : il ne pèse plus sur le démarrage.
+- Les cartes des offres apparaissent sans le flou d'entrée, qui alourdissait la mise en page à l'arrivée des polices.
+- Les prix utilisent une espace insécable que la police signature dessine (elle n'a pas l'espace fine du français : « 1200 € » s'affichait collé).
+
+### Qualité
+- `npm test` : 9 tests unitaires et 98 tests Playwright passés, 2 sautés (Chromium, téléphone et ordinateur), dont les offres dans les cinq langues, les boutons d'offre, l'ordre de l'accueil et ses deux carrousels, les blocs absents tant que leur donnée manque, la marque sur chaque page et les offres sans JavaScript.
+- Lighthouse : accessibilité, bonnes pratiques et SEO à 100 sur `/`, `/en/` et `/ru/`, sur mobile comme sur ordinateur ; performance à 100 sur ordinateur. **Performance mobile pas encore confirmée à 100** : sur une machine occupée par d'autres programmes, le pire de trois passages a varié de 98 à 100 pour un même code. En passages alternés sous la même charge, la 1.17.0 fait jeu égal avec la 1.15.0 publiée sur l'accueil (blocage médian 111 et 110 ms) et reste un peu plus lourde sur `/ru/` (92 contre 65 ms). À mesurer de nouveau machine au repos avant la publication.
+- Captures de l'accueil et du contact en clair et en sombre, sur téléphone (390 px) et sur ordinateur (1280 px) ; aucun défilement horizontal, aucune erreur dans la console.
+- Un plantage de Chromium sans écran, sur ordinateur, quand une vraie souris bouge pendant un défilement en douceur, existe déjà dans la 1.15.0 publiée (2 passages sur 10) : le test des boutons d'offre clique sans souris, et le plantage est suivi à part.
+
 ## [1.16.0] - 2026-11-17
 
 ### Ajouté

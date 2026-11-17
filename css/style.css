@@ -1,5 +1,5 @@
 /* =========================================================================
-   AdamRodWebDev — feuille de style
+   AdamRodWebTech — feuille de style
    Direction : interface "augmentée" noir / or / blanc, angles chanfreinés,
    hexagones et éclats triangulaires. Mise en page alignée à gauche,
    grille de 12 colonnes sur bureau, une colonne sur mobile.
@@ -150,7 +150,8 @@ h1, h2, h3, h4, label, button, summary, .btn, .skip-link, .big,
 .hero__status, .hero__scroll, .hud-panel, .panel__index, .section__tag, .aug__meta, .protocol__num, .marquee,
 .slide__status, .slide__tags, .slide__links, .swiper__controls,
 .sound-deck__title, .sound-deck__facts, .sound-deck__clock, .sound-deck__controls, .sound-deck__timeline,
-.chapter__num, .chapter__name, .field__count, .chips, .success__title, .success__log, .contact__facts dt {
+.chapter__num, .chapter__name, .field__count, .chips, .success__title, .success__log, .contact__facts dt,
+.offer__badge, .offer__price, .care__price {
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
 ::selection { background: color-mix(in srgb, var(--gold) 32%, transparent); }
@@ -329,7 +330,7 @@ body::before {
 }
 .hero__line { display: block; animation: slice-in 1.1s var(--ease-out) both; }
 .hero__line:nth-child(2) { animation-delay: 0.15s; }
-/* L'or de « WebDev » remplit la lettre : un contour tracerait les lignes de cassure de la signature. */
+/* L'or de « WebTech » remplit la lettre : un contour tracerait les lignes de cassure de la signature. */
 .hero__line--gold {
   color: transparent;
   background: linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-hi) 40%, var(--gold) 60%, var(--gold-deep) 100%);
@@ -407,10 +408,14 @@ body::before {
   z-index: 1; margin-top: calc(-1 * var(--overlap)); isolation: isolate; overflow-x: clip;
   view-timeline: --panel block;
 }
-#projets { z-index: 2; }
-#methode { z-index: 3; }
-#bande-son { z-index: 4; }
-#contact { z-index: 5; }
+/* Sept panneaux (1.17.0), chacun au-dessus du précédent : offres, services, réalisations, méthode, créations,
+   bande-son, contact */
+#services { z-index: 2; }
+#projets { z-index: 3; }
+#methode { z-index: 4; }
+#creations { z-index: 5; }
+#bande-son { z-index: 6; }
+#contact { z-index: 7; }
 .panel--fall { --step-x: 60%; }
 .panel::before, .panel::after { content: ""; position: absolute; z-index: -1; pointer-events: none; }
 /* La plaque du panneau : éclairée en haut, fondue dans le fond plus bas */
@@ -813,6 +818,9 @@ body::before {
   to { font-variation-settings: "FRAC" 72; }
 }
 .slide:not(.is-active) .art-anim, .slide:not(.is-active) .art-anim * { animation-play-state: paused !important; }
+/* Hors de l'écran (1.17.0), même l'illustration active dort : avec deux carrousels, leurs animations
+   tournaient sous la ligne de flottaison et occupaient le fil principal pendant le chargement. */
+.swiper.is-offscreen .art-anim, .swiper.is-offscreen .art-anim * { animation-play-state: paused !important; }
 
 /* La police signature s'anime sur son axe FRAC (1.14.0) : 100 brisée, 0 entière. La chasse ne bouge pas,
    la ligne non plus. Rien de tout cela avec « réduire les animations » (règle en fin de feuille).
@@ -981,6 +989,57 @@ span.sound-deck__viz {
   .submit-btn { width: 100%; min-width: 0; }
   .brand__name { font-size: 1.15rem; }
 }
+
+/* ---------- Offres (1.17.0) : trois formules sur des plaques chanfreinées, la maintenance, le pré-audit ---------- */
+.offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1.5rem; margin: 2.5rem 0 0; padding: 0; list-style: none; }
+.offer {
+  position: relative; display: flex; flex-direction: column; gap: 0.9rem; padding: 2rem 1.6rem 1.6rem;
+  background: var(--surface); border: 1px solid var(--line);
+  clip-path: polygon(var(--bevel) 0, 100% 0, 100% calc(100% - var(--bevel)), calc(100% - var(--bevel)) 100%, 0 100%, 0 var(--bevel));
+}
+.offer--pick { border-color: var(--gold); background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: inset 0 0 0 1px var(--gold); }
+.offer__badge { position: absolute; top: 0; right: 1.6rem; margin: 0; padding: 0.3rem 0.7rem; background: var(--gold-hi); color: var(--on-gold); font: 700 0.75rem/1 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; }
+.offer__name { margin: 0; font: 700 1.25rem/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); }
+.offer__price { margin: 0; font: 700 clamp(2.2rem, 1.9rem + 1.2vw, 3rem)/1 var(--font-display); color: var(--gold); white-space: nowrap; }
+.offer__price small { font: 600 0.95rem/1 var(--font-body); color: var(--muted); margin-right: 0.3rem; letter-spacing: 0; text-transform: none; }
+.offer__price--quote { font-size: clamp(1.8rem, 1.6rem + 0.8vw, 2.3rem); }
+.offer__for { margin: 0; color: var(--fg); font: 500 1rem/1.5 var(--font-body); }
+.offer__list { display: grid; gap: 0.55rem; margin: 0.3rem 0 0; padding: 0; list-style: none; color: var(--muted); font: 1rem/1.45 var(--font-body); }
+.offer__list li { position: relative; padding-left: 1.3rem; }
+.offer__list li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.5rem; height: 0.5rem; background: var(--gold); transform: rotate(45deg); }
+.offer__cta { margin-top: auto; align-self: flex-start; }
+
+.care { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.care__title { margin: 0 0 1.2rem; font: 700 1.15rem/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); }
+.care__tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.care__tiers li { display: grid; align-content: start; gap: 0.4rem; padding: 1.2rem 1.3rem; border: 1px solid var(--line-soft); background: var(--surface); }
+.care__name { margin: 0; font: 700 1rem/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg); }
+.care__price { margin: 0; font: 700 1.8rem/1 var(--font-display); color: var(--gold); }
+.care__price small { font: 600 0.9rem/1 var(--font-body); color: var(--muted); }
+.care__text { margin: 0; color: var(--muted); font: 0.95rem/1.45 var(--font-body); }
+.care__more { margin: 1rem 0 0; }
+.link-arrow { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; color: var(--gold); font: 600 1rem/1.3 var(--font-body); text-decoration: underline; text-underline-offset: 0.25em; }
+.link-arrow::after { content: "→"; transition: transform 0.3s var(--ease-out); }
+.link-arrow:hover::after, .link-arrow:focus-visible::after { transform: translateX(4px); }
+
+/* Le pré-audit : son texte, puis son prix et son bouton, à côté dès que la place le permet (sans requête) */
+.audit { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem 2rem; margin-top: 2rem; padding: 1.6rem; background: var(--surface-2); border: 1px solid var(--line); }
+.audit__copy { flex: 1 1 26rem; }
+.audit__copy p { margin: 0; color: var(--muted); font: 1rem/1.5 var(--font-body); max-width: 65ch; }
+.audit__copy .care__title { margin-bottom: 0.6rem; }
+.audit__copy .audit__law { margin-top: 0.7rem; font-size: 0.92rem; }
+.audit__side { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
+.offers__legal { margin: 1.5rem 0 0; color: var(--muted); font: 0.9rem/1.5 var(--font-body); }
+
+/* Témoignages : générés seulement quand un vrai avis existe (js/data/testimonials.js) */
+.testimonials { margin-top: 3rem; }
+.testimonials__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.testimonial { margin: 0; padding: 1.4rem; border: 1px solid var(--line); background: var(--surface); }
+.testimonial blockquote { margin: 0 0 0.8rem; color: var(--fg); font: italic 1.05rem/1.55 var(--font-body); }
+.testimonial figcaption { color: var(--muted); font: 0.95rem/1.4 var(--font-body); }
+
+/* Contact : le bouton de réservation, généré seulement quand l'agenda existe */
+.contact__booking { margin: 1.5rem 0 0; }
 
 /* ---------- Mouvement réduit ---------- */
 @media (prefers-reduced-motion: reduce) {

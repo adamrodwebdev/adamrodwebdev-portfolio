@@ -1,4 +1,4 @@
-# AdamRodWebDev — portfolio
+# AdamRodWebTech — portfolio (adamrodwebdev.com)
 
 Site vitrine statique : HTML, CSS, JavaScript et îlots **Vue 3** (Vue 3.5.44 et vue-i18n 11.4.16, versions figées, servis par le site). Une génération sans outil de bundle écrit le site publié dans `dist/` : rien n'est demandé à un autre domaine, et une politique de sécurité de contenu (CSP) stricte protège chaque page.
 
@@ -46,12 +46,14 @@ css/style.css           Styles, jetons de couleur, thèmes, animations (copiés 
 css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
 js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
-js/config.js            Mode d'envoi du formulaire, e-mail de contact
+js/config.js            Mode d'envoi du formulaire, e-mail de contact, liens d'agenda et de profil Malt
 js/i18n/languages.js    Les cinq langues : code, nom, adresses, langue de l'heure
 js/i18n/locales/        Textes de l'accueil, un fichier par langue (fr, en, ru, it, es)
 js/components/          NavBar, ProjectSwiper, SoundtrackPlayer, ContactForm (gabarits précompilés dans dist/)
 js/composables/         useTheme (mode sombre + View Transitions)
-js/data/projects.js     ← ajoutez vos projets ici
+js/data/projects.js     ← ajoutez vos projets ici (groupe « work » ou « lab » : réalisations ou créations)
+js/data/offers.js       Les offres : prix des formules, de la maintenance et du pré-audit, types de projet
+js/data/testimonials.js Les témoignages de clients (vide tant qu'il n'y a pas de vrai avis)
 js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
 js/fx/                  Effets (révélations, curseur, éclats, particules)
@@ -98,7 +100,7 @@ netlify.toml            Génération et redirections
 npm test
 ```
 
-Génère `dist/`, le sert sur le port 8090, puis Playwright (un seul processus, Chromium, téléphone 390 × 844 et ordinateur 1280 × 800) vérifie : chaque page sans requête vers un autre domaine, sans violation de CSP ni erreur ; les en-têtes de sécurité ; les fichiers internes en 404 ; le formulaire, avec et sans JavaScript.
+Lance d'abord les tests unitaires (`npm run test:unit`, node:test : prix dans chaque langue, liens sortants et leurs entrées hostiles, témoignages échappés, données structurées), puis génère `dist/`, le sert sur le port 8090, et Playwright (un seul processus, Chromium, téléphone 390 × 844 et ordinateur 1280 × 800) vérifie : chaque page sans requête vers un autre domaine, sans violation de CSP ni erreur ; les en-têtes de sécurité ; les fichiers internes en 404 ; le formulaire, avec et sans JavaScript.
 
 ## À personnaliser avant la mise en ligne
 
@@ -141,7 +143,7 @@ Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefe
 
 ## La police signature (1.14.0)
 
-**Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebDev et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici. Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
+**Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebTech et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici. Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
 
 - **Une police variable à un axe, `FRAC`** : 0 entière, 100 brisée (le verre se fend, le signal se perd, le mot se déchire en deux). La chasse ne change jamais sur l'axe : l'animer ne déplace rien.
 - **Les animations** (`css/style.css`, `js/fx/effects.js`) : un titre arrive brisé et se répare en apparaissant (`data-repair`, classe `is-repairing`) ; le hero se brise puis se répare une fois la police chargée (`is-shattering`) ; le logo et les titres se fissurent au survol à la souris (`crack-once`) ; les pages 404 perdent leur signal (`lost-signal`). Rien avec « réduire les animations ». **Toujours par paliers** (`steps()`) : chaque état recalcule la mise en forme des lettres variables ; en continu, l'animation des grands titres chargeait le fil principal au chargement (Lighthouse tombait à 90 dès que la machine travaillait).
@@ -174,15 +176,25 @@ Ajouter une langue : une entrée dans `js/i18n/languages.js`, le fichier `js/i18
 
 1. Ajoutez un objet dans `js/data/projects.js` :
    ```js
-   { id: 'mon-projet', status: 'live', url: 'https://…', art: 'classified' }
+   { id: 'mon-projet', group: 'work', status: 'live', url: 'https://…', art: 'classified' }
    ```
-   Pour un jeu, `play: { playgama: 'https://…' }` au lieu de `url` (voir « Jeux du carrousel »).
+   `group` choisit le carrousel : `'work'` pour les réalisations (sites et applications), `'lab'` pour les créations (jeux). Pour un jeu, `play: { playgama: 'https://…' }` au lieu de `url` (voir « Jeux du carrousel »).
 2. Ajoutez ses textes sous `projects` dans **chacun** des cinq fichiers de `js/i18n/locales/` (le test des traductions échoue s'il en manque un) :
    ```js
    'mon-projet': { title: 'Mon projet', description: '…', tags: ['Vue 3'], link: 'Voir le projet' },
    ```
 
 Le carrousel, les puces et le compteur s'adaptent automatiquement.
+
+## Offre commerciale (1.17.0)
+
+L'accueil s'ouvre sur les offres, avant les services ; les réalisations (sites et applications) et les créations (jeux) ont chacune leur carrousel. Tout ce bloc est rendu à la génération (`scripts/offers.mjs`) : il se lit sans JavaScript.
+
+- **Les prix** sont dans `js/data/offers.js`, en euros entiers ; chaque langue les écrit à sa façon (« 1 200 € », « €1,200 », « 1200 € »). Les textes des offres sont sous `offers` dans chaque fichier de `js/i18n/locales/`. **Les descriptions de page (`meta.description`, `meta.ogDescription`) citent aussi le prix d'appel et celui de la maintenance : changez-les ensemble.**
+- **Les boutons des offres** choisissent le type de projet du formulaire (`data-project-type`, lu dans la liste fermée `PROJECT_TYPES`, dans l'ordre de `form.types`).
+- **Prendre rendez-vous et Malt** : renseignez `bookingUrl` (agenda Cal.com) et `maltUrl` (profil) dans `js/config.js`. Tant qu'ils sont vides, rien n'est généré : le second bouton du héros reste « Démarrer un projet ». Ce sont de simples liens qui s'ouvrent dans un nouvel onglet, aucun widget, rien chargé d'un autre domaine ; seules les adresses https de `cal.com` et `malt.fr` sont admises (la génération échoue sinon).
+- **Témoignages** : ajoutez un avis dans `js/data/testimonials.js` (nom, rôle et citation dans les cinq langues) ; la section apparaît dès le premier. **Uniquement de vrais avis, donnés par écrit, avec l'accord de la personne : n'en inventez jamais.**
+- **Marque** : le site s'affiche sous le nom commercial déclaré, AdamRodWebTech ; le domaine, l'e-mail et les comptes restent en « adamrodwebdev ».
 
 ## Profondeur (1.11.0)
 
