@@ -18,6 +18,8 @@ import { playLinks } from '../js/data/platforms.js';
 import { SECTIONS, DURATION, TITLE, clock } from '../js/audio/score.js';
 import { minifyCss, purgeCss, pageNames } from './css.mjs';
 import { afterFirstPaintScript } from './after-first-paint.mjs';
+import { escape } from './html.mjs';
+import { offersPanel, testimonialsBlock, heroSecondCta, contactBooking, maltFact, ldOffers } from './offers.mjs';
 
 export const ORIGIN = 'https://adamrodwebdev.com';
 
@@ -54,9 +56,6 @@ function soundtrackStatic(texts) {
 
 /** Les accueils à générer, un par langue : index.html pour la langue par défaut, <code>/index.html sinon. */
 const pages = LANGUAGES.map((language) => ({ ...language, out: `${language.base.slice(1)}index.html` }));
-
-const escape = (s) => String(s)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const lookup = (obj, path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), obj);
 
@@ -187,6 +186,13 @@ export async function buildPages({ root, out, imports }) {
       budgetOptions: m.form.budgets.map((o) => `<option>${escape(o)}</option>`).join(''),
       sendLabel: escape(m.form.steps[0]),
       soundtrackStatic: soundtrackStatic(m),
+      // L'offre commerciale (1.17.0) : prix dans la langue de la page, blocs absents tant que leur donnée manque
+      offersPanel: offersPanel(m, m.meta.ldLanguage),
+      testimonials: testimonialsBlock(m, locale),
+      heroSecondCta: heroSecondCta(m),
+      contactBooking: contactBooking(m),
+      maltFact: maltFact(m),
+      ldOffers: ldOffers(m),
       contactEmail: escape(config.contactEmail),
       playCatapulte: escape(playUrl('catapulte-mania')),
       playBastion: escape(playUrl('bastion')),
