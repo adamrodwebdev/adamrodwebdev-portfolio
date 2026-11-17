@@ -125,7 +125,7 @@ Les fiches des jeux mènent à leur page de jeu sur les plateformes (Playgama po
 { id: 'catapulte-mania', status: 'live', play: { playgama: 'https://playgama.ai/play/…' }, art: 'catapult' },
 ```
 
-Une nouvelle plateforme s'ajoute dans `js/data/platforms.js` (son nom) ; le libellé « Jouer sur … » est traduit (`swiper.playOn`). Ballmania est « À venir » tant qu'il n'a pas de page Playgama.
+Une nouvelle plateforme s'ajoute dans `js/data/platforms.js` (son nom) ; le libellé « Jouer sur … » est traduit (`swiper.playOn`). Ballmania est « À venir » tant qu'il n'a pas de page Playgama. Cocorico est « En développement », sans lien : l'application est privée et tourne sur le PC de la maison, sans serveur.
 
 Les anciennes adresses des démos redirigent (`netlify.toml`) : Catapulte Mania vers Playgama, Ballmania vers l'accueil, Lumirift (et Stackrift) vers `/lumirift/`.
 

@@ -2,6 +2,20 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.16.0] - 2026-11-17
+
+### Ajouté
+- **Trois projets dans le carrousel**, avec leurs textes dans les cinq langues et leur ligne dans la liste sans JavaScript :
+  - **Aplomb Cordeau**, après Plumb : la GT fictive en 3D temps réel et son configurateur dans la scène, avec son lien GitHub Pages. Son illustration montre la voiture de profil sur une route mouillée : les roues tournent, le marquage défile, le bandeau lumineux pulse et un reflet traverse la carrosserie, découpé par sa silhouette.
+  - **Short Reel**, après Lumirift : le jeu d'action fait en quatre jours pour l'Epic AI MegaJam 2026 (Unreal Engine 5), avec son lien itch.io. Son illustration est une bande de film : les ciseaux coupent une image, qui sort de la bande, glisse et se recolle deux images plus loin, puis la bande se rembobine.
+  - **Cocorico**, « En développement », sans lien : le carnet de basse-cour qui tourne sur le PC de la maison (dépôt privé, aucun serveur). Son illustration : un coq qui chante, une poule et un poussin qui picorent, un œuf, et la jauge de l'accueil de l'application (« 9 semaines sur 12 »).
+- Au repos, et donc en mouvement réduit, chaque illustration reste lisible : la voiture à l'arrêt et le reflet hors du cadre, l'image à sa place dans la bande, les volailles debout.
+
+### Qualité
+- `npm test` (Chromium, téléphone et ordinateur) : 85 tests passés, 2 sautés, 1 échec isolé. Sur ce passage, le formulaire de contact n'avait pas démarré au bout de 30 secondes (aucun îlot Vue n'avait démarré), pendant que la carte graphique tournait à 98 % pour un autre programme ; relancés trois fois, les deux tests du formulaire passent 12 fois sur 12, en 6 secondes. Le démarrage différé n'est pas touché par cette version.
+- Les trois fiches vues au téléphone (390 px) en thème clair et sombre, et à l'ordinateur (1280 px) : aucun défilement horizontal, aucune erreur dans la console.
+- Lighthouse pas encore mesuré : à faire avant la publication, machine au repos.
+
 ## [1.15.0] - 2026-11-16
 
 ### Ajouté
