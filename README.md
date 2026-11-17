@@ -102,6 +102,14 @@ npm test
 
 Lance d'abord les tests unitaires (`npm run test:unit`, node:test : prix dans chaque langue, liens sortants et leurs entrées hostiles, témoignages échappés, données structurées), puis génère `dist/`, le sert sur le port 8090, et Playwright (un seul processus, Chromium, téléphone 390 × 844 et ordinateur 1280 × 800) vérifie : chaque page sans requête vers un autre domaine, sans violation de CSP ni erreur ; les en-têtes de sécurité ; les fichiers internes en 404 ; le formulaire, avec et sans JavaScript.
 
+### Un plantage du navigateur de test, pas du site (17 novembre 2026)
+
+Le projet `desktop` tourne dans le *headless shell* de Chromium, le navigateur sans écran allégé que Playwright lance par défaut. Ce navigateur plante parfois, sur une vérification interne de son compositeur (« Target crashed », `EXCEPTION_BREAKPOINT`, suivi d'erreurs `SharedImageManager::ProduceMemory`), dans un cas précis : **une vraie souris qui bouge pendant que la page défile en douceur, quand les carrousels sont en 3D** (le mode ordinateur).
+
+- Mesuré avec la même sonde : 7 plantages sur 12 dans le headless shell ; **aucun dans Chrome stable (30 sur 30) ni dans WebKit (10 sur 10)**. Les visiteurs ne sont pas touchés.
+- Sans les carrousels, plus aucun plantage (20 sur 20). Retirer seulement leur filtre gris, leur `preserve-3d`, leur réponse au pointeur, le curseur personnalisé, le défilement en douceur ou les flous d'arrière-plan réduit le risque sans le supprimer : une course du compositeur, plus probable avec plus de calques 3D.
+- **Pour écrire un test** : quand un clic fait défiler la page (une ancre, un bouton qui mène au formulaire), cliquez sans souris, avec `locator.dispatchEvent('click')`, ou faites défiler instantanément ; ne bougez pas la souris pendant le défilement.
+
 ## À personnaliser avant la mise en ligne
 
 1. **Domaine** : `https://adamrodwebdev.com` (constante `ORIGIN` dans `scripts/build-pages.mjs`, plus robots.txt et sitemap.xml).
