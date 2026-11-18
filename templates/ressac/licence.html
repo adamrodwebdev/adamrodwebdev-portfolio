@@ -1,0 +1,272 @@
+<!doctype html>
+<!--
+  FICHIER GÉNÉRÉ — ne pas modifier directement.
+  Source : templates/ressac/licence.html + templates/ressac/EULA.<langue>.md (copies exactes de la fonderie,
+  voir scripts/licence-pages.mjs) + js/i18n/messages.js (licencePage, l'en-tête et le pied de page de la langue)
+  + les règles de css/style.css que la page applique (copiées dans la page)
+  Régénérer : npm run build
+-->
+<html lang="[[@lang]]" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>[[licence.meta.title]]</title>
+  <meta name="description" content="[[licence.meta.description]]">
+  <meta name="author" content="AdamRodWebTech">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="[[@url]]">
+  [[@alternates]]
+
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="[[meta.ogLocale]]">
+  <meta property="og:site_name" content="AdamRodWebTech">
+  <meta property="og:title" content="[[licence.meta.title]]">
+  <meta property="og:description" content="[[licence.meta.description]]">
+  <meta property="og:url" content="[[@url]]">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('arwd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Les polices du site, demandées une fois le premier affichage signalé (scripts/after-first-paint.mjs). -->
+  <noscript><link rel="stylesheet" href="[[@fonts]]"></noscript>
+  <script>[[@afterFirstPaint]]</script>
+
+  <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->
+  <style>[[@css]]</style>
+  <style>
+    /* La licence : ses parties propres. En-tête, pied de page, jetons et thèmes : style.css. */
+
+    /* Le contrat se lit dans les polices du système, comme le texte courant des pages russes : rien à attendre,
+       donc rien qui bouge. Avec Barlow, le texte visible sur ordinateur se recomposait à son arrivée (décalage de
+       0,12, Lighthouse à 96), et même un repli calé sur sa chasse laissait un mot changer de ligne et pousser le
+       paragraphe suivant (0,03 à 0,10). Les titres gardent la signature, dont le repli ne décale rien. */
+    .lic { --font-body: "Segoe UI", Roboto, "Helvetica Neue", system-ui, -apple-system, sans-serif; }
+
+    /* Sans îlot Vue, l'en-tête reste dans le flux : jamais au-dessus du texte, donc rien à réserver en haut
+       quand une ancre ramène un article à l'écran. Et le saut est immédiat : le défilement doux du site mettait
+       plus d'une seconde à traverser 7 000 px de contrat jusqu'à #article-14. Cibles de 44 px au doigt. */
+    html { scroll-padding-top: 0; scroll-behavior: auto; }
+    .lic .site-header { position: relative; inset: auto; }
+    .lic .brand { min-height: 2.75rem; }
+    .lic .nav__links a, .lic .footer__links a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+    .licence { padding-block: clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(3rem, 2rem + 4vw, 5rem); }
+    .licence__head { max-width: 46rem; }
+    .licence__kicker { font: 600 0.9rem var(--font-display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+    .licence h1 { margin-top: 0.75rem; font-size: clamp(1.9rem, 1.5rem + 2vw, 3.2rem); text-transform: uppercase; }
+    .licence__version { margin-top: 1rem; color: var(--muted); }
+    .licence__lang {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.25rem;
+      margin-top: 1.5rem; padding: 0.75rem 1.125rem; color: var(--fg);
+      background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold);
+    }
+    .licence__lang a { display: inline-flex; align-items: center; min-height: 2.75rem; font-weight: 600; }
+    .licence a { color: var(--gold); text-underline-offset: 0.18em; }
+    .licence a:hover { color: var(--gold-hi); }
+
+    /* Le sommaire au-dessus du texte ; sur grand écran, une colonne à gauche qui suit la lecture. */
+    /* minmax(0, …) : une colonne ne s'élargit jamais à la largeur d'un tableau, qui défile dans son cadre. */
+    .licence__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; margin-top: clamp(2rem, 1.5rem + 2vw, 3rem); }
+    .licence__toc { align-self: start; padding: 1.25rem 1.25rem 0.75rem; background: var(--surface); border: 1px solid var(--line-soft); }
+    .licence__toc h2 { font-size: var(--step-0); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+    .licence__toc ol { margin-top: 0.5rem; }
+    .licence__toc a {
+      display: flex; align-items: center; min-height: 2.75rem; padding-block: 0.25rem;
+      color: var(--muted); text-decoration: none; border-top: 1px solid var(--line-soft); line-height: 1.3;
+    }
+    .licence__toc li:first-child a { border-top: 0; }
+    .licence__toc a:hover, .licence__toc a:focus-visible { color: var(--gold); }
+    @media (width >= 64rem) {
+      .licence__layout { grid-template-columns: minmax(15rem, 19rem) minmax(0, 46rem); gap: clamp(2.5rem, 1rem + 3vw, 4.5rem); }
+    }
+    @media (width >= 64rem) and (height >= 40rem) {
+      .licence__toc { position: sticky; top: 1.5rem; max-height: calc(100svh - 3rem); overflow-y: auto; overscroll-behavior: contain; }
+    }
+
+    /* Le texte : 70 signes par ligne au plus, des articles bien séparés, des listes à puces dorées. */
+    .licence__text { font-size: var(--step-0); line-height: 1.65; }
+    .licence__text p, .licence__text ul, .licence__text ol, .licence__table { margin-top: 1em; }
+    .licence__intro > :first-child { margin-top: 0; }
+    .licence__text h2 {
+      margin-top: 2.5em; padding-top: 1.25em; border-top: 1px solid var(--line);
+      font-size: var(--step-1); line-height: 1.2; text-transform: uppercase; color: var(--gold); scroll-margin-top: 1rem;
+    }
+    .licence__text h2 + * { margin-top: 0.85em; }
+    .licence__text ul { list-style: disc; padding-left: 1.4em; }
+    .licence__text ol { list-style: decimal; padding-left: 1.6em; }
+    .licence__text li + li { margin-top: 0.5em; }
+    .licence__text li::marker { color: var(--gold); }
+    .licence__text ol li { scroll-margin-top: 1rem; }
+    .licence__text strong { color: var(--fg); font-weight: 600; }
+    .licence__text code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 0.9em; padding: 0.1em 0.35em; background: var(--surface-2); }
+    .licence__text a { overflow-wrap: anywhere; }
+    .licence__back { margin-top: 3em; }
+    .licence__back a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+    /* Un tableau large défile dans son cadre, jamais la page. Une ombre au bord dit qu'il reste à voir :
+       les deux premiers fonds suivent le contenu et la masquent aux extrémités (CSS seul). */
+    .licence__table {
+      overflow-x: auto; border: 1px solid var(--line);
+      background:
+        linear-gradient(to right, var(--bg) 40%, transparent) left / 2.5rem 100% no-repeat local,
+        linear-gradient(to left, var(--bg) 40%, transparent) right / 2.5rem 100% no-repeat local,
+        radial-gradient(farthest-side at 0 50%, var(--line), transparent) left / 0.875rem 100% no-repeat scroll,
+        radial-gradient(farthest-side at 100% 50%, var(--line), transparent) right / 0.875rem 100% no-repeat scroll;
+    }
+    .licence__table:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
+    .licence__table table { width: 100%; border-collapse: collapse; font-size: 0.92em; line-height: 1.45; font-variant-numeric: tabular-nums; }
+    .licence__table--wide table { min-width: 30rem; }
+    .licence__table th, .licence__table td { padding: 0.6rem 0.75rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-soft); }
+    .licence__table th { color: var(--gold); font-weight: 600; background: var(--surface); }
+    .licence__table tbody tr:last-child td { border-bottom: 0; }
+
+    /* Un contrat se lit et se copie : son texte reste sélectionnable, ses titres compris (1.14.1).
+       Le sommaire et les liens de langue, eux, sont de l'interface. */
+    .licence__head h1, .licence__text h2 { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+    .licence__kicker, .licence__toc { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+    /* À l'impression : le texte seul, en noir sur blanc (couleurs du système). */
+    @media print {
+      :root { --bg: Canvas; --surface: Canvas; --surface-2: Canvas; --fg: CanvasText; --muted: CanvasText;
+        --gold: CanvasText; --gold-hi: CanvasText; --line: GrayText; --line-soft: GrayText; }
+      .skip-link, .site-header, .site-footer, .licence__toc, .licence__lang a, .licence__back { display: none; }
+      .licence__layout { display: block; }
+      .licence__text h2 { break-after: avoid; }
+      .licence__table { overflow: visible; background: none; }
+      .licence__table--wide table { min-width: 0; }
+    }
+  </style>
+</head>
+<body class="lic">
+  <a class="skip-link" href="#contenu">[[a11y.skip]]</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="[[a11y.mainNav]]">
+      <a class="brand" href="[[@home]]" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebTech</b></span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="[[@home]]#offres">[[nav.offers]]</a></li>
+        <li><a href="[[@home]]#services">[[nav.services]]</a></li>
+        <li><a href="[[@home]]#projets">[[nav.projects]]</a></li>
+        <li><a href="[[@home]]#creations">[[nav.creations]]</a></li>
+        <li><a href="[[@home]]#contact">[[nav.contact]]</a></li>
+      </ul>
+      <div class="nav__tools">
+        <a class="icon-btn lang-btn" href="[[@otherUrl]]" hreflang="[[@otherLang]]" lang="[[@otherLang]]">[[@otherCode]]<span class="visually-hidden"> [[licence.other.short]]</span></a>
+        <button class="icon-btn is-dark" type="button" data-theme-toggle aria-pressed="true" aria-label="[[nav.themeLight]]"
+          data-to-light="[[nav.themeLight]]" data-to-dark="[[nav.themeDark]]">
+          <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="moon-mask"><rect width="24" height="24" fill="#fff"/><circle class="theme-icon__mask-circle" cx="17" cy="7" r="7" fill="#000"/></mask>
+            <circle class="theme-icon__core" cx="12" cy="12" r="8" fill="currentColor" mask="url(#moon-mask)"/>
+            <g class="theme-icon__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenu" class="licence container">
+    <header class="licence__head">
+      <p class="licence__kicker">[[licence.kicker]]</p>
+      <h1>[[@title]]</h1>
+      <p class="licence__version">[[@version]]</p>
+      <div class="licence__lang">
+        <p>[[licence.notice]]</p>
+        <a href="[[@otherUrl]]" hreflang="[[@otherLang]]" lang="[[@otherLang]]">[[licence.other.label]]</a>
+      </div>
+    </header>
+
+    <div class="licence__layout">
+      <nav class="licence__toc" aria-labelledby="[[@tocId]]">
+        <h2 id="[[@tocId]]">[[licence.toc]]</h2>
+        <ol role="list">
+            [[@toc]]
+        </ol>
+      </nav>
+
+      <article class="licence__text">
+        <div class="licence__intro">
+[[@intro]]
+        </div>
+[[@sections]]
+        <p class="licence__back"><a href="#[[@tocId]]"><span aria-hidden="true">↑&nbsp;</span>[[licence.back]]</a></p>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer">
+      <a class="brand" href="[[@home]]" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebTech</b></span>
+      </a>
+      <nav aria-label="[[a11y.footerNav]]">
+        <ul class="footer__links">
+          <li><a href="[[@home]]#offres">[[nav.offers]]</a></li>
+          <li><a href="[[@home]]#services">[[nav.services]]</a></li>
+          <li><a href="[[@home]]#projets">[[nav.projects]]</a></li>
+          <li><a href="[[@home]]#contact">[[nav.contact]]</a></li>
+          <li><a href="[[@legal]]">[[nav.legal]]</a></li>
+          <li><a href="[[@otherUrl]]" hreflang="[[@otherLang]]" lang="[[@otherLang]]">[[licence.other.short]]</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 AdamRodWebTech. [[footer.copy]]</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var root = document.documentElement;
+
+      // Le bouton de thème de l'accueil (useTheme), sans Vue : le même que sur la page de Lumirift.
+      var themeButton = document.querySelector('[data-theme-toggle]');
+      var light = window.matchMedia('(prefers-color-scheme: light)');
+      var isDark = function () {
+        var forced = root.getAttribute('data-theme');
+        return forced ? forced === 'dark' : !light.matches;
+      };
+      var paintTheme = function () {
+        var dark = isDark();
+        themeButton.classList.toggle('is-dark', dark);
+        themeButton.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        themeButton.setAttribute('aria-label', dark ? themeButton.dataset.toLight : themeButton.dataset.toDark);
+        var mask = themeButton.querySelector('.theme-icon__mask-circle');
+        mask.setAttribute('cx', dark ? '17' : '30');
+        mask.setAttribute('cy', dark ? '7' : '-6');
+        themeButton.querySelector('.theme-icon__core').setAttribute('r', dark ? '8' : '5');
+      };
+      themeButton.addEventListener('click', function () {
+        var dark = !isDark();
+        root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        try { localStorage.setItem('arwd-theme', dark ? 'dark' : 'light'); } catch (e) {}
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+          meta.setAttribute('content', dark ? '#000000' : '#FBFAF7');
+        });
+        paintTheme();
+      });
+      if (light.addEventListener) light.addEventListener('change', paintTheme);
+      paintTheme();
+    })();
+  </script>
+</body>
+</html>

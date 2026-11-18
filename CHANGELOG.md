@@ -2,6 +2,31 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.18.0] - 2026-11-18
+
+### Ajouté
+- **La licence des polices Ressac** (CLUF, version 1.0, en vigueur depuis le 18 novembre 2026, une fois la convention avec le médiateur CM2C signée), vers laquelle renvoie la case « Conditions » du paiement Gumroad : `/ressac/licence/` en français, qui prévaut, et `/en/ressac/licence/` en anglais. Chaque page le dit et mène à l'autre. Pour les autres langues du site, il n'existe pas de licence traduite : les moteurs de recherche reçoivent l'anglaise.
+- **Le texte de la fonderie, mot pour mot** : des copies exactes des fichiers du dépôt `type-foundry`, au commit noté dans le code, vérifiées à chaque génération par leur identifiant Git. Un test compare le texte de la page à celui du fichier, mot à mot et dans l'ordre. Sur la page française, la typographie française s'applique au rendu sans changer un mot : espaces insécables avant ; : ! ? » et après «, dans les nombres (10 000), entre un nombre et son unité (25 $) et dans les numéros de téléphone. Aucune ligne ne commence plus par un point-virgule, aucun « 10 000 » ne se coupe.
+- **Une page faite pour lire un contrat** : un sommaire des 18 articles, de l'annexe des prix et de l'historique, qui suit la lecture sur grand écran. Chaque article a son ancre stable (`#article-14`, `#section-14`, `#article-10-4`), et le saut vers une ancre est immédiat, depuis le sommaire comme depuis un autre site. Le texte se sélectionne, titres compris. Sur téléphone, un tableau trop large défile dans son cadre, avec une ombre au bord ; celui des prix, à trois colonnes, se replie. À l'impression, la page sort en noir sur blanc, sans menu.
+
+- **La médiation de la consommation dans les mentions légales** (`#mediation`) : la convention avec CM2C est signée le 18 novembre 2026, valable trois ans. La clause est celle que CM2C fournit à ses adhérents, en français, avec la typographie française (espaces insécables) et des liens vers le téléphone, la page de saisine et le courriel. Elle est traduite en anglais, et dans la page anglaise, où mènent le russe, l'italien et l'espagnol, en russe, en italien et en espagnol ; chaque version précise que la médiation se fait en français.
+
+### Performance
+- **Le texte du contrat se lit dans les polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte visible sur ordinateur se recomposait à l'arrivée de la police (décalage de mise en page de 0,12, performance à 96) et l'article visé par une ancre glissait de 300 px. Même un repli calé sur la chasse de Barlow laissait un mot changer de ligne (0,03 à 0,10). Sans police de texte à attendre, rien ne bouge, et la page télécharge 45 Ko de moins.
+- **Pas de défilement doux sur ces pages** : il mettait plus d'une seconde à traverser le contrat jusqu'à un article.
+- **Les mentions légales se lisent aussi dans les polices du système**, titres en signature : avec Barlow, la page anglaise se recomposait à l'arrivée de la police (décalage de 0,02 sur ordinateur).
+
+### Corrigé
+- **`/es/` revient à 100 sur ordinateur** : le titre du hero est 4 % plus petit. Depuis « WebTech » (1.17.0), il dépassait d'un cheveu le paragraphe espagnol, le plus court des cinq ; or il entre en se dévoilant, et Chrome ne le compte qu'à la fin de cette entrée. Lighthouse retenait donc le titre comme plus grand élément vers 0,9 s, au lieu du paragraphe affiché dès le premier rendu (0,37 s). Les autres langues, dont l'italien, étaient au bord du même basculement.
+
+### Modifié
+- Le remplissage des gabarits et l'écriture des pages sortent de `scripts/build-pages.mjs` pour un module partagé, `scripts/template.mjs`. Les autres pages générées restent identiques, octet pour octet.
+
+### Qualité
+- `npm test` : 17 tests unitaires et 124 tests Playwright passés, 2 sautés (Chromium, téléphone et ordinateur). Nouveaux : les copies identiques à la source, le texte rendu mot pour mot, les ancres, le Markdown refusé (titre ###, lien, citation, HTML, italique, tableau ou liste mal formés), le texte échappé et la typographie française ; dans le navigateur, le sommaire complet, l'autre langue et les liens alternatifs, la sélection, le texte en polices du système sans Barlow demandée, l'ancre juste après l'arrivée des polices, aucun défilement horizontal de 320 à 2560 px, le bouton de thème ; la médiation dans les mentions légales (coordonnées et liens de CM2C, typographie française, versions russe, italienne et espagnole, aucun débordement à 320 px).
+- Lighthouse, sur le serveur local qui applique les en-têtes de Netlify, préchauffage puis pire de trois passages mobiles, et sur ordinateur : 100 dans les quatre catégories pour les deux pages de licence et les deux pages de mentions légales, sans aucun décalage, et 100 sur ordinateur pour toutes les pages, `/es/` compris. Sur mobile, les accueils et `/lumirift/`, que cette version ne touche pas sinon par la taille du titre, varient avec la charge de la machine par le seul temps de blocage (de 88 à 100 le 18 novembre, avec un navigateur et l'antivirus actifs ; le plus grand élément ne bouge pas) : mesurée en alternance dans les mêmes conditions, la 1.15.0 publiée fait de même, et la page de Lumirift ne diffère d'elle que par le nom de la marque.
+- Autres navigateurs : la suite tourne aussi sous WebKit (ordinateur et téléphone) une fois les noms de police comparés sans guillemets et `user-select` lu sous `-webkit-` ; il y reste trois écarts propres à WebKit sous Windows, sans défaut du site (une violation de CSP signalée pour tout `<select>`, même nu ; l'audio qui ne démarre pas sans écran ; le repli de la signature qui ne trouve pas Arial Bold). Firefox ne se lance pas sur cette machine.
+
 ## [1.17.0] - 2026-11-17
 
 ### Ajouté

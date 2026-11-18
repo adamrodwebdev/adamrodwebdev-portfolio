@@ -99,9 +99,33 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.18.0 : la licence des polices Ressac
+
+Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la »), réalisée sur la branche `feat/1.18-licence-ressac` (PR vers `dev`). La convention avec le médiateur CM2C, que nomme l'article 17, est signée le 18 novembre 2026 (valable jusqu'au 18 novembre 2029) : la licence finale, en vigueur depuis le 18 novembre 2026, est en place. Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (18 novembre 2026)
+- **Deux pages, une par langue** : `/ressac/licence/` (le français, qui prévaut) et `/en/ressac/licence/`. La case « Conditions » du paiement Gumroad y renvoie : la licence est le contrat entre le vendeur et l'acheteur (conditions de Gumroad, 6.7). Chaque page dit que la française prévaut et mène à l'autre.
+- **Pas de licence en russe, en italien ni en espagnol** : un texte juridique ne se traduit pas sans relecture. Pour ces langues, les moteurs de recherche reçoivent l'anglaise (`x-default`), comme pour les mentions légales.
+- **Le texte mot pour mot** : copies exactes des fichiers de la fonderie (`type-foundry`, `licence/EULA.fr.md` et `EULA.en.md`, commit `dbf34ba`), vérifiées à chaque génération par leur identifiant Git. Rien n'est reformulé : la page ajoute un sommaire, des ancres et l'encadré de langue.
+- **Une page faite pour lire un contrat** : le sommaire des 18 articles, de l'annexe et de l'historique (une colonne qui suit la lecture sur grand écran), des ancres stables (`#article-14`, `#section-14`, `#article-10-4` pour chaque interdit) et un saut immédiat, un texte sélectionnable titres compris, un tableau trop large qui défile dans son cadre sur téléphone (celui des prix, à trois colonnes, se replie), l'impression en noir sur blanc.
+- **La médiation de la consommation** (demandée le 18 novembre 2026, une fois CM2C signé) : le site n'a pas de conditions générales de vente, la clause de CM2C va donc dans les mentions légales (`#mediation`), en français telle que CM2C la fournit et en anglais ; le russe, l'italien et l'espagnol, qui mènent aux mentions anglaises, y trouvent chacun la clause dans leur langue. Chaque version dit que la médiation se fait en français.
+- **La typographie française au rendu** : les fichiers de la fonderie emploient des espaces ordinaires ; la page française les rend insécables là où le français le veut (avant ; : ! ?, dans les guillemets, les nombres et les numéros de téléphone), sans changer un mot.
+- **Les mentions légales en polices du système**, comme la licence : la page anglaise se décalait de 0,02 à l'arrivée de Barlow.
+- **Le texte du contrat en polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte se recomposait à l'arrivée de la police (décalage de 0,12 sur ordinateur, et une ancre glissait de 300 px), même avec un repli calé. À valider avec l'utilisateur.
+
+### Vérifications (« fini » quand)
+- `npm test` passe : tests unitaires (copies identiques à la source, texte rendu mot pour mot, ancres, balisage refusé, échappement) et Playwright (sommaire, langues, liens alternatifs, sélection, ancre juste après l'arrivée des polices, aucun défilement horizontal de 320 à 2560 px, thème).
+- Lighthouse 100 dans les quatre catégories, pire de trois passages sur mobile, plus l'ordinateur, sur les deux pages.
+- Captures en clair et en sombre, sur téléphone et sur ordinateur.
+- Entrée 1.18.0 dans le CHANGELOG, README à jour.
+
+### Avant la mise en ligne
+- La convention CM2C signée et la licence finale recopiée (commit `dbf34ba` de type-foundry : CM2C, polices achetées sur MyFonts, prix de la boutique pour une famille) : fait le 18 novembre 2026.
+- Le feu vert de l'utilisateur, une fois les contrôles GitHub verts, puis la fusion dans `dev` et la publication.
+
 ## 1.15.0 : la signature parle russe
 
-Statut : demandée le 16 novembre 2026 (« Enchaîne sur le cyrillique »), réalisée sur la branche `feat/1.15-cyrillique` (PR vers `dev`, après la 1.14.1). Mise en ligne seulement sur décision.
+Statut : demandée le 16 novembre 2026 (« Enchaîne sur le cyrillique »), réalisée sur la branche `feat/1.15-cyrillique`, en ligne depuis le 16 novembre 2026 avec la 1.14.1 (versions v1.14.0 et v1.15.0 sur GitHub).
 
 ### Ce qui a été décidé (16 novembre 2026)
 - **Tout l'alphabet russe** : les 33 lettres, capitales et minuscules, Ё et Й compris. Les lettres que le russe partage avec le latin reprennent les dessins de la signature (le А cyrillique est son A) ; les autres sont taillées dans le même cristal et se brisent sur le même axe.
