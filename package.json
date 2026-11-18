@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
-    "test:unit": "node --test tests/unit/offers.unit.mjs tests/unit/licence.unit.mjs tests/unit/learn.test.mjs",
+    "test:unit": "node --test tests/unit/offers.unit.mjs tests/unit/licence.unit.mjs tests/unit/learn.unit.mjs",
     "test": "npm run test:unit && node scripts/build.mjs && playwright test"
   },
   "engines": {
