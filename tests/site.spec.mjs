@@ -676,3 +676,32 @@ test.describe('licence des polices Ressac (1.18.0)', () => {
     await expect(page.locator('[data-theme-toggle]')).toHaveAttribute('aria-pressed', 'false');
   });
 });
+
+// La médiation de la consommation (1.18.0) : CM2C, dans les mentions légales
+test.describe('mentions légales : la médiation de la consommation (1.18.0)', () => {
+  const CM2C = ['a[href="tel:+33189470014"]', 'a[href="https://www.cm2c.net/declarer-un-litige.php"]', 'a[href="mailto:litiges@cm2c.net"]'];
+
+  test('en français : la clause de CM2C, ses coordonnées et leurs liens, sans débordement à 320 px', async ({ page }) => {
+    await page.goto('/mentions-legales.html');
+    await expect(page.locator('#mediation')).toHaveText('Médiation de la consommation');
+    await expect(page.getByText('vous avez la possibilité de recourir gratuitement à une procédure de médiation de la consommation')).toBeVisible();
+    for (const link of CM2C) await expect(page.locator(link), link).toBeVisible();
+    // Typographie française : espaces insécables avant les deux-points et dans les guillemets
+    expect(await page.locator('#mediation + p').textContent()).toContain('«\u00a0le processus de médiation des litiges de la consommation\u00a0»');
+    await page.setViewportSize({ width: 320, height: 640 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+  });
+
+  test('en anglais, puis en russe, en italien et en espagnol : la médiation se fait en français', async ({ page }) => {
+    await page.goto('/en/legal-notice.html');
+    await expect(page.locator('#mediation')).toHaveText('Consumer mediation');
+    await expect(page.getByText('The mediation is conducted in French.')).toBeVisible();
+    for (const link of CM2C) await expect(page.locator(link), link).toBeVisible();
+    for (const [lang, french] of [['ru', 'на французском'], ['it', 'in francese'], ['es', 'en francés']]) {
+      await expect(page.locator(`p[lang="${lang}"]`), lang).toContainText('CM2C');
+      await expect(page.locator(`p[lang="${lang}"]`), lang).toContainText(french);
+    }
+    await page.setViewportSize({ width: 320, height: 640 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+  });
+});
