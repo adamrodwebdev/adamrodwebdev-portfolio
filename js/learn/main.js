@@ -2,11 +2,12 @@
  * L'entrée de /learn/ (1.19.0), chargée une fois le premier affichage signalé : elle monte l'épisode et
  * son lecteur. Avec `?film`, la page ne montre que la scène, sans sous-titres (l'habillage du film les
  * dessine par langue), et expose `window.EPISODE` pour l'outil de tournage : la durée, les temps des
- * sous-titres, `render(t)`, `retime(beats)` (les battements fixés par la voix) et `ready`, la promesse
- * des polices chargées.
+ * sous-titres, `render(t)`, `retime(beats)` (les battements fixés par la voix), `plan` (les battements
+ * prévus, que la voix ne raccourcit jamais) et `ready`, la promesse des polices chargées. Ce contrat est
+ * celui de l'outil de tournage : on y ajoute, on n'y change rien sans le prévenir (test « film : … »).
  */
 import { cleanText, textLength } from '../input.js';
-import { Direction } from './episode01.js';
+import { Direction, PLAN } from './episode01.js';
 import { Episode } from './episode.js';
 import { Player } from './player.js';
 import { ThemeToggle } from './theme.js';
@@ -92,6 +93,8 @@ if (root) {
       render: (t) => episode.render(t),
       // Les battements fixés par la voix ([{ id, seconds }], dans l'ordre) : la même scène, chaque moment étiré.
       retime: (beats) => episode.retime(Direction.retimed(beats)),
+      // Les battements prévus ([{ id, seconds }], figés) : l'outil calcule le minutage de la voix à partir d'eux.
+      plan: PLAN,
       ready: fontsReady(),
     });
   } else {
