@@ -1,6 +1,6 @@
 # Ressac Font Licence (EULA)
 
-Version 1.0 · in force from 23 November 2026
+Version 1.0 · in force from 18 November 2026
 
 This licence is a contract between you (the **Licensee**) and Kevin Rousselet, sole trader
 (entrepreneur individuel, EI) under the trade name AdamRodWebTech, 840 846 927 RCS
@@ -213,8 +213,10 @@ Font Software concerned.
 - **If you are a consumer**, you keep the protection of the mandatory rules of the country where
   you live and may go to its courts; after a written complaint to us that has not been settled,
   consumers may use, for free, within one year of that complaint, our consumer mediator: Centre de
-  Médiation de la Consommation des Conciliateurs de justice (CM2C), 49 rue de Ponthieu, 75008
-  Paris, France, https://www.cm2c.net (online referral) [membership no. …].
+  la Médiation de la Consommation de Conciliateurs de justice (CM2C), 49 rue de Ponthieu, 75008
+  Paris, France; telephone +33 1 89 47 00 14; online referral:
+  https://www.cm2c.net/declarer-un-litige.php; e-mail: litiges@cm2c.net (membership valid until
+  18 November 2029).
 - This licence exists in English and in French; if they differ, the French version prevails.
 
 ## 18. General
@@ -249,4 +251,4 @@ Each size costs the base price times its multiplier.
 
 | Version | Date | Changes |
 |---|---|---|
-| 1.0 | 23 November 2026 | First version in force. Since draft 0.1 (17 November 2026): the licensor, resellers acting as merchant of record (Gumroad), a refunded licence ends, the licence key as proof, the consumer mediator. |
+| 1.0 | 18 November 2026 | First version in force. Since draft 0.1 (17 November 2026): the licensor, resellers acting as merchant of record (Gumroad), a refunded licence ends, the licence key as proof, the consumer mediator. |

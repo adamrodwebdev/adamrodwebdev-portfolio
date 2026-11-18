@@ -159,7 +159,7 @@ La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad :
 - **Générées** par `scripts/licence-pages.mjs` (gabarit `templates/ressac/licence.html`, textes autour de la licence dans `js/i18n/messages.js`, export `licencePage`). Le Markdown est lu par `scripts/licence-markdown.mjs`, qui ne connaît que ce que la licence emploie (titres, paragraphes, listes, tableaux, gras, code) et refuse tout le reste plutôt que de mal le rendre.
 - **Les ancres** : `#article-14` en français, `#section-14` en anglais, `#article-10-4` pour chaque interdit de l'article 10, `#annexe-a` et `#schedule-a` pour les prix. Le saut est immédiat (pas de défilement doux sur ces pages : il mettait plus d'une seconde à traverser le contrat).
 - **Le texte du contrat se lit dans les polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte visible sur ordinateur se recomposait à l'arrivée de la police (décalage de 0,12, Lighthouse à 96) et une ancre ouverte de l'extérieur glissait de 300 px ; même un repli calé sur la chasse de Barlow laissait un mot changer de ligne. Sans police de texte à attendre, rien ne bouge.
-- **Mettre la licence à jour** (le numéro d'adhésion CM2C et la date d'entrée en vigueur, puis chaque nouvelle version) :
+- **Mettre la licence à jour**, à chaque nouvelle version du texte dans la fonderie :
 
   ```bash
   git -C ../type-foundry show <commit>:licence/EULA.fr.md > templates/ressac/EULA.fr.md
@@ -168,7 +168,7 @@ La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad :
   ```
 
   puis reportez le commit et les deux identifiants dans `LICENCE_SOURCE` et `LICENCE_PAGES`, et lancez `npm test`.
-- **Pas en ligne avant la signature de la convention avec CM2C** : l'article 17 nomme ce médiateur de la consommation, et on ne peut pas le nommer avant d'avoir signé (règle de la CECMC).
+- **Le médiateur** : l'article 17 nomme CM2C, avec qui la convention est signée depuis le 18 novembre 2026 (valable jusqu'au 18 novembre 2029). On ne peut pas nommer un médiateur avant d'avoir signé sa convention (règle de la CECMC) : la licence n'est partie en ligne qu'après.
 
 ## La police signature (1.14.0)
 

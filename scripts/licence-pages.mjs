@@ -21,10 +21,10 @@ import { CSS_SLOT, render, writePage } from './template.mjs';
 import { purgeCss, pageNames } from './css.mjs';
 import { afterFirstPaintScript } from './after-first-paint.mjs';
 
-/** D'où vient le texte : le dépôt de la fonderie, au commit où l'utilisateur a validé la version 1.0. */
+/** D'où vient le texte : le dépôt de la fonderie, au commit de la version 1.0 en vigueur (CM2C signé le 18 novembre 2026). */
 export const LICENCE_SOURCE = {
   repository: 'type-foundry',
-  commit: 'c4799ad5cc797224862b962997a8b31bfe90b670',
+  commit: 'df793663f079bda32cdd6e07761efbc45ae84928',
   committed: '2026-11-18',
 };
 
@@ -38,11 +38,11 @@ export const LICENCE_SOURCE = {
 export const LICENCE_PAGES = [
   {
     code: 'fr', path: '/ressac/licence/', anchor: 'article', tocId: 'sommaire',
-    copy: 'templates/ressac/EULA.fr.md', from: 'licence/EULA.fr.md', blob: 'c5d9eb4f449586d93b163df83fd685d6d08d5f5e',
+    copy: 'templates/ressac/EULA.fr.md', from: 'licence/EULA.fr.md', blob: '1841a21ff6adebe865cef8551f6643f3bcc4bbd5',
   },
   {
     code: 'en', path: '/en/ressac/licence/', anchor: 'section', tocId: 'contents',
-    copy: 'templates/ressac/EULA.en.md', from: 'licence/EULA.en.md', blob: '14170fbe0b0a93ef84c58d5fd94d06f6a58b66b9',
+    copy: 'templates/ressac/EULA.en.md', from: 'licence/EULA.en.md', blob: 'c3fa9a25ed4467fe75af6d33059d66f8ea5b59bd',
   },
 ];
 

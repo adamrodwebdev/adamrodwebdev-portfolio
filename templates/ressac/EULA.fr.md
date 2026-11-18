@@ -1,6 +1,6 @@
 # Licence des polices Ressac (CLUF)
 
-Version 1.0 · en vigueur à compter du 23 novembre 2026
+Version 1.0 · en vigueur à compter du 18 novembre 2026
 
 Cette licence est un contrat entre vous (le **Licencié**) et Kevin Rousselet, entrepreneur
 individuel (EI) sous le nom commercial AdamRodWebTech, 840 846 927 RCS Chalon-sur-Saône, SIRET
@@ -237,9 +237,10 @@ pays le permet.
 - **Si vous êtes un consommateur**, vous conservez la protection des règles impératives du pays où
   vous résidez et pouvez saisir ses tribunaux ; après une réclamation écrite adressée à nous et restée
   sans solution, les consommateurs peuvent recourir gratuitement, dans l'année qui suit cette
-  réclamation, à notre médiateur de la consommation : Centre de Médiation de la Consommation des
-  Conciliateurs de justice (CM2C), 49 rue de Ponthieu, 75008 Paris, France, https://www.cm2c.net
-  (saisine en ligne) [n° d'adhésion …].
+  réclamation, à notre médiateur de la consommation : Centre de la Médiation de la Consommation de
+  Conciliateurs de justice (CM2C), 49 rue de Ponthieu, 75008 Paris, France ; téléphone
+  01 89 47 00 14 ; saisine en ligne : https://www.cm2c.net/declarer-un-litige.php ; courriel :
+  litiges@cm2c.net (adhésion valable jusqu'au 18 novembre 2029).
 - Cette licence existe en français et en anglais ; en cas d'écart, la version française prévaut.
 
 ## 18. Dispositions générales
@@ -276,4 +277,4 @@ la famille. Chaque taille coûte le prix de base multiplié par son coefficient.
 
 | Version | Date | Changements |
 |---|---|---|
-| 1.0 | 23 novembre 2026 | Première version en vigueur. Depuis le projet 0.1 (17 novembre 2026) : le concédant, les revendeurs marchands officiels (Gumroad), la fin d'une licence remboursée, la clé de licence comme preuve, le médiateur de la consommation. |
+| 1.0 | 18 novembre 2026 | Première version en vigueur. Depuis le projet 0.1 (17 novembre 2026) : le concédant, les revendeurs marchands officiels (Gumroad), la fin d'une licence remboursée, la clé de licence comme preuve, le médiateur de la consommation. |

@@ -4,10 +4,8 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 
 ## [1.18.0] - 2026-11-18
 
-**Pas en ligne avant la signature de la convention avec le médiateur CM2C**, que l'article 17 de la licence nomme.
-
 ### Ajouté
-- **La licence des polices Ressac** (CLUF, version 1.0), vers laquelle renvoie la case « Conditions » du paiement Gumroad : `/ressac/licence/` en français, qui prévaut, et `/en/ressac/licence/` en anglais. Chaque page le dit et mène à l'autre. Pour les autres langues du site, il n'existe pas de licence traduite : les moteurs de recherche reçoivent l'anglaise.
+- **La licence des polices Ressac** (CLUF, version 1.0, en vigueur depuis le 18 novembre 2026, une fois la convention avec le médiateur CM2C signée), vers laquelle renvoie la case « Conditions » du paiement Gumroad : `/ressac/licence/` en français, qui prévaut, et `/en/ressac/licence/` en anglais. Chaque page le dit et mène à l'autre. Pour les autres langues du site, il n'existe pas de licence traduite : les moteurs de recherche reçoivent l'anglaise.
 - **Le texte de la fonderie, mot pour mot** : des copies exactes des fichiers du dépôt `type-foundry`, au commit noté dans le code, vérifiées à chaque génération par leur identifiant Git. Un test compare le texte de la page à celui du fichier, mot à mot et dans l'ordre.
 - **Une page faite pour lire un contrat** : un sommaire des 18 articles, de l'annexe des prix et de l'historique, qui suit la lecture sur grand écran. Chaque article a son ancre stable (`#article-14`, `#section-14`, `#article-10-4`), et le saut vers une ancre est immédiat, depuis le sommaire comme depuis un autre site. Le texte se sélectionne, titres compris. Sur téléphone, le tableau des prix défile dans son cadre, avec une ombre au bord. À l'impression, la page sort en noir sur blanc, sans menu.
 
