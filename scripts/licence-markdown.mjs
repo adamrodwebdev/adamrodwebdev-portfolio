@@ -24,17 +24,39 @@ const UNSUPPORTED_LINE = /^\s*(?:>|<|\* |\+ |```|~~~)/;
 /** Les adresses web et e-mail du texte, rendues en liens (sans la ponctuation qui les suit). */
 const AUTOLINK = /\bhttps:\/\/[^\s<]*[^\s<.,;:!?)]|[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 
+/** L'espace insécable (U+00A0), écrite par son code : invisible dans le source, elle s'y confondrait avec une espace. */
+const NBSP = String.fromCharCode(0xa0);
+
+/**
+ * La typographie de chaque langue, sur le texte déjà échappé : aucun mot ne change, seules des espaces
+ * deviennent insécables. Les fichiers français de la fonderie emploient des espaces ordinaires : une ligne
+ * pouvait commencer par « ; » et « 10 000 » se couper en deux (1.18.0).
+ */
+export const TYPOGRAPHY = {
+  fr: (text) => text
+    // Avant ; : ! ? et », après «
+    .replace(/ ([;:!?»])/g, `${NBSP}$1`)
+    .replace(/« /g, `«${NBSP}`)
+    // Groupes de chiffres (10 000, 840 846 927), nombre et unité (25 $), signe et nombre (× 4)
+    .replace(/(\d) (?=\d{3}(?!\d))/g, `$1${NBSP}`)
+    .replace(/(\d) (?=[$€%])/g, `$1${NBSP}`)
+    .replace(/× (?=\d)/g, `×${NBSP}`)
+    // Un numéro de téléphone tient sur une ligne : 01 89 47 00 14
+    .replace(/\b0\d(?: \d{2}){4}\b/g, (phone) => phone.replaceAll(' ', NBSP)),
+  en: (text) => text,
+};
+
 /** Un identifiant d'ancre : minuscules sans accents, mots reliés par des tirets. */
-export const slug = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+export const slug = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-/** Une ligne de texte en HTML : échappée, puis **gras**, `code` et liens. */
-export function inline(text) {
+/** Une ligne de texte en HTML : échappée, mise à la typographie de sa langue, puis **gras**, `code` et liens. */
+export function inline(text, typography = TYPOGRAPHY.en) {
   if (text.includes('](')) throw new Error(`Lien Markdown non pris en charge : « ${text} »`);
   return text.split(/(`[^`]+`)/).map((part, index) => {
     if (index % 2) return `<code>${escape(part.slice(1, -1))}</code>`;
     if (part.includes('`')) throw new Error(`Accent grave sans fin : « ${text} »`);
-    const html = escape(part).replace(/\*\*(?=\S)(.+?)(?<=\S)\*\*/g, '<strong>$1</strong>');
+    const html = typography(escape(part)).replace(/\*\*(?=\S)(.+?)(?<=\S)\*\*/g, '<strong>$1</strong>');
     if (html.includes('*')) throw new Error(`Emphase non prise en charge : « ${text} »`);
     return html.replace(AUTOLINK, (address) =>
       `<a href="${address.startsWith('https://') ? address : `mailto:${address}`}">${address}</a>`);
@@ -99,19 +121,22 @@ export function parseBlocks(markdown) {
   return blocks;
 }
 
-/** Le HTML de chaque sorte de bloc, dans sa partie (`section` : son ancre, ou null pour l'introduction). */
+/**
+ * Le HTML de chaque sorte de bloc, dans sa partie (`section` : son ancre, ou null pour l'introduction) ;
+ * `line` rend une ligne de texte dans la typographie de la page.
+ */
 const BLOCK_HTML = {
-  p: (block) => `<p>${inline(block.text)}</p>`,
-  ul: (block) => `<ul>\n${block.items.map((item) => `  <li>${inline(item)}</li>`).join('\n')}\n</ul>`,
-  ol: (block, section) => `<ol>\n${block.items.map((item, index) =>
-    `  <li${section ? ` id="${section}-${index + 1}"` : ''}>${inline(item)}</li>`).join('\n')}\n</ol>`,
-  table: (block, section) => {
+  p: (block, section, line) => `<p>${line(block.text)}</p>`,
+  ul: (block, section, line) => `<ul>\n${block.items.map((item) => `  <li>${line(item)}</li>`).join('\n')}\n</ul>`,
+  ol: (block, section, line) => `<ol>\n${block.items.map((item, index) =>
+    `  <li${section ? ` id="${section}-${index + 1}"` : ''}>${line(item)}</li>`).join('\n')}\n</ol>`,
+  table: (block, section, line) => {
     // Un tableau large défile dans son cadre, jamais la page : au clavier aussi (tabindex), nommé par son titre.
     // Au-delà de trois colonnes, il garde une largeur où chaque colonne se lit (licence__table--wide).
     const frame = section ? ` role="region" aria-labelledby="${section}" tabindex="0"` : '';
     const wide = block.head.length > 3 ? ' licence__table--wide' : '';
-    const head = block.head.map((cell) => `<th scope="col">${inline(cell)}</th>`).join('');
-    const body = block.body.map((row) => `    <tr>${row.map((cell) => `<td>${inline(cell)}</td>`).join('')}</tr>`).join('\n');
+    const head = block.head.map((cell) => `<th scope="col">${line(cell)}</th>`).join('');
+    const body = block.body.map((row) => `    <tr>${row.map((cell) => `<td>${line(cell)}</td>`).join('')}</tr>`).join('\n');
     return `<div class="licence__table${wide}"${frame}>\n<table>\n  <thead><tr>${head}</tr></thead>\n  <tbody>\n${body}\n  </tbody>\n</table>\n</div>`;
   },
 };
@@ -119,10 +144,13 @@ const BLOCK_HTML = {
 /**
  * La licence prête à placer dans la page : son titre, sa ligne de version, son introduction et ses parties.
  * @param {string} markdown le texte d'un fichier EULA.<langue>.md
- * @param {{ anchor: string }} options préfixe des ancres d'articles (« article » : #article-5, « section » : #section-5)
+ * @param {{ anchor: string, lang: string }} options préfixe des ancres d'articles (« article » : #article-5,
+ *   « section » : #section-5) et langue du texte, pour sa typographie (fr, en)
  * @returns {{ title: string, version: string, intro: string, sections: { id: string, title: string, html: string }[] }}
  */
-export function renderLicence(markdown, { anchor }) {
+export function renderLicence(markdown, { anchor, lang }) {
+  if (!Object.hasOwn(TYPOGRAPHY, lang)) throw new Error(`Langue sans typographie connue : « ${lang} »`);
+  const line = (text) => inline(text, TYPOGRAPHY[lang]);
   const [title, version, ...rest] = parseBlocks(markdown);
   if (title?.type !== 'title') throw new Error('La licence doit commencer par son titre (#)');
   if (version?.type !== 'p' || !/^Version \d/.test(version.text)) throw new Error('La ligne de version doit suivre le titre');
@@ -134,7 +162,7 @@ export function renderLicence(markdown, { anchor }) {
       const number = /^(\d+)\. /.exec(block.text)?.[1];
       const id = number ? `${anchor}-${number}` : slug(block.text.split(':')[0]);
       if (!id || sections.some((section) => section.id === id)) throw new Error(`Ancre vide ou en double : « ${block.text} »`);
-      sections.push({ id, title: inline(block.text), blocks: [] });
+      sections.push({ id, title: line(block.text), blocks: [] });
     } else if (sections.length) {
       sections[sections.length - 1].blocks.push(block);
     } else {
@@ -143,13 +171,13 @@ export function renderLicence(markdown, { anchor }) {
   }
   if (!sections.length) throw new Error('La licence n\'a aucun article (##)');
   return {
-    title: inline(title.text),
-    version: inline(version.text),
-    intro: intro.map((block) => BLOCK_HTML[block.type](block, null)).join('\n'),
+    title: line(title.text),
+    version: line(version.text),
+    intro: intro.map((block) => BLOCK_HTML[block.type](block, null, line)).join('\n'),
     sections: sections.map((section) => ({
       id: section.id,
       title: section.title,
-      html: section.blocks.map((block) => BLOCK_HTML[block.type](block, section.id)).join('\n'),
+      html: section.blocks.map((block) => BLOCK_HTML[block.type](block, section.id, line)).join('\n'),
     })),
   };
 }

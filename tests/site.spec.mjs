@@ -162,7 +162,7 @@ test('curseur : la flèche sur le contenu, la main sur ce qui se clique, la barr
 test('sélection : les titres et l’interface ne se sélectionnent pas, les textes si (1.14.1)', async ({ page, isMobile }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  const userSelect = (selector) => page.locator(selector).first().evaluate((element) => getComputedStyle(element).userSelect);
+  const userSelect = (selector) => page.locator(selector).first().evaluate((element) => { const style = getComputedStyle(element); return style.webkitUserSelect || style.userSelect; });
   for (const selector of ['.hero__title', '.hero__status', '#services-title', '.brand__name', '.nav__link', '.btn', '.hud-panel', '.panel__index']) {
     expect(await userSelect(selector), selector).toBe('none');
   }
@@ -285,7 +285,8 @@ test('titres : l’effet de survol joue une fois, même si la souris reste dessu
 const SIGNATURE = 'Clivage';
 const signatureLoaded = (page) => page.waitForFunction((family) =>
   [...document.fonts].some((face) => face.family.replace(/["']/g, '') === family && face.status === 'loaded'), SIGNATURE);
-const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily);
+// Sans guillemets : Chromium écrit « "Clivage Fallback" », WebKit « Clivage Fallback »
+const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily.replace(/["']/g, ''));
 
 test('police signature : tout l’affichage en Clivage, le texte courant en Barlow, plus de Rajdhani', async ({ page }) => {
   const fonts = [];
@@ -295,7 +296,7 @@ test('police signature : tout l’affichage en Clivage, le texte courant en Barl
   await page.waitForLoadState('networkidle');
   await signatureLoaded(page);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
-    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, "Clivage Fallback"/);
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, Clivage Fallback/);
   }
   expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
   // Une seule graisse, déclarée pour toutes : le navigateur ne simule aucun gras
@@ -319,7 +320,7 @@ test('police signature : le menu des langues fermé n’est pas mis en page, le 
   const russian = list.getByRole('link', { name: 'Русский' });
   await expect(russian).toBeVisible();
   await expect.poll(() => fonts.includes('/fonts/clivage-v2-cyrillic.woff2')).toBe(true);
-  expect(await fontOf(russian)).toMatch(/^Clivage, "Clivage Fallback"/);
+  expect(await fontOf(russian)).toMatch(/^Clivage, Clivage Fallback/);
 });
 
 test('police signature : chaque titre arrive brisé et se répare, le hero se brise puis se répare', async ({ page }) => {
@@ -365,10 +366,10 @@ test('police signature : en russe aussi, tout l’affichage en Clivage, ses deux
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
-    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, "Clivage Fallback"/);
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, Clivage Fallback/);
   }
   // Barlow n'a pas de cyrillique : le texte courant russe garde les polices système
-  expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^"Segoe UI"/);
+  expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Segoe UI/);
   expect(fonts.filter((path) => path.startsWith('/fonts/clivage-')).sort()).toEqual(['/fonts/clivage-v2-cyrillic.woff2', '/fonts/clivage-v2-latin.woff2']);
   const faces = await page.evaluate(() => [...document.fonts].filter((face) => face.family.replace(/["']/g, '') === 'Clivage').map((face) => face.status));
   expect(faces).toEqual(['loaded', 'loaded']);
@@ -608,7 +609,7 @@ test.describe('licence des polices Ressac (1.18.0)', () => {
 
   test('le texte se sélectionne, titres compris ; le sommaire, non', async ({ page }) => {
     await page.goto('/ressac/licence/');
-    const userSelect = (selector) => page.locator(selector).first().evaluate((element) => getComputedStyle(element).userSelect);
+    const userSelect = (selector) => page.locator(selector).first().evaluate((element) => { const style = getComputedStyle(element); return style.webkitUserSelect || style.userSelect; });
     for (const selector of ['.licence__head h1', '.licence__text h2', '.licence__text p', '.licence__text li', '.licence__table td']) {
       expect(await userSelect(selector), selector).not.toBe('none');
     }
@@ -620,9 +621,9 @@ test.describe('licence des polices Ressac (1.18.0)', () => {
     page.on('request', (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); });
     await page.goto('/ressac/licence/');
     await page.waitForLoadState('networkidle');
-    const family = (selector) => page.locator(selector).first().evaluate((element) => getComputedStyle(element).fontFamily);
-    expect(await family('.licence__text p')).toMatch(/^"Segoe UI"/);
-    expect(await family('.licence__text h2')).toMatch(/^Clivage, "Clivage Fallback"/);
+    const family = (selector) => fontOf(page.locator(selector).first());
+    expect(await family('.licence__text p')).toMatch(/^Segoe UI/);
+    expect(await family('.licence__text h2')).toMatch(/^Clivage, Clivage Fallback/);
     // Barlow recomposait le texte visible à son arrivée (décalage de 0,12 sur ordinateur) : elle n'est plus demandée
     expect(fonts.filter((path) => path.includes('barlow'))).toEqual([]);
   });
@@ -644,7 +645,7 @@ test.describe('licence des polices Ressac (1.18.0)', () => {
     expect(new URL(page.url()).hash).toBe('#section-17');
   });
 
-  test('aucun défilement horizontal de 320 à 2560 px ; le tableau des prix défile dans son cadre', async ({ page }) => {
+  test('aucun défilement horizontal de 320 à 2560 px ; un tableau défile dans son cadre, nommé, au clavier', async ({ page }) => {
     for (const licence of LICENCE) {
       await page.goto(licence.path);
       for (const width of [320, 360, 390, 768, 1024, 1280, 1920, 2560]) {
@@ -704,4 +705,17 @@ test.describe('mentions légales : la médiation de la consommation (1.18.0)', (
     await page.setViewportSize({ width: 320, height: 640 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
   });
+});
+
+test('mentions légales : le texte dans les polices du système, sans Barlow à attendre (1.18.0)', async ({ page }) => {
+  for (const path of ['/mentions-legales.html', '/en/legal-notice.html']) {
+    const fonts = [];
+    const listen = (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); };
+    page.on('request', listen);
+    await page.goto(path);
+    await page.waitForLoadState('networkidle');
+    expect(await fontOf(page.locator('.page p').first()), path).toMatch(/^Segoe UI/);
+    expect(fonts.filter((font) => font.includes('barlow')), path).toEqual([]);
+    page.off('request', listen);
+  }
 });

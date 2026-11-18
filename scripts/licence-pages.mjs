@@ -21,10 +21,10 @@ import { CSS_SLOT, render, writePage } from './template.mjs';
 import { purgeCss, pageNames } from './css.mjs';
 import { afterFirstPaintScript } from './after-first-paint.mjs';
 
-/** D'où vient le texte : le dépôt de la fonderie, au commit de la version 1.0 en vigueur (CM2C signé le 18 novembre 2026). */
+/** D'où vient le texte : le dépôt de la fonderie, au commit de la version 1.0 en vigueur (CM2C signé le 18 novembre 2026, polices MyFonts et prix de parité ajoutés le même jour). */
 export const LICENCE_SOURCE = {
   repository: 'type-foundry',
-  commit: 'df793663f079bda32cdd6e07761efbc45ae84928',
+  commit: 'dbf34ba72b4b6a283b2f607703464d254ff540ae',
   committed: '2026-11-18',
 };
 
@@ -38,11 +38,11 @@ export const LICENCE_SOURCE = {
 export const LICENCE_PAGES = [
   {
     code: 'fr', path: '/ressac/licence/', anchor: 'article', tocId: 'sommaire',
-    copy: 'templates/ressac/EULA.fr.md', from: 'licence/EULA.fr.md', blob: '1841a21ff6adebe865cef8551f6643f3bcc4bbd5',
+    copy: 'templates/ressac/EULA.fr.md', from: 'licence/EULA.fr.md', blob: '0913f0166bf93d3ab7ec47351885b5b8b95c8df2',
   },
   {
     code: 'en', path: '/en/ressac/licence/', anchor: 'section', tocId: 'contents',
-    copy: 'templates/ressac/EULA.en.md', from: 'licence/EULA.en.md', blob: 'c3fa9a25ed4467fe75af6d33059d66f8ea5b59bd',
+    copy: 'templates/ressac/EULA.en.md', from: 'licence/EULA.en.md', blob: 'd9f4e88715d6351bbb99591eb3e28590959d89c0',
   },
 ];
 
@@ -78,7 +78,7 @@ export async function buildLicencePages({ root, out, origin, siteCss, fonts }) {
   for (const page of LICENCE_PAGES) {
     const other = LICENCE_PAGES.find((candidate) => candidate !== page);
     const language = languageOf(page.code);
-    const licence = renderLicence(await readLicence(root, page), { anchor: page.anchor });
+    const licence = renderLicence(await readLicence(root, page), { anchor: page.anchor, lang: page.code });
     const html = render(
       template,
       { ...messages[page.code], licence: licencePage[page.code] },
