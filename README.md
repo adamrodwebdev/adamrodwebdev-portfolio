@@ -42,6 +42,7 @@ Si les builds ont été arrêtés dans Netlify, les pushes reçus pendant l'arr�
 
 ```
 templates/              Gabarits des pages générées (accueil des cinq langues, page de Lumirift)
+templates/ressac/       Licence des polices Ressac : gabarit et copies exactes du texte de la fonderie
 css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
 css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
@@ -148,6 +149,26 @@ Ses médias sont dans `lumirift/` :
 - `card-*` : les images des trois cartes, recadrées en 4:3 (480 et 800 px) ; `avatar-176` ; `og-lumirift-1200x630.png`, la carte de partage.
 
 Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. Le titre utilise Unbounded, réduite aux lettres du titre (`fonts/unbounded-900-title.woff2`, 1,5 Ko) : si le titre change de lettres, refaites ce fichier.
+
+## La licence des polices Ressac (1.18.0)
+
+La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad : la case « Conditions » du paiement y renvoie, car la licence est le contrat entre le vendeur et l'acheteur (conditions de Gumroad, 6.7).
+
+- **Deux pages** : `/ressac/licence/` en français, qui prévaut, et `/en/ressac/licence/` en anglais. Chacune le dit et mène à l'autre. Il n'y a pas de licence en russe, en italien ni en espagnol (un texte juridique ne se traduit pas sans relecture) : pour ces langues, les moteurs de recherche reçoivent l'anglaise (`x-default`).
+- **Le texte vient de la fonderie, mot pour mot.** `templates/ressac/EULA.fr.md` et `EULA.en.md` sont des copies exactes de `licence/EULA.fr.md` et `licence/EULA.en.md` du dépôt `type-foundry` (privé), au commit noté dans `scripts/licence-pages.mjs` (`LICENCE_SOURCE`, avec l'identifiant Git de chaque fichier). La génération s'arrête si une copie a été retouchée ici : le texte se corrige dans la fonderie, jamais dans ce dépôt.
+- **Générées** par `scripts/licence-pages.mjs` (gabarit `templates/ressac/licence.html`, textes autour de la licence dans `js/i18n/messages.js`, export `licencePage`). Le Markdown est lu par `scripts/licence-markdown.mjs`, qui ne connaît que ce que la licence emploie (titres, paragraphes, listes, tableaux, gras, code) et refuse tout le reste plutôt que de mal le rendre.
+- **Les ancres** : `#article-14` en français, `#section-14` en anglais, `#article-10-4` pour chaque interdit de l'article 10, `#annexe-a` et `#schedule-a` pour les prix. Le saut est immédiat (pas de défilement doux sur ces pages : il mettait plus d'une seconde à traverser le contrat).
+- **Le texte du contrat se lit dans les polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte visible sur ordinateur se recomposait à l'arrivée de la police (décalage de 0,12, Lighthouse à 96) et une ancre ouverte de l'extérieur glissait de 300 px ; même un repli calé sur la chasse de Barlow laissait un mot changer de ligne. Sans police de texte à attendre, rien ne bouge.
+- **Mettre la licence à jour** (le numéro d'adhésion CM2C et la date d'entrée en vigueur, puis chaque nouvelle version) :
+
+  ```bash
+  git -C ../type-foundry show <commit>:licence/EULA.fr.md > templates/ressac/EULA.fr.md
+  git -C ../type-foundry show <commit>:licence/EULA.en.md > templates/ressac/EULA.en.md
+  git -C ../type-foundry rev-parse <commit> <commit>:licence/EULA.fr.md <commit>:licence/EULA.en.md
+  ```
+
+  puis reportez le commit et les deux identifiants dans `LICENCE_SOURCE` et `LICENCE_PAGES`, et lancez `npm test`.
+- **Pas en ligne avant la signature de la convention avec CM2C** : l'article 17 nomme ce médiateur de la consommation, et on ne peut pas le nommer avant d'avoir signé (règle de la CECMC).
 
 ## La police signature (1.14.0)
 
