@@ -509,6 +509,20 @@ test('accueil : l’offre d’abord, les sites puis les jeux, chacun son carrous
   expect(links).toEqual(['#offres', '#services', '#projets', '#creations', '#contact']);
 });
 
+test('en-tête : chaque page qui en a un porte la marque et le menu de l’accueil (1.19.0)', async ({ page }) => {
+  // Les pages générées hors de Vue (Lumirift, la licence, /learn/) recopient l'en-tête : il ne doit pas vieillir.
+  const anchors = ['#offres', '#services', '#projets', '#creations', '#contact'];
+  for (const path of PAGES) {
+    await page.goto(path);
+    const links = page.locator('.site-header .nav__links a');
+    if ((await links.count()) === 0) continue; // 404, merci, mentions légales : pas d'en-tête de site
+    expect(await links.evaluateAll((as) => as.map((a) => new URL(a.href).hash)), path).toEqual(anchors);
+    const names = await page.locator('.brand__name').allTextContents();
+    expect(names.length, path).toBeGreaterThan(0);
+    for (const name of names) expect(name, path).toBe('AdamRodWebTech');
+  }
+});
+
 test('témoignages, réservation et Malt : absents tant que leur donnée manque (1.17.0)', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.testimonials, .contact__booking')).toHaveCount(0);
