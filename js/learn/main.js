@@ -1,5 +1,5 @@
 /**
- * L'entrée de /learn/ (1.14.0), chargée une fois le premier affichage signalé : elle monte l'épisode et
+ * L'entrée de /learn/ (1.19.0), chargée une fois le premier affichage signalé : elle monte l'épisode et
  * son lecteur. Avec `?film`, la page ne montre que la scène, sans sous-titres (l'habillage du film les
  * dessine par langue), et expose `window.EPISODE` pour l'outil de tournage : la durée, les temps des
  * sous-titres, `render(t)`, `retime(beats)` (les battements fixés par la voix) et `ready`, la promesse

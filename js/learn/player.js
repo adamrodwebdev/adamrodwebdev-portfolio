@@ -1,5 +1,5 @@
 /**
- * Le lecteur d'un épisode dans la page (1.14.0) : Lire / Pause, Précédent / Suivant, une pastille par
+ * Le lecteur d'un épisode dans la page (1.19.0) : Lire / Pause, Précédent / Suivant, une pastille par
  * battement. Il fait avancer le temps et appelle `episode.render(t)` ; l'horloge lui est donnée (aucune
  * heure cachée). Avec le mouvement réduit, il passe d'un battement posé au suivant, sans travelling.
  */

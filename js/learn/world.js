@@ -1,5 +1,5 @@
 /**
- * Le monde de l'épisode 1 (1.14.0), en unités du monde : un plan de métro entre « ton téléphone » et
+ * Le monde de l'épisode 1 (1.19.0), en unités du monde : un plan de métro entre « ton téléphone » et
  * « un serveur ». Plan entier en 9:16 ; le plan large garde tout entre 25 % et 78 % de la hauteur
  * (sous la bande des sous-titres, au-dessus de la légende et des boutons des applis).
  *

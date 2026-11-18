@@ -1,5 +1,5 @@
 /**
- * La ligne de temps d'un épisode (1.14.0) : ses battements, chacun avec sa durée en secondes. Le film
+ * La ligne de temps d'un épisode (1.19.0) : ses battements, chacun avec sa durée en secondes. Le film
  * et la page interactive la lisent de la même façon : un instant t donne un battement et son avancée.
  */
 export class Timeline {

@@ -1,5 +1,5 @@
 /**
- * Fabrique d'éléments SVG (1.14.0) : des attributs posés un à un, jamais de balisage inséré par
+ * Fabrique d'éléments SVG (1.19.0) : des attributs posés un à un, jamais de balisage inséré par
  * innerHTML (la CSP du site refuse l'attribut style ; les attributs de présentation SVG restent permis).
  */
 const NS = 'http://www.w3.org/2000/svg';

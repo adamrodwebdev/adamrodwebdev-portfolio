@@ -1,5 +1,5 @@
 /**
- * Un épisode (1.14.0) : sa scène, sa mise en scène et, dans la page, ses sous-titres. `render(t)` dessine
+ * Un épisode (1.19.0) : sa scène, sa mise en scène et, dans la page, ses sous-titres. `render(t)` dessine
  * l'instant t, et le même t dessine toujours la même image : le film se tourne image par image, dans
  * n'importe quel ordre, et la page interactive se joue avec la même fonction.
  */

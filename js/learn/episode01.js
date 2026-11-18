@@ -1,5 +1,5 @@
 /**
- * La mise en scène de l'épisode 1, « Le voyage d'une page » (1.14.0) : l'état de la scène à chaque
+ * La mise en scène de l'épisode 1, « Le voyage d'une page » (1.19.0) : l'état de la scène à chaque
  * instant, calculé à partir du temps seulement (aucune horloge, aucun hasard). Le film image par image
  * et la page interactive appellent la même fonction.
  *

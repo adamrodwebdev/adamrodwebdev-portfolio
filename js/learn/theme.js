@@ -1,5 +1,5 @@
 /**
- * Le bouton de thème des pages générées sans Vue (1.14.0), le même comportement que celui de l'accueil
+ * Le bouton de thème des pages générées sans Vue (1.19.0), le même comportement que celui de l'accueil
  * (useTheme) et de /lumirift/ : sombre ou clair, mémorisé, et la couleur de la barre du navigateur suivie.
  */
 export class ThemeToggle {

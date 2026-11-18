@@ -1,5 +1,5 @@
 /**
- * Courbes et interpolations des épisodes « Comment marche le Web » (1.14.0) : des fonctions pures,
+ * Courbes et interpolations des épisodes « Comment marche le Web » (1.19.0) : des fonctions pures,
  * sans horloge ni hasard. Tout ce qui bouge dans un épisode se calcule à partir de son temps t.
  */
 

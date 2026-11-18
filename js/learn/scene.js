@@ -1,5 +1,5 @@
 /**
- * La scène de l'épisode 1 (1.14.0) : le monde dessiné une fois en SVG (fond, lignes, stations, globe,
+ * La scène de l'épisode 1 (1.19.0) : le monde dessiné une fois en SVG (fond, lignes, stations, globe,
  * serveur, téléphone et son navigateur), puis un état appliqué à chaque image. Elle ne décide rien :
  * la mise en scène (episode01.js) calcule l'état à partir du temps, la scène le peint.
  */

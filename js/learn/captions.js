@@ -1,5 +1,5 @@
 /**
- * Les règles des sous-titres de la série (1.14.0), communes à tous les épisodes : des phrases clés de
+ * Les règles des sous-titres de la série (1.19.0), communes à tous les épisodes : des phrases clés de
  * 35 caractères au plus, chacune entièrement à l'écran au moins (caractères ÷ 15) + 1,5 s, jamais deux
  * à la fois. La voix fixe leurs vrais temps, langue par langue ; un test vérifie chaque épisode.
  */

@@ -1,5 +1,5 @@
 /**
- * La caméra des épisodes (1.14.0) : une suite de plans, chacun cadré par une fonction du temps (fixe, ou
+ * La caméra des épisodes (1.19.0) : une suite de plans, chacun cadré par une fonction du temps (fixe, ou
  * qui suit le jeton), fondus l'un dans l'autre. Elle rend un viewBox en 9:16, gardé dans le monde.
  */
 import { EASE, lerp, phase } from './ease.js';

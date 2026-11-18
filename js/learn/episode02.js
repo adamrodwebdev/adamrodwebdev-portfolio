@@ -1,5 +1,5 @@
 /**
- * La base de l'épisode 2, « Trois langages » (1.14.0) : la première mise en scène de la série (le
+ * La base de l'épisode 2, « Trois langages » (1.19.0) : la première mise en scène de la série (le
  * storyboard du 15 novembre), où la page se construit en boîtes, s'habille et vit. Pas encore branchée :
  * elle sera réécrite sur la voix de l'épisode 2 (le HTML, le CSS et le JavaScript définis, leur nom
  * complet, le binaire, et l'image du corps : les os, l'apparence, le cerveau).
