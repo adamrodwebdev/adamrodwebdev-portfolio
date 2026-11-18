@@ -104,20 +104,28 @@ const LUMIRIFT = {
 };
 
 /**
- * La série « Comment marche le Web » (1.19.0) : l'épisode 1, en français (/learn/) et en anglais
- * (/en/learn/) d'abord. Les autres langues mènent à la page anglaise tant que leur voix n'est pas
+ * La série « Comment marche le Web » (1.19.0) : l'épisode 1, en français (/learn/1/) et en anglais
+ * (/en/learn/1/) d'abord. Les autres langues mènent à la page anglaise tant que leur voix n'est pas
  * enregistrée : aucune page en anglais sous /it/ ou /ru/ (doublons, hreflang faux). Pas d'îlot Vue :
  * son module se charge après le premier affichage, comme les îlots de l'accueil.
+ *
+ * Chaque épisode garde son adresse pour toujours : un lien partagé le jour de sa diffusion montre
+ * toujours cet épisode. /learn/ et /en/learn/ renvoient à l'épisode 1 (302, netlify.toml) jusqu'à ce
+ * qu'elles deviennent la page de la série.
  */
 const LEARN = {
   languages: ['fr', 'en'],
+  // La langue montrée aux autres (x-default) : l'anglais, comme pour la licence des polices.
+  fallback: 'en',
+  episode: 1,
   entry: '/js/learn/main.js',
   // La pastille de chaque battement prend la couleur de la ligne de métro qu'il emprunte (or : le serveur).
   beatColours: ['green', 'green', 'green', 'gold', 'red', ''],
   // Classes que le module de la page ajoute lui-même : leurs règles restent dans la feuille copiée.
   runtimeClasses: ['is-dark', 'is-ready', 'learn-film'],
 };
-const learnBase = (code) => `${languageOf(code).base}learn/`;
+/** L'adresse de l'épisode dans une langue : /learn/1/, /en/learn/1/. */
+const episodePath = (code) => `${languageOf(code).base}learn/${LEARN.episode}/`;
 
 /**
  * Le menu des langues de l'en-tête (1.10.0), tel qu'avant le montage de Vue : un <details> qui marche
@@ -227,16 +235,16 @@ export async function buildPages({ root, out, imports }) {
     const page = learnPage[code];
     const language = languageOf(code);
     const other = LEARN.languages.find((candidate) => candidate !== code);
-    const base = learnBase(code);
+    const base = episodePath(code);
     const html = render(learnTemplate, { ...messages[code], page }, {
       lang: code,
       url: ORIGIN + base,
       alternates: [
-        ...LEARN.languages.map((c) => `<link rel="alternate" hreflang="${c}" href="${ORIGIN}${learnBase(c)}">`),
-        `<link rel="alternate" hreflang="x-default" href="${ORIGIN}${learnBase(DEFAULT_LANGUAGE.code)}">`,
+        ...LEARN.languages.map((c) => `<link rel="alternate" hreflang="${c}" href="${ORIGIN}${episodePath(c)}">`),
+        `<link rel="alternate" hreflang="x-default" href="${ORIGIN}${episodePath(LEARN.fallback)}">`,
       ].join('\n  '),
       home: language.base,
-      otherHref: learnBase(other),
+      otherHref: episodePath(other),
       otherLang: other,
       otherCode: other.toUpperCase(),
       legal: language.legal,
