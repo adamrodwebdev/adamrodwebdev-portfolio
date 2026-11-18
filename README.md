@@ -242,7 +242,7 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 
 - **Rien ne retient le premier affichage** : chaque page générée porte sa feuille de style (`scripts/css.mjs`).
 - **Le reste vient après** : polices, Vue, vue-i18n et îlots ne sont demandés qu'une fois le premier affichage signalé (`scripts/after-first-paint.mjs`). Lighthouse simule un téléphone lent à partir de ce qui est arrivé avant ce premier affichage : une requête partie plus tôt, même sans rien bloquer, allonge la durée simulée.
-- **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard.
+- **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard. Le titre du hero entre en se dévoilant (`slice-in`, un `clip-path`) : Chrome ne le compte qu'à la fin de cette entrée, vers 0,9 s. Il doit donc rester plus petit que le paragraphe dans chaque langue, sinon il devient le plus grand élément en retard. Depuis « WebTech », il est réglé 4 % plus petit (`--step-4`, 1.18.0) ; vérifiez la langue au paragraphe le plus court (l'espagnol) après tout changement du titre ou de l'accroche.
 - **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
 - Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
 
