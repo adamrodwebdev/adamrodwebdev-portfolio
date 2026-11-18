@@ -16,7 +16,7 @@ export const messages = { fr, en, ru, it, es };
 export const SUPPORTED = LANGUAGES.map((language) => language.code);
 
 /**
- * La série « Comment marche le Web » (/learn/, version 1.14.0), en français et en anglais d'abord : les
+ * La série « Comment marche le Web » (/learn/, version 1.19.0), en français et en anglais d'abord : les
  * autres langues mènent à la page anglaise tant que leur voix n'est pas enregistrée. Hors de vue-i18n
  * (la page n'a pas d'îlot Vue). Les épisodes tutoient, comme leur voix ; les textes de la page évitent
  * de s'adresser au visiteur. Les sous-titres (dix par épisode, 35 caractères au plus) suivent la voix.

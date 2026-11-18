@@ -1,4 +1,4 @@
-// Tests unitaires de « Comment marche le Web » (1.14.0) : les parties pures des épisodes, sans navigateur
+// Tests unitaires de « Comment marche le Web » (1.19.0) : les parties pures des épisodes, sans navigateur
 // (node --test). La scène, qui dessine dans le DOM, est vérifiée par les tests Playwright et le tournage.
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';

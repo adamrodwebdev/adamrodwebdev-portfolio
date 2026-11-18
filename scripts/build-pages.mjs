@@ -104,7 +104,7 @@ const LUMIRIFT = {
 };
 
 /**
- * La série « Comment marche le Web » (1.14.0) : l'épisode 1, en français (/learn/) et en anglais
+ * La série « Comment marche le Web » (1.19.0) : l'épisode 1, en français (/learn/) et en anglais
  * (/en/learn/) d'abord. Les autres langues mènent à la page anglaise tant que leur voix n'est pas
  * enregistrée : aucune page en anglais sous /it/ ou /ru/ (doublons, hreflang faux). Pas d'îlot Vue :
  * son module se charge après le premier affichage, comme les îlots de l'accueil.
