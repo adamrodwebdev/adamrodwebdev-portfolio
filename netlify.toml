@@ -38,6 +38,21 @@
   status = 301
   force = true
 
+# « Comment marche le Web » (1.19.0) : chaque épisode a son adresse (/learn/1/) ; /learn/ renvoie à
+# l'épisode 1 tant qu'elle n'est pas la page de la série. Temporaire (302) : elle le deviendra.
+# Avant les pages 404 de langue, sinon /en/learn/ tomberait dans /en/*.
+[[redirects]]
+  from = "/learn/"
+  to = "/learn/1/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/en/learn/"
+  to = "/en/learn/1/"
+  status = 302
+  force = true
+
 # Une page 404 par langue (1.10.0)
 [[redirects]]
   from = "/en/*"

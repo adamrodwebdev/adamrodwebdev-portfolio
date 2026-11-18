@@ -2,7 +2,7 @@
 //  - chaque page ne demande rien à un autre domaine, ne déclenche aucune violation de CSP ni aucune erreur ;
 //  - les fichiers internes du dépôt ne sont pas servis ;
 //  - le formulaire de contact envoie le consentement et garde le pot de miel, avec et sans JavaScript.
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 /** Les pages publiées, d'après les fichiers HTML de dist/. */
@@ -542,8 +542,27 @@ test('marque : AdamRodWebTech sur chaque page, plus jamais AdamRodWebDev (1.17.0
   await expect(page).toHaveTitle(/^AdamRodWebTech \|/);
 });
 
+test('épisode : chaque épisode à son adresse, /learn/ y renvoie par netlify.toml (1.19.0)', async ({ page }) => {
+  // Le serveur local ne joue pas les redirections de Netlify : les règles se lisent dans netlify.toml.
+  const toml = readFileSync('netlify.toml', 'utf8');
+  const rules = [...toml.matchAll(/\[\[redirects\]\]\s+from = "([^"]+)"\s+to = "([^"]+)"\s+status = (\d+)/g)]
+    .map(([, from, to, status]) => ({ from, to, status: Number(status) }));
+  const firstLanguage404 = rules.findIndex((rule) => rule.status === 404);
+  for (const [series, episode, lang] of [['/learn/', '/learn/1/', 'fr'], ['/en/learn/', '/en/learn/1/', 'en']]) {
+    const index = rules.findIndex((rule) => rule.from === series);
+    expect(rules[index], series).toEqual({ from: series, to: episode, status: 302 });
+    expect(index, `${series} avant les pages 404 de langue`).toBeLessThan(firstLanguage404);
+    expect(existsSync(`dist${series}index.html`), `aucune page restée à ${series}`).toBe(false);
+    await page.goto(episode);
+    await expect(page.locator('html')).toHaveAttribute('lang', lang);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://adamrodwebdev.com${episode}`);
+  }
+  const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((links) => links.map((l) => `${l.hreflang} ${new URL(l.href).pathname}`));
+  expect(alternates).toEqual(['fr /learn/1/', 'en /en/learn/1/', 'x-default /en/learn/1/']);
+});
+
 test('épisode : les sous-titres gardent leurs espaces insécables, « Internet : » ne se coupe pas avant ses deux-points', async ({ page }) => {
-  await page.goto('/learn/');
+  await page.goto('/learn/1/');
   await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
   // Le battement d'Internet, puis lecture : son premier sous-titre arrive 0,3 s après.
   await page.locator('[data-learn-dot]').nth(1).click();
