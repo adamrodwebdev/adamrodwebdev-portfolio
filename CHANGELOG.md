@@ -2,6 +2,26 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.18.0] - 2026-11-18
+
+**Pas en ligne avant la signature de la convention avec le médiateur CM2C**, que l'article 17 de la licence nomme.
+
+### Ajouté
+- **La licence des polices Ressac** (CLUF, version 1.0), vers laquelle renvoie la case « Conditions » du paiement Gumroad : `/ressac/licence/` en français, qui prévaut, et `/en/ressac/licence/` en anglais. Chaque page le dit et mène à l'autre. Pour les autres langues du site, il n'existe pas de licence traduite : les moteurs de recherche reçoivent l'anglaise.
+- **Le texte de la fonderie, mot pour mot** : des copies exactes des fichiers du dépôt `type-foundry`, au commit noté dans le code, vérifiées à chaque génération par leur identifiant Git. Un test compare le texte de la page à celui du fichier, mot à mot et dans l'ordre.
+- **Une page faite pour lire un contrat** : un sommaire des 18 articles, de l'annexe des prix et de l'historique, qui suit la lecture sur grand écran. Chaque article a son ancre stable (`#article-14`, `#section-14`, `#article-10-4`), et le saut vers une ancre est immédiat, depuis le sommaire comme depuis un autre site. Le texte se sélectionne, titres compris. Sur téléphone, le tableau des prix défile dans son cadre, avec une ombre au bord. À l'impression, la page sort en noir sur blanc, sans menu.
+
+### Performance
+- **Le texte du contrat se lit dans les polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte visible sur ordinateur se recomposait à l'arrivée de la police (décalage de mise en page de 0,12, performance à 96) et l'article visé par une ancre glissait de 300 px. Même un repli calé sur la chasse de Barlow laissait un mot changer de ligne (0,03 à 0,10). Sans police de texte à attendre, rien ne bouge, et la page télécharge 45 Ko de moins.
+- **Pas de défilement doux sur ces pages** : il mettait plus d'une seconde à traverser le contrat jusqu'à un article.
+
+### Modifié
+- Le remplissage des gabarits et l'écriture des pages sortent de `scripts/build-pages.mjs` pour un module partagé, `scripts/template.mjs`. Les autres pages générées restent identiques, octet pour octet.
+
+### Qualité
+- `npm test` : 16 tests unitaires et 118 tests Playwright passés, 2 sautés (Chromium, téléphone et ordinateur). Nouveaux : les copies identiques à la source, le texte rendu mot pour mot, les ancres, le Markdown refusé (titre ###, lien, citation, HTML, italique, tableau ou liste mal formés) et le texte échappé ; dans le navigateur, le sommaire complet, l'autre langue et les liens alternatifs, la sélection, le texte en polices du système sans Barlow demandée, l'ancre juste après l'arrivée des polices, aucun défilement horizontal de 320 à 2560 px, le bouton de thème.
+- Lighthouse : 100 dans les quatre catégories sur chacun des trois passages mobiles des deux pages, et sur ordinateur, sur le serveur local qui applique les en-têtes de Netlify ; décalage de mise en page (CLS) nul ; 62 Ko pour la page française, 61 pour l'anglaise.
+
 ## [1.17.0] - 2026-11-17
 
 ### Ajouté

@@ -84,3 +84,34 @@ export const lumiriftPage = {
     trailerDescription: 'Fire lands on a pool of oil and the whole pool blazes.',
   },
 };
+
+/**
+ * La licence des polices Ressac (1.18.0), /ressac/licence/ et /en/ressac/licence/ : les textes de la page autour
+ * de la licence (scripts/licence-pages.mjs, templates/ressac/licence.html). La licence elle-même vient de la
+ * fonderie, mot pour mot (templates/ressac/EULA.<langue>.md) : rien ici ne la reformule.
+ * `other` parle dans la langue de l'autre page, vers laquelle il mène.
+ */
+export const licencePage = {
+  fr: {
+    meta: {
+      title: 'Licence des polices Ressac (CLUF) | AdamRodWebTech',
+      description: 'Le contrat de licence des polices de la fonderie Ressac, version 1.0 : usages permis, licences bureautique, web, application et livre numérique, prix et droit applicable.',
+    },
+    kicker: 'Fonderie Ressac',
+    notice: 'Cette licence existe aussi en anglais. En cas d’écart, la version française prévaut.',
+    toc: 'Sommaire',
+    back: 'Revenir au sommaire',
+    other: { label: 'Read the English version', short: 'English version' },
+  },
+  en: {
+    meta: {
+      title: 'Ressac Font Licence (EULA) | AdamRodWebTech',
+      description: 'The licence agreement for the fonts of the Ressac type foundry, version 1.0: what you may do, desktop, web, app and e-book licences, prices and governing law.',
+    },
+    kicker: 'Ressac type foundry',
+    notice: 'This licence also exists in French. If the two differ, the French version prevails.',
+    toc: 'Contents',
+    back: 'Back to contents',
+    other: { label: 'Lire la version française', short: 'Version française' },
+  },
+};

@@ -5,11 +5,12 @@
  * Appelé par scripts/build.mjs, une fois dist/ préparé (fichiers publiés, Vue, gabarits précompilés).
  *
  * Produit, dans dist/ : un accueil par langue de js/i18n/languages.js (index.html en français,
- * en/, ru/, it/, es/…) et lumirift/index.html.
+ * en/, ru/, it/, es/…), lumirift/index.html et la licence des polices Ressac en français et en anglais
+ * (scripts/licence-pages.mjs, 1.18.0).
  * La feuille css/style.css est copiée dans chaque page (1.8.1).
  */
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { messages, lumiriftPage } from '../js/i18n/messages.js';
 import { LANGUAGES, DEFAULT_LANGUAGE } from '../js/i18n/languages.js';
 import { config } from '../js/config.js';
@@ -20,6 +21,8 @@ import { minifyCss, purgeCss, pageNames } from './css.mjs';
 import { afterFirstPaintScript } from './after-first-paint.mjs';
 import { escape } from './html.mjs';
 import { offersPanel, testimonialsBlock, heroSecondCta, contactBooking, maltFact, ldOffers } from './offers.mjs';
+import { CSS_SLOT, render, writePage } from './template.mjs';
+import { buildLicencePages } from './licence-pages.mjs';
 
 export const ORIGIN = 'https://adamrodwebdev.com';
 
@@ -28,9 +31,6 @@ const FONTS = '/css/fonts.css';
 
 /** La première plateforme où jouer à un jeu du carrousel (le contenu statique de l'accueil n'en cite qu'une). */
 const playUrl = (id) => playLinks(projects.find((project) => project.id === id))[0].url;
-
-/** Repère de la feuille dans une page rendue, remplacé une fois la page connue. */
-const CSS_SLOT = '\u0000css\u0000';
 
 /**
  * La section « Bande-son » sans JavaScript (1.12.0) : le morceau et ses cinq parties, les mêmes classes que le
@@ -56,25 +56,6 @@ function soundtrackStatic(texts) {
 
 /** Les accueils à générer, un par langue : index.html pour la langue par défaut, <code>/index.html sinon. */
 const pages = LANGUAGES.map((language) => ({ ...language, out: `${language.base.slice(1)}index.html` }));
-
-const lookup = (obj, path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), obj);
-
-/**
- * Remplit un gabarit : [[clé]] lit un texte de `texts` (échappé), [[@nom]] une valeur calculée.
- * Les messages vue-i18n peuvent contenir {param} : ils ne doivent pas apparaître dans les pages statiques.
- */
-function render(template, texts, special, where) {
-  return template.replace(/\[\[(@?)([\w.-]+)\]\]/g, (_, at, key) => {
-    if (at) {
-      if (!(key in special)) throw new Error(`Variable inconnue : @${key}`);
-      return special[key];
-    }
-    const v = lookup(texts, key);
-    if (typeof v !== 'string') throw new Error(`Traduction manquante : ${where}.${key}`);
-    if (/[{}]/.test(v)) throw new Error(`Paramètre vue-i18n non résolu dans ${where}.${key}`);
-    return escape(v);
-  });
-}
 
 /**
  * Les modules qu'importent `roots`, de proche en proche (racines comprises), lus dans `dir` : seulement les
@@ -136,13 +117,6 @@ function languageMenu(current, label) {
               ${items.join('\n              ')}
             </ul>
           </details>`;
-}
-
-async function writePage(out, file, html) {
-  const target = join(out, file);
-  await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, html);
-  console.log(`✔ ${file}`);
 }
 
 /**
@@ -226,4 +200,7 @@ export async function buildPages({ root, out, imports }) {
   // Sans îlot Vue, la page ne garde de la feuille du site que les règles que son HTML peut appliquer.
   const lumiriftCss = purgeCss(siteCss, pageNames(lumirift, LUMIRIFT.runtimeClasses), lumirift);
   await writePage(out, LUMIRIFT.out, lumirift.replace(CSS_SLOT, () => lumiriftCss));
+
+  // La licence des polices Ressac (1.18.0), en français et en anglais
+  await buildLicencePages({ root, out, origin: ORIGIN, siteCss, fonts: FONTS });
 }
