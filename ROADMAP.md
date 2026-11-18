@@ -101,12 +101,12 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 
 ## 1.18.0 : la licence des polices Ressac
 
-Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la »), réalisée sur la branche `feat/1.18-licence-ressac` (PR vers `dev`, en brouillon). **Ne part pas en ligne avant la signature de la convention avec CM2C** : l'article 17 nomme ce médiateur de la consommation, et la règle de la CECMC interdit de le nommer avant. Le numéro d'adhésion et la date d'entrée en vigueur seront remplis dans le texte de la fonderie, puis recopiés ici.
+Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la »), réalisée sur la branche `feat/1.18-licence-ressac` (PR vers `dev`). La convention avec le médiateur CM2C, que nomme l'article 17, est signée le 18 novembre 2026 (valable jusqu'au 18 novembre 2029) : la licence finale, en vigueur depuis le 18 novembre 2026, est en place. Mise en ligne sur le feu vert de l'utilisateur.
 
 ### Ce qui a été décidé (18 novembre 2026)
 - **Deux pages, une par langue** : `/ressac/licence/` (le français, qui prévaut) et `/en/ressac/licence/`. La case « Conditions » du paiement Gumroad y renvoie : la licence est le contrat entre le vendeur et l'acheteur (conditions de Gumroad, 6.7). Chaque page dit que la française prévaut et mène à l'autre.
 - **Pas de licence en russe, en italien ni en espagnol** : un texte juridique ne se traduit pas sans relecture. Pour ces langues, les moteurs de recherche reçoivent l'anglaise (`x-default`), comme pour les mentions légales.
-- **Le texte mot pour mot** : copies exactes des fichiers de la fonderie (`type-foundry`, `licence/EULA.fr.md` et `EULA.en.md`, commit `c4799ad`), vérifiées à chaque génération par leur identifiant Git. Rien n'est reformulé : la page ajoute un sommaire, des ancres et l'encadré de langue.
+- **Le texte mot pour mot** : copies exactes des fichiers de la fonderie (`type-foundry`, `licence/EULA.fr.md` et `EULA.en.md`, commit `df79366`), vérifiées à chaque génération par leur identifiant Git. Rien n'est reformulé : la page ajoute un sommaire, des ancres et l'encadré de langue.
 - **Une page faite pour lire un contrat** : le sommaire des 18 articles, de l'annexe et de l'historique (une colonne qui suit la lecture sur grand écran), des ancres stables (`#article-14`, `#section-14`, `#article-10-4` pour chaque interdit) et un saut immédiat, un texte sélectionnable titres compris, un tableau des prix qui défile dans son cadre sur téléphone, l'impression en noir sur blanc.
 - **Le texte du contrat en polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte se recomposait à l'arrivée de la police (décalage de 0,12 sur ordinateur, et une ancre glissait de 300 px), même avec un repli calé. À valider avec l'utilisateur.
 
@@ -117,8 +117,8 @@ Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la
 - Entrée 1.18.0 dans le CHANGELOG, README à jour.
 
 ### Avant la mise en ligne
-- La convention CM2C signée ; son numéro d'adhésion (article 17) et la date d'entrée en vigueur remplis dans type-foundry, puis les deux fichiers recopiés ici avec leur nouveau commit (README, « La licence des polices Ressac »).
-- Le feu vert de l'utilisateur, puis la fusion dans `dev` et la publication.
+- La convention CM2C signée et la licence finale recopiée (commit `df79366` de type-foundry) : fait le 18 novembre 2026.
+- Le feu vert de l'utilisateur, une fois les contrôles GitHub verts, puis la fusion dans `dev` et la publication.
 
 ## 1.15.0 : la signature parle russe
 
