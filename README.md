@@ -42,6 +42,7 @@ Si les builds ont été arrêtés dans Netlify, les pushes reçus pendant l'arr�
 
 ```
 templates/              Gabarits des pages générées (accueil des cinq langues, page de Lumirift)
+templates/ressac/       Licence des polices Ressac : gabarit et copies exactes du texte de la fonderie
 css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
 css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
@@ -149,6 +150,27 @@ Ses médias sont dans `lumirift/` :
 
 Le clip ne se charge qu'après la page et un moment de calme, jamais avec `prefers-reduced-motion` ni l'économie de données. Le titre utilise Unbounded, réduite aux lettres du titre (`fonts/unbounded-900-title.woff2`, 1,5 Ko) : si le titre change de lettres, refaites ce fichier.
 
+## La licence des polices Ressac (1.18.0)
+
+La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad : la case « Conditions » du paiement y renvoie, car la licence est le contrat entre le vendeur et l'acheteur (conditions de Gumroad, 6.7).
+
+- **Deux pages** : `/ressac/licence/` en français, qui prévaut, et `/en/ressac/licence/` en anglais. Chacune le dit et mène à l'autre. Il n'y a pas de licence en russe, en italien ni en espagnol (un texte juridique ne se traduit pas sans relecture) : pour ces langues, les moteurs de recherche reçoivent l'anglaise (`x-default`).
+- **Le texte vient de la fonderie, mot pour mot.** `templates/ressac/EULA.fr.md` et `EULA.en.md` sont des copies exactes de `licence/EULA.fr.md` et `licence/EULA.en.md` du dépôt `type-foundry` (privé), au commit noté dans `scripts/licence-pages.mjs` (`LICENCE_SOURCE`, avec l'identifiant Git de chaque fichier). La génération s'arrête si une copie a été retouchée ici : le texte se corrige dans la fonderie, jamais dans ce dépôt.
+- **Générées** par `scripts/licence-pages.mjs` (gabarit `templates/ressac/licence.html`, textes autour de la licence dans `js/i18n/messages.js`, export `licencePage`). Le Markdown est lu par `scripts/licence-markdown.mjs`, qui ne connaît que ce que la licence emploie (titres, paragraphes, listes, tableaux, gras, code) et refuse tout le reste plutôt que de mal le rendre.
+- **La typographie française** s'applique au rendu de la page française (`TYPOGRAPHY` dans `scripts/licence-markdown.mjs`) : espaces insécables avant ; : ! ? » et après «, dans les nombres, entre un nombre et son unité et dans les numéros de téléphone. Les mots ne changent pas : le test de fidélité compare le texte, espaces comprises comme des espaces.
+- **Les ancres** : `#article-14` en français, `#section-14` en anglais, `#article-10-4` pour chaque interdit de l'article 10, `#annexe-a` et `#schedule-a` pour les prix. Le saut est immédiat (pas de défilement doux sur ces pages : il mettait plus d'une seconde à traverser le contrat).
+- **Le texte du contrat se lit dans les polices du système**, comme le texte courant des pages russes ; les titres gardent la signature. Avec Barlow, le texte visible sur ordinateur se recomposait à l'arrivée de la police (décalage de 0,12, Lighthouse à 96) et une ancre ouverte de l'extérieur glissait de 300 px ; même un repli calé sur la chasse de Barlow laissait un mot changer de ligne. Sans police de texte à attendre, rien ne bouge.
+- **Mettre la licence à jour**, à chaque nouvelle version du texte dans la fonderie :
+
+  ```bash
+  git -C ../type-foundry show <commit>:licence/EULA.fr.md > templates/ressac/EULA.fr.md
+  git -C ../type-foundry show <commit>:licence/EULA.en.md > templates/ressac/EULA.en.md
+  git -C ../type-foundry rev-parse <commit> <commit>:licence/EULA.fr.md <commit>:licence/EULA.en.md
+  ```
+
+  puis reportez le commit et les deux identifiants dans `LICENCE_SOURCE` et `LICENCE_PAGES`, et lancez `npm test`.
+- **Le médiateur** : l'article 17 nomme CM2C, avec qui la convention est signée depuis le 18 novembre 2026 (valable jusqu'au 18 novembre 2029). On ne peut pas nommer un médiateur avant d'avoir signé sa convention (règle de la CECMC) : la licence n'est partie en ligne qu'après.
+
 ## La police signature (1.14.0)
 
 **Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebTech et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici. Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
@@ -173,7 +195,7 @@ Le site existe en français (`/`), en anglais (`/en/`), en russe (`/ru/`), en it
 - **Langues et adresses** : `js/i18n/languages.js` (code, nom affiché, accueil, page de confirmation, mentions légales, langue de l'heure). La génération, le menu et l'horloge s'en servent.
 - **Chaque page ne charge que sa langue** : `js/i18n/index.js` importe `locales/<code>.js`, que la génération précharge avec les îlots Vue. `js/i18n/messages.js` réunit toutes les langues pour la génération et les tests ; le navigateur ne le demande pas.
 - Les accueils de `dist/` sont **générés** à partir de `templates/index.html` par `npm run build`, avec les liens `hreflang` des cinq langues et `x-default` vers le français.
-- Les pages 404 et de confirmation existent dans chaque langue (`ru/404.html`, `ru/thank-you.html`…). Les mentions légales n'existent qu'en français (version légale) et en anglais : les autres langues mènent à l'anglaise, et le lien le dit.
+- Les pages 404 et de confirmation existent dans chaque langue (`ru/404.html`, `ru/thank-you.html`…). Les mentions légales n'existent qu'en français (version légale) et en anglais : les autres langues mènent à l'anglaise, et le lien le dit. La section « Médiation de la consommation » (`#mediation`, 1.18.0) donne la clause de CM2C : en français telle que CM2C la fournit, en anglais, et dans la page anglaise en russe, en italien et en espagnol, puisque ces langues y mènent ; chaque version précise que la médiation se fait en français. Comme la licence, les mentions légales se lisent dans les polices du système (les titres gardent la signature) : sans Barlow à attendre, rien ne bouge à l'ouverture.
 - **Russe** : la police signature parle russe (1.15.0) et garde tout l'affichage ; Barlow n'a pas de cyrillique, le texte courant russe prend des polices système qui en ont (`:root:lang(ru)` dans `css/style.css`). Les textes russes méritent la relecture d'un lecteur natif, la police aussi.
 - Syntaxe vue-i18n : `{ } @ $ |` sont des caractères spéciaux dans les messages (écrire `{'@'}` pour un @) ; le test le contrôle.
 - Registre : *vous* en français, *you* en anglais, *вы* en russe, *tu* en italien, *tú* en espagnol (Espagne). Les textes italiens et espagnols méritent une relecture par une personne de langue maternelle avant d'être mis en avant.
@@ -220,7 +242,7 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 
 - **Rien ne retient le premier affichage** : chaque page générée porte sa feuille de style (`scripts/css.mjs`).
 - **Le reste vient après** : polices, Vue, vue-i18n et îlots ne sont demandés qu'une fois le premier affichage signalé (`scripts/after-first-paint.mjs`). Lighthouse simule un téléphone lent à partir de ce qui est arrivé avant ce premier affichage : une requête partie plus tôt, même sans rien bloquer, allonge la durée simulée.
-- **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard.
+- **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard. Le titre du hero entre en se dévoilant (`slice-in`, un `clip-path`) : Chrome ne le compte qu'à la fin de cette entrée, vers 0,9 s. Il doit donc rester plus petit que le paragraphe dans chaque langue, sinon il devient le plus grand élément en retard. Depuis « WebTech », il est réglé 4 % plus petit (`--step-4`, 1.18.0) ; vérifiez la langue au paragraphe le plus court (l'espagnol) après tout changement du titre ou de l'accroche.
 - **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
 - Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
 

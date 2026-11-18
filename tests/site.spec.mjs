@@ -162,7 +162,7 @@ test('curseur : la flèche sur le contenu, la main sur ce qui se clique, la barr
 test('sélection : les titres et l’interface ne se sélectionnent pas, les textes si (1.14.1)', async ({ page, isMobile }) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle');
-  const userSelect = (selector) => page.locator(selector).first().evaluate((element) => getComputedStyle(element).userSelect);
+  const userSelect = (selector) => page.locator(selector).first().evaluate((element) => { const style = getComputedStyle(element); return style.webkitUserSelect || style.userSelect; });
   for (const selector of ['.hero__title', '.hero__status', '#services-title', '.brand__name', '.nav__link', '.btn', '.hud-panel', '.panel__index']) {
     expect(await userSelect(selector), selector).toBe('none');
   }
@@ -285,7 +285,8 @@ test('titres : l’effet de survol joue une fois, même si la souris reste dessu
 const SIGNATURE = 'Clivage';
 const signatureLoaded = (page) => page.waitForFunction((family) =>
   [...document.fonts].some((face) => face.family.replace(/["']/g, '') === family && face.status === 'loaded'), SIGNATURE);
-const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily);
+// Sans guillemets : Chromium écrit « "Clivage Fallback" », WebKit « Clivage Fallback »
+const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily.replace(/["']/g, ''));
 
 test('police signature : tout l’affichage en Clivage, le texte courant en Barlow, plus de Rajdhani', async ({ page }) => {
   const fonts = [];
@@ -295,7 +296,7 @@ test('police signature : tout l’affichage en Clivage, le texte courant en Barl
   await page.waitForLoadState('networkidle');
   await signatureLoaded(page);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
-    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, "Clivage Fallback"/);
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, Clivage Fallback/);
   }
   expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
   // Une seule graisse, déclarée pour toutes : le navigateur ne simule aucun gras
@@ -319,7 +320,7 @@ test('police signature : le menu des langues fermé n’est pas mis en page, le 
   const russian = list.getByRole('link', { name: 'Русский' });
   await expect(russian).toBeVisible();
   await expect.poll(() => fonts.includes('/fonts/clivage-v2-cyrillic.woff2')).toBe(true);
-  expect(await fontOf(russian)).toMatch(/^Clivage, "Clivage Fallback"/);
+  expect(await fontOf(russian)).toMatch(/^Clivage, Clivage Fallback/);
 });
 
 test('police signature : chaque titre arrive brisé et se répare, le hero se brise puis se répare', async ({ page }) => {
@@ -365,10 +366,10 @@ test('police signature : en russe aussi, tout l’affichage en Clivage, ses deux
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
-    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, "Clivage Fallback"/);
+    expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, Clivage Fallback/);
   }
   // Barlow n'a pas de cyrillique : le texte courant russe garde les polices système
-  expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^"Segoe UI"/);
+  expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Segoe UI/);
   expect(fonts.filter((path) => path.startsWith('/fonts/clivage-')).sort()).toEqual(['/fonts/clivage-v2-cyrillic.woff2', '/fonts/clivage-v2-latin.woff2']);
   const faces = await page.evaluate(() => [...document.fonts].filter((face) => face.family.replace(/["']/g, '') === 'Clivage').map((face) => face.status));
   expect(faces).toEqual(['loaded', 'loaded']);
@@ -572,4 +573,149 @@ test.describe('sans JavaScript', () => {
     expect(sent.get('rgpd')).toBe('oui');
     expect(sent.has('bot-field')).toBe(true);
   });
+});
+
+// La licence des polices Ressac (1.18.0) : /ressac/licence/ (fait foi) et /en/ressac/licence/
+const LICENCE = [
+  { path: '/ressac/licence/', lang: 'fr', other: '/en/ressac/licence/', otherLang: 'en', first: '#article-1', annex: 'annexe-a', toc: 'sommaire' },
+  { path: '/en/ressac/licence/', lang: 'en', other: '/ressac/licence/', otherLang: 'fr', first: '#section-1', annex: 'schedule-a', toc: 'contents' },
+];
+
+test.describe('licence des polices Ressac (1.18.0)', () => {
+  for (const licence of LICENCE) {
+    test(`${licence.path} : titre, version, sommaire complet, lien vers l’autre langue, liens alternatifs`, async ({ page }) => {
+      await page.goto(licence.path);
+      await expect(page.locator('html')).toHaveAttribute('lang', licence.lang);
+      await expect(page.locator('h1')).toContainText('Ressac');
+      await expect(page.locator('.licence__version')).toContainText('1.0');
+      // Vingt entrées (18 articles, l'annexe, l'historique), chacune vers un titre de la page
+      const targets = await page.locator('.licence__toc a').evaluateAll((links) =>
+        links.map((link) => document.getElementById(link.hash.slice(1))?.tagName ?? `absent : ${link.hash}`));
+      expect(targets).toEqual(Array(20).fill('H2'));
+      await expect(page.locator('.licence__toc a').first()).toHaveAttribute('href', licence.first);
+      // L'autre langue, dans l'encadré et dans l'en-tête ; la version française prévaut
+      const notice = page.locator('.licence__lang');
+      await expect(notice.locator('a')).toHaveAttribute('href', licence.other);
+      await expect(notice.locator('a')).toHaveAttribute('hreflang', licence.otherLang);
+      await expect(notice).toContainText(licence.lang === 'fr' ? 'la version française prévaut' : 'the French version prevails');
+      await expect(page.locator(`.nav__tools a[hreflang="${licence.otherLang}"]`)).toHaveAttribute('href', licence.other);
+      // Le français, l'anglais, et l'anglais pour les autres langues (russe, italien, espagnol)
+      const alternates = await page.locator('link[rel="alternate"]').evaluateAll((links) =>
+        links.map((link) => `${link.hreflang} ${new URL(link.href).pathname}`));
+      expect(alternates).toEqual(['fr /ressac/licence/', 'en /en/ressac/licence/', 'x-default /en/ressac/licence/']);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://adamrodwebdev.com${licence.path}`);
+    });
+  }
+
+  test('le texte se sélectionne, titres compris ; le sommaire, non', async ({ page }) => {
+    await page.goto('/ressac/licence/');
+    const userSelect = (selector) => page.locator(selector).first().evaluate((element) => { const style = getComputedStyle(element); return style.webkitUserSelect || style.userSelect; });
+    for (const selector of ['.licence__head h1', '.licence__text h2', '.licence__text p', '.licence__text li', '.licence__table td']) {
+      expect(await userSelect(selector), selector).not.toBe('none');
+    }
+    for (const selector of ['.licence__toc', '.licence__kicker', '.site-header']) expect(await userSelect(selector), selector).toBe('none');
+  });
+
+  test('le contrat se lit dans les polices du système, les titres dans la signature : aucune police de texte à attendre', async ({ page }) => {
+    const fonts = [];
+    page.on('request', (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); });
+    await page.goto('/ressac/licence/');
+    await page.waitForLoadState('networkidle');
+    const family = (selector) => fontOf(page.locator(selector).first());
+    expect(await family('.licence__text p')).toMatch(/^Segoe UI/);
+    expect(await family('.licence__text h2')).toMatch(/^Clivage, Clivage Fallback/);
+    // Barlow recomposait le texte visible à son arrivée (décalage de 0,12 sur ordinateur) : elle n'est plus demandée
+    expect(fonts.filter((path) => path.includes('barlow'))).toEqual([]);
+  });
+
+  test('une ancre ouverte de l’extérieur tombe sur son article, même après l’arrivée des polices', async ({ page }) => {
+    await page.goto('/ressac/licence/#article-14');
+    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => [...document.fonts].some((face) => face.family === 'Clivage' && face.status === 'loaded'));
+    await page.waitForTimeout(300);
+    const top = await page.locator('#article-14').evaluate((element) => element.getBoundingClientRect().top);
+    expect(top).toBeGreaterThanOrEqual(0);
+    expect(top).toBeLessThan(48);
+  });
+
+  test('le sommaire mène à l’article choisi', async ({ page }) => {
+    await page.goto('/en/ressac/licence/');
+    await page.locator('.licence__toc a[href="#section-17"]').click();
+    await expect.poll(() => page.locator('#section-17').evaluate((element) => Math.round(element.getBoundingClientRect().top))).toBeLessThan(48);
+    expect(new URL(page.url()).hash).toBe('#section-17');
+  });
+
+  test('aucun défilement horizontal de 320 à 2560 px ; un tableau défile dans son cadre, nommé, au clavier', async ({ page }) => {
+    for (const licence of LICENCE) {
+      await page.goto(licence.path);
+      for (const width of [320, 360, 390, 768, 1024, 1280, 1920, 2560]) {
+        await page.setViewportSize({ width, height: 800 });
+        const overflow = await page.evaluate(() => {
+          const limit = document.documentElement.clientWidth;
+          const wide = [...document.querySelectorAll('body *')]
+            .filter((element) => !element.closest('.licence__table') && element.getBoundingClientRect().right > limit + 1)
+            .map((element) => element.tagName + (element.className ? `.${String(element.className).split(' ')[0]}` : ''));
+          return { page: document.documentElement.scrollWidth - limit, wide: wide.slice(0, 5) };
+        });
+        expect(overflow, `${licence.path} à ${width} px`).toEqual({ page: 0, wide: [] });
+      }
+      const frame = page.locator(`.licence__table[aria-labelledby="${licence.annex}"]`);
+      await expect(frame).toHaveAttribute('role', 'region');
+      await expect(frame).toHaveAttribute('tabindex', '0');
+    }
+  });
+
+  test('le bouton de thème bascule et se souvient', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.goto('/ressac/licence/');
+    const button = page.locator('[data-theme-toggle]');
+    await expect(button).toHaveAttribute('aria-pressed', 'true');
+    await button.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(page.locator('[data-theme-toggle]')).toHaveAttribute('aria-pressed', 'false');
+  });
+});
+
+// La médiation de la consommation (1.18.0) : CM2C, dans les mentions légales
+test.describe('mentions légales : la médiation de la consommation (1.18.0)', () => {
+  const CM2C = ['a[href="tel:+33189470014"]', 'a[href="https://www.cm2c.net/declarer-un-litige.php"]', 'a[href="mailto:litiges@cm2c.net"]'];
+
+  test('en français : la clause de CM2C, ses coordonnées et leurs liens, sans débordement à 320 px', async ({ page }) => {
+    await page.goto('/mentions-legales.html');
+    await expect(page.locator('#mediation')).toHaveText('Médiation de la consommation');
+    await expect(page.getByText('vous avez la possibilité de recourir gratuitement à une procédure de médiation de la consommation')).toBeVisible();
+    for (const link of CM2C) await expect(page.locator(link), link).toBeVisible();
+    // Typographie française : espaces insécables avant les deux-points et dans les guillemets
+    expect(await page.locator('#mediation + p').textContent()).toContain('«\u00a0le processus de médiation des litiges de la consommation\u00a0»');
+    await page.setViewportSize({ width: 320, height: 640 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+  });
+
+  test('en anglais, puis en russe, en italien et en espagnol : la médiation se fait en français', async ({ page }) => {
+    await page.goto('/en/legal-notice.html');
+    await expect(page.locator('#mediation')).toHaveText('Consumer mediation');
+    await expect(page.getByText('The mediation is conducted in French.')).toBeVisible();
+    for (const link of CM2C) await expect(page.locator(link), link).toBeVisible();
+    for (const [lang, french] of [['ru', 'на французском'], ['it', 'in francese'], ['es', 'en francés']]) {
+      await expect(page.locator(`p[lang="${lang}"]`), lang).toContainText('CM2C');
+      await expect(page.locator(`p[lang="${lang}"]`), lang).toContainText(french);
+    }
+    await page.setViewportSize({ width: 320, height: 640 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+  });
+});
+
+test('mentions légales : le texte dans les polices du système, sans Barlow à attendre (1.18.0)', async ({ page }) => {
+  for (const path of ['/mentions-legales.html', '/en/legal-notice.html']) {
+    const fonts = [];
+    const listen = (request) => { if (request.resourceType() === 'font') fonts.push(new URL(request.url()).pathname); };
+    page.on('request', listen);
+    await page.goto(path);
+    await page.waitForLoadState('networkidle');
+    expect(await fontOf(page.locator('.page p').first()), path).toMatch(/^Segoe UI/);
+    expect(fonts.filter((font) => font.includes('barlow')), path).toEqual([]);
+    page.off('request', listen);
+  }
 });

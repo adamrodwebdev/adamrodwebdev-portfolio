@@ -32,7 +32,10 @@
   --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
   --step-2: clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
   --step-3: clamp(2rem, 1.6rem + 2vw, 3.2rem);
-  --step-4: clamp(3.2rem, 2rem + 7vw, 8.5rem);
+  /* Le titre du hero, seul à s'en servir (1.18.0 : 4 % plus petit). Depuis « WebTech » (1.17.0), il dépassait
+     d'un cheveu le paragraphe en espagnol : dévoilé de gauche à droite, il devient le plus grand élément à la fin
+     de son entrée, vers 0,9 s sur ordinateur, au lieu du paragraphe affiché dès le premier rendu (Lighthouse à 99). */
+  --step-4: clamp(3.2rem, 2rem + 6.6vw, 8.2rem);
 
   --cut: 14px;
   /* Profondeur (1.11.0) : recouvrement des panneaux, hauteur de leur marche, décalage des plaques */
