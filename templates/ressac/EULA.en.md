@@ -6,13 +6,16 @@ This licence is a contract between you (the **Licensee**) and Kevin Rousselet, s
 (entrepreneur individuel, EI) under the trade name AdamRodWebTech, 840 846 927 RCS
 Chalon-sur-Saône, SIRET 840 846 927 00027, 621 route de Louhans, 71500 Ratte, France, trading as
 **Ressac** (the **Licensor**, "we"). Contact: contact@adamrodwebdev.com. It applies to every
-font of Ressac that you obtain, from our own shop or from a reseller. A French version exists; if
-the two differ, the French version prevails (section 17).
+font of Ressac that you obtain from our own shop, or from a reseller that presents this licence to
+you. A French version exists; if the two differ, the French version prevails (section 17).
 
 **Who sells, who licenses.** Our fonts are sold by resellers acting as merchant of record, such as
 Gumroad for our shop. The sale, the payment, the receipt, taxes and refunds are between you and
 that reseller, under its own terms. The right to use the fonts is granted by us, under this
 licence, which the reseller presents to you on our behalf.
+
+**Fonts bought on MyFonts.** A font of Ressac bought on MyFonts (Monotype) comes with MyFonts' own
+licence, which then applies instead of this one.
 
 By downloading, installing or using the Font Software you accept this licence. If you do not
 accept it, do not install the fonts, and ask the seller for a refund under its own policy. If you
@@ -232,23 +235,23 @@ Font Software concerned.
 
 ## Schedule A: licence sizes and prices
 
-Prices in US dollars, the same on every channel. **Base price:** $25 a style, $79 a family.
-Each size costs the base price times its multiplier.
+Prices in US dollars, for a whole family in our own shop. Resellers set their own prices;
+single styles are sold by resellers, such as MyFonts.
 
-| Licence | Size | Multiplier | A style | A family |
-|---|---|---|---|---|
-| Desktop | 1–5 Users | × 1 | $25 | $79 |
-| Desktop | 6–20 Users | × 2 | $50 | $158 |
-| Desktop | 21–50 Users | × 4 | $100 | $316 |
-| Web | up to 10,000 pageviews a month | × 1 | $25 | $79 |
-| Web | up to 100,000 pageviews a month | × 2 | $50 | $158 |
-| Web | up to 500,000 pageviews a month | × 4 | $100 | $316 |
-| E-book | 1 title | × 1 | $25 | $79 |
-| App | 1 application | × 4 | $100 | $316 |
-| Desktop above 50 Users, web above 500,000 pageviews, digital ads, server | on quote | — | — | — |
+| Licence | Size | A family |
+|---|---|---|
+| Desktop | 1–5 Users | $79 |
+| Desktop | 6–20 Users | $249 |
+| Desktop | 21–50 Users | $529 |
+| Web | up to 10,000 pageviews a month | $79 |
+| Web | up to 100,000 pageviews a month | $158 |
+| Web | up to 500,000 pageviews a month | $316 |
+| E-book | 1 title | $79 |
+| App | 1 application | $316 |
+| Desktop above 50 Users, web above 500,000 pageviews, digital ads, server | on quote | — |
 
 ## Version history
 
 | Version | Date | Changes |
 |---|---|---|
-| 1.0 | 18 November 2026 | First version in force. Since draft 0.1 (17 November 2026): the licensor, resellers acting as merchant of record (Gumroad), a refunded licence ends, the licence key as proof, the consumer mediator. |
+| 1.0 | 18 November 2026 | First version in force. Since draft 0.1 (17 November 2026): the licensor, resellers acting as merchant of record (Gumroad), a refunded licence ends, the licence key as proof, the consumer mediator; fonts bought on MyFonts under MyFonts' licence, and the shop's price schedule set to stay at or above MyFonts' prices (its parity rule). |

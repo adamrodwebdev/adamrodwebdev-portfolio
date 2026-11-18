@@ -6,14 +6,17 @@ Cette licence est un contrat entre vous (le **Licencié**) et Kevin Rousselet, e
 individuel (EI) sous le nom commercial AdamRodWebTech, 840 846 927 RCS Chalon-sur-Saône, SIRET
 840 846 927 00027, 621 route de Louhans, 71500 Ratte, France, exerçant sous le nom **Ressac** (le
 **Concédant**, « nous »). Contact : contact@adamrodwebdev.com. Elle s'applique à toute police de
-Ressac que vous obtenez, dans notre boutique ou chez un revendeur. Une version anglaise existe ; en
-cas d'écart, la version française prévaut (article 17).
+Ressac que vous obtenez dans notre boutique, ou chez un revendeur qui vous présente cette licence.
+Une version anglaise existe ; en cas d'écart, la version française prévaut (article 17).
 
 **Qui vend, qui concède.** Nos polices sont vendues par des revendeurs qui agissent en marchand
 officiel (« merchant of record »), comme Gumroad pour notre boutique. La vente, le paiement, le
 reçu, les taxes et les remboursements se règlent entre vous et ce revendeur, selon ses propres
 conditions. Le droit d'utiliser les polices est concédé par nous, selon cette licence, que le
 revendeur vous présente pour notre compte.
+
+**Polices achetées sur MyFonts.** Une police de Ressac achetée sur MyFonts (Monotype) est livrée avec
+la licence propre à MyFonts, qui s'applique alors à la place de celle-ci.
 
 En téléchargeant, en installant ou en utilisant le Logiciel de police, vous acceptez cette licence.
 Si vous ne l'acceptez pas, n'installez pas les polices et demandez le remboursement au vendeur selon
@@ -258,23 +261,23 @@ pays le permet.
 
 ## Annexe A : tailles et prix des licences
 
-Prix en dollars américains, identiques sur tous les canaux. **Prix de base :** 25 $ le style, 79 $
-la famille. Chaque taille coûte le prix de base multiplié par son coefficient.
+Prix en dollars américains, pour une famille entière dans notre boutique. Les revendeurs fixent
+leurs propres prix ; les styles seuls sont vendus par des revendeurs, comme MyFonts.
 
-| Licence | Taille | Coefficient | Un style | Une famille |
-|---|---|---|---|---|
-| Bureautique | 1 à 5 Utilisateurs | × 1 | 25 $ | 79 $ |
-| Bureautique | 6 à 20 Utilisateurs | × 2 | 50 $ | 158 $ |
-| Bureautique | 21 à 50 Utilisateurs | × 4 | 100 $ | 316 $ |
-| Web | jusqu'à 10 000 pages vues par mois | × 1 | 25 $ | 79 $ |
-| Web | jusqu'à 100 000 pages vues par mois | × 2 | 50 $ | 158 $ |
-| Web | jusqu'à 500 000 pages vues par mois | × 4 | 100 $ | 316 $ |
-| Livre numérique | 1 titre | × 1 | 25 $ | 79 $ |
-| Application | 1 application | × 4 | 100 $ | 316 $ |
-| Bureautique au-delà de 50 Utilisateurs, web au-delà de 500 000 pages vues, publicité numérique, serveur | sur devis | — | — | — |
+| Licence | Taille | Une famille |
+|---|---|---|
+| Bureautique | 1 à 5 Utilisateurs | 79 $ |
+| Bureautique | 6 à 20 Utilisateurs | 249 $ |
+| Bureautique | 21 à 50 Utilisateurs | 529 $ |
+| Web | jusqu'à 10 000 pages vues par mois | 79 $ |
+| Web | jusqu'à 100 000 pages vues par mois | 158 $ |
+| Web | jusqu'à 500 000 pages vues par mois | 316 $ |
+| Livre numérique | 1 titre | 79 $ |
+| Application | 1 application | 316 $ |
+| Bureautique au-delà de 50 Utilisateurs, web au-delà de 500 000 pages vues, publicité numérique, serveur | sur devis | — |
 
 ## Historique des versions
 
 | Version | Date | Changements |
 |---|---|---|
-| 1.0 | 18 novembre 2026 | Première version en vigueur. Depuis le projet 0.1 (17 novembre 2026) : le concédant, les revendeurs marchands officiels (Gumroad), la fin d'une licence remboursée, la clé de licence comme preuve, le médiateur de la consommation. |
+| 1.0 | 18 novembre 2026 | Première version en vigueur. Depuis le projet 0.1 (17 novembre 2026) : le concédant, les revendeurs marchands officiels (Gumroad), la fin d'une licence remboursée, la clé de licence comme preuve, le médiateur de la consommation ; les polices achetées sur MyFonts sous la licence de MyFonts, et l'annexe des prix de la boutique fixée pour rester au niveau des prix de MyFonts ou au-dessus (sa règle de parité). |

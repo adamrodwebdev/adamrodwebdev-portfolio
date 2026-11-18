@@ -49,8 +49,23 @@ test('une copie retouchée arrête la génération', async () => {
 test('le texte arrive dans la page mot pour mot, dans l’ordre, sans rien de plus', async () => {
   for (const page of LICENCE_PAGES) {
     const markdown = await source(page);
-    assert.equal(rendered(renderLicence(markdown, { anchor: page.anchor })), markdownText(markdown), page.code);
+    assert.equal(rendered(renderLicence(markdown, { anchor: page.anchor, lang: page.code })), markdownText(markdown), page.code);
   }
+});
+
+test('le français prend ses espaces insécables, l’anglais reste tel quel', async () => {
+  const NBSP = String.fromCharCode(0xa0);
+  const all = (doc) => [doc.title, doc.version, doc.intro, ...doc.sections.flatMap((s) => [s.title, s.html])].join('\n');
+  // Le texte sans les balises (les adresses des liens n'ont pas d'espace)
+  const fr = all(renderLicence(await source(LICENCE_PAGES[0]), { anchor: 'article', lang: 'fr' })).replace(/<[^>]+>/g, '');
+  assert.doesNotMatch(fr, / [;:!?»]/, 'une espace ordinaire avant ; : ! ? »');
+  assert.doesNotMatch(fr, /« /, 'une espace ordinaire après «');
+  for (const kept of [`10${NBSP}000 pages`, `79${NBSP}$`, `249${NBSP}$`, `01${NBSP}89${NBSP}47${NBSP}00${NBSP}14`, `840${NBSP}846${NBSP}927 00027`]) {
+    assert.ok(fr.includes(kept), kept.replaceAll(NBSP, '⍽'));
+  }
+  const en = all(renderLicence(await source(LICENCE_PAGES[1]), { anchor: 'section', lang: 'en' }));
+  assert.ok(!en.includes(NBSP), 'l’anglais garde ses espaces');
+  assert.throws(() => renderLicence('# T\n\nVersion 1.0\n\n## 1. A\n', { anchor: 'article', lang: 'ru' }), /Langue sans typographie/);
 });
 
 test('le sommaire couvre chaque article, et chaque ancre est unique', async () => {
@@ -59,15 +74,17 @@ test('le sommaire couvre chaque article, et chaque ancre est unique', async () =
     en: ['schedule-a', 'version-history'],
   };
   for (const page of LICENCE_PAGES) {
-    const doc = renderLicence(await source(page), { anchor: page.anchor });
+    const doc = renderLicence(await source(page), { anchor: page.anchor, lang: page.code });
     const numbered = Array.from({ length: 18 }, (_, i) => `${page.anchor}-${i + 1}`);
     assert.deepEqual(doc.sections.map((section) => section.id), [...numbered, ...expected[page.code]], page.code);
     // Les interdits de l'article 10 ont chacun leur ancre (10.1 à 10.5), que le texte cite
     const ten = doc.sections.find((section) => section.id === `${page.anchor}-10`).html;
     for (let n = 1; n <= 5; n += 1) assert.ok(ten.includes(`id="${page.anchor}-10-${n}"`), `${page.code} 10.${n}`);
-    // Les tableaux défilent dans un cadre nommé par leur titre, atteignable au clavier
+    // Les tableaux défilent dans un cadre nommé par leur titre, atteignable au clavier ; celui des prix a
+    // trois colonnes (une famille dans la boutique, depuis le commit dbf34ba de la fonderie) : il se replie
     const annex = doc.sections.find((section) => section.id === expected[page.code][0]).html;
-    assert.match(annex, new RegExp(`class="licence__table licence__table--wide" role="region" aria-labelledby="${expected[page.code][0]}" tabindex="0"`));
+    assert.match(annex, new RegExp(`class="licence__table" role="region" aria-labelledby="${expected[page.code][0]}" tabindex="0"`));
+    assert.equal((annex.match(/<th scope="col">/g) ?? []).length, 3, `${page.code} : trois colonnes de prix`);
   }
 });
 
@@ -108,10 +125,10 @@ test('le lecteur refuse le balisage qu’il ne sait pas rendre', () => {
     '- un\n texte sans retrait',
     'Un `code sans fin',
   ];
-  for (const body of hostile) assert.throws(() => renderLicence(licence(body), { anchor: 'article' }), Error, body);
-  assert.throws(() => renderLicence('Version 1.0\n', { anchor: 'article' }), /commencer par son titre/);
-  assert.throws(() => renderLicence('# Titre\n\nUn texte\n\n## 1. A\n', { anchor: 'article' }), /ligne de version/);
-  assert.throws(() => renderLicence('# Titre\n\nVersion 1.0\n', { anchor: 'article' }), /aucun article/);
-  assert.throws(() => renderLicence('# Titre\n\nVersion 1.0\n\n## 1. A\n\n## 1. B\n', { anchor: 'article' }), /en double/);
-  assert.throws(() => renderLicence('# Titre\n\nVersion 1.0\n\n## 1. A\n\n# Autre\n', { anchor: 'article' }), /Un seul titre/);
+  for (const body of hostile) assert.throws(() => renderLicence(licence(body), { anchor: 'article', lang: 'fr' }), Error, body);
+  assert.throws(() => renderLicence('Version 1.0\n', { anchor: 'article', lang: 'fr' }), /commencer par son titre/);
+  assert.throws(() => renderLicence('# Titre\n\nUn texte\n\n## 1. A\n', { anchor: 'article', lang: 'fr' }), /ligne de version/);
+  assert.throws(() => renderLicence('# Titre\n\nVersion 1.0\n', { anchor: 'article', lang: 'fr' }), /aucun article/);
+  assert.throws(() => renderLicence('# Titre\n\nVersion 1.0\n\n## 1. A\n\n## 1. B\n', { anchor: 'article', lang: 'fr' }), /en double/);
+  assert.throws(() => renderLicence('# Titre\n\nVersion 1.0\n\n## 1. A\n\n# Autre\n', { anchor: 'article', lang: 'fr' }), /Un seul titre/);
 });

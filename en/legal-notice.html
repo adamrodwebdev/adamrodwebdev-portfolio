@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="/css/fonts.css">
   <link rel="stylesheet" href="/css/style.css">
   <style>
+    /* Le texte se lit dans les polices du système, comme la licence Ressac (1.18.0) : avec Barlow, il se
+       recomposait à l'arrivée de la police (décalage de 0,02 sur ordinateur). Les titres gardent la signature. */
+    body { --font-body: "Segoe UI", Roboto, "Helvetica Neue", system-ui, -apple-system, sans-serif; }
     .page { min-height: 100svh; display: grid; align-content: center; padding-block: 96px; }
     .page h1 { font-size: var(--step-3); text-transform: uppercase; margin-bottom: 20px; }
     .page h2 { font-size: var(--step-1); text-transform: uppercase; margin: 32px 0 8px; color: var(--gold); }
