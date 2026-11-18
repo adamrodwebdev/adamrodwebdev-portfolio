@@ -57,6 +57,12 @@ const BYTES_PER_SECOND = 3;
 /** Le jeton suit sa plume de ce retard (s) ; il apparaît et s'efface en ce temps (s). */
 const LAG = 0.3;
 const FADE = 0.25;
+/**
+ * La taille du « ? » face aux bits : la question se lit d'un coup d'œil, même dans le plan large
+ * d'Internet. Elle revient à 1 en `QUESTION_SHRINK` secondes juste avant les bits, sans saut.
+ */
+export const QUESTION_SIZE = 1.6;
+const QUESTION_SHRINK = 0.3;
 
 /**
  * Les cadrages fixes { cx, cy, width } du monde. Ceux de l'écran gardent le téléphone entre 24 % et
@@ -68,7 +74,6 @@ const FRAMES = Object.freeze({
   network: Object.freeze({ cx: 230, cy: 560, width: 560 }),
   // Serré sur le jour et la nuit (y 267), la baie et le plateau (y 580) : ils tiennent entre 27 % et 78 %.
   server: Object.freeze({ cx: 680, cy: 424, width: 360 }),
-  wide: Object.freeze({ cx: 450, cy: 780, width: 1000 }),
 });
 
 /** Les trois documents qui reviennent : leur ligne, et leur départ décalé (secondes prévues dans « back »). */
@@ -143,7 +148,11 @@ export class Direction {
     return EASE.inOut(phase(t, item.start, item.end));
   }
 
-  /** Le jeton de la demande : « ? », puis ses bits qui défilent une fois sorti d'Internet ; null hors de son voyage. */
+  /**
+   * Le jeton de la demande : « ? », puis ses bits qui défilent une fois sorti d'Internet ; null hors de son
+   * voyage. `scale` le fait apparaître et s'effacer ; `size` grossit le « ? » (QUESTION_SIZE) et revient à 1
+   * juste avant les bits.
+   */
   token(t) {
     const { start, arrive } = this.request;
     if (t < start || t > arrive + LAG + FADE) return null;
@@ -152,11 +161,13 @@ export class Direction {
     const leave = 1 - phase(t, arrive + LAG, arrive + LAG + FADE);
     const binaryFrom = this.at('binary', 0.4);
     const letter = Math.floor(Math.max(0, t - binaryFrom) * BYTES_PER_SECOND) % BYTES.length;
+    const shrink = EASE.inOut(phase(t, binaryFrom - QUESTION_SHRINK, binaryFrom));
     return {
       line: 'request',
       label: t >= binaryFrom ? BYTES[letter] : '?',
       along,
       scale: EASE.out(Math.min(appear, leave)),
+      size: QUESTION_SIZE + (1 - QUESTION_SIZE) * shrink,
     };
   }
 
@@ -190,8 +201,8 @@ export class Direction {
       { at: at('binary', 0.2), blend: 1.0, frame: this.#ride('request', 470) },
       { at: at('server', 0.2), blend: 1.0, frame: still(FRAMES.server) },
       { at: at('back', 0.3), blend: 1.0, frame: this.#ride('html', 560) },
+      // La fin reste sur le téléphone et ses trois fichiers, cadrée comme le début : la boucle se referme.
       { at: at('back', 4.4), blend: 1.0, frame: still(FRAMES.screen) },
-      { at: at('done', 0), blend: 1.6, frame: still(FRAMES.wide) },
     ];
   }
 

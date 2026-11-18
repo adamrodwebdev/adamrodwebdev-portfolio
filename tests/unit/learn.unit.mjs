@@ -7,7 +7,7 @@ import { Timeline } from '../../js/learn/timeline.js';
 import { ASPECT, FOCUS, Shots, viewBoxOf } from '../../js/learn/camera.js';
 import { LINES, ROUTE, STATIONS, fractionNear, linePoints, offsetPath, pointAlong, polylineLength } from '../../js/learn/world.js';
 import { CAPTION_MAX, readSeconds } from '../../js/learn/captions.js';
-import { BYTES, CAPTIONS, Direction, PLAN } from '../../js/learn/episode01.js';
+import { BYTES, CAPTIONS, Direction, PLAN, QUESTION_SIZE } from '../../js/learn/episode01.js';
 import { Direction as LanguagesBase } from '../../js/learn/episode02.js';
 import { learnEpisode2, learnPage } from '../../js/i18n/messages.js';
 
@@ -145,6 +145,26 @@ describe("l'épisode 1, « Le voyage d'une page »", () => {
       const letter = String.fromCharCode(Number.parseInt(direction.token(at('binary', s)).label, 2));
       assert.ok('page?'.includes(letter), `à ${s.toFixed(2)} s : « ${letter} »`);
     }
+  });
+
+  it('grossit le « ? » pour qu’il se lise, et le ramène à la taille des bits sans saut', () => {
+    assert.ok(QUESTION_SIZE > 1);
+    assert.equal(direction.token(at('ask', 8)).size, QUESTION_SIZE, 'le « ? » en route');
+    assert.equal(direction.token(at('internet', 5)).size, QUESTION_SIZE, 'le « ? » qui attend au globe');
+    assert.equal(direction.token(at('binary', 0.5)).size, 1, 'les bits à leur taille');
+    // Image par image (1/30 s) autour du passage aux bits : la taille ne fait que décroître, par petits pas.
+    let last = direction.token(at('binary', -0.2)).size;
+    for (let t = at('binary', -0.2); t <= at('binary', 0.6); t += 1 / 30) {
+      const { size } = direction.token(t);
+      assert.ok(size <= last + 1e-9 && last - size < 0.15, `à ${t.toFixed(3)} s : ${last} → ${size}`);
+      last = size;
+    }
+  });
+
+  it('finit sur le téléphone, cadré comme au début : la boucle se referme', () => {
+    const start = direction.state(0).camera;
+    const end = direction.state(direction.duration).camera;
+    for (const key of Object.keys(start)) assert.ok(near(end[key], start[key]), `${key} : ${start[key]} au début, ${end[key]} à la fin`);
   });
 
   it('ouvre le réseau pour Internet seulement', () => {

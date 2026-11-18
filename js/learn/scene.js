@@ -458,7 +458,8 @@ export class Scene {
     pill.setAttribute('width', fixed(width));
     pill.setAttribute('fill', view.line.colour);
     group.setAttribute('opacity', fixed(Math.min(1, token.scale * 1.5)));
-    group.setAttribute('transform', `translate(${fixed(ax)} ${fixed(ay)}) scale(${fixed(token.scale)})`);
+    // `scale` fait apparaître et effacer le jeton ; `size` grossit le « ? » (épisode 1).
+    group.setAttribute('transform', `translate(${fixed(ax)} ${fixed(ay)}) scale(${fixed(token.scale * (token.size ?? 1))})`);
   }
 
   #applyScreen(screen) {
