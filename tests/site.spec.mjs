@@ -572,6 +572,53 @@ test('épisode : les sous-titres gardent leurs espaces insécables, « Internet 
   expect(await caption.textContent()).toContain('Internet\u00a0:');
 });
 
+test('film : le contrat de l\u2019outil de tournage (?film, window.EPISODE) tient, et l\u2019image ne d\u00e9pend pas de la langue (1.19.0)', async ({ page }) => {
+  // L'outil de tournage filme ces pages : on ajoute au contrat, on n'y change rien sans le pr\u00e9venir.
+  const pictures = [];
+  for (const path of ['/learn/1/?film', '/en/learn/1/?film']) {
+    await page.goto(path);
+    await page.waitForFunction(() => window.EPISODE);
+    await page.evaluate(() => window.EPISODE.ready);
+    await expect(page.locator('html')).toHaveClass(/learn-film/);
+    await expect(page.locator('#learn-title')).toHaveCount(1);
+    await expect(page.locator('.learn-scrim')).toHaveCount(1);
+    const shape = await page.evaluate(() => {
+      const { EPISODE } = window;
+      const scene = () => document.querySelector('[data-learn-scene]').outerHTML;
+      EPISODE.render(30);
+      const at30 = scene();
+      EPISODE.render(5);
+      EPISODE.render(30);
+      const plan = EPISODE.plan;
+      const planned = EPISODE.duration;
+      EPISODE.retime(plan.map(({ id, seconds }) => ({ id, seconds: seconds + 1 })));
+      const stretched = EPISODE.duration;
+      EPISODE.retime(plan.map(({ id, seconds }) => ({ id, seconds })));
+      return {
+        frozen: Object.isFrozen(EPISODE) && Object.isFrozen(plan) && plan.every(Object.isFrozen),
+        functions: ['render', 'retime'].map((name) => typeof EPISODE[name]),
+        planIds: plan.map((beat) => beat.id),
+        planSum: Math.round(plan.reduce((sum, beat) => sum + beat.seconds, 0) * 1000),
+        planned: Math.round(planned * 1000),
+        stretched: Math.round((stretched - planned) * 1000),
+        captions: EPISODE.captions.map(({ index, start, end }) => typeof index === 'number' && start < end).filter(Boolean).length,
+        texts: document.querySelectorAll('[data-learn-captions] [data-caption]').length,
+        pure: at30 === scene(),
+        picture: (EPISODE.render(20), scene()),
+      };
+    });
+    expect(shape.frozen, path).toBe(true);
+    expect(shape.functions, path).toEqual(['function', 'function']);
+    expect(shape.planIds, path).toEqual(['ask', 'internet', 'binary', 'server', 'back', 'done']);
+    expect(shape.planned, `${path} : la dur\u00e9e suit le plan`).toBe(shape.planSum);
+    expect(shape.stretched, `${path} : retime allonge chaque battement`).toBe(6000);
+    expect(shape.captions, path).toBe(shape.texts);
+    expect(shape.pure, `${path} : render(t) ne d\u00e9pend que de t`).toBe(true);
+    pictures.push(shape.picture);
+  }
+  expect(pictures[1], 'la m\u00eame image en fran\u00e7ais et en anglais').toBe(pictures[0]);
+});
+
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
