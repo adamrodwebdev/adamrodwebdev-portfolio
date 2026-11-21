@@ -7,7 +7,7 @@ import { Timeline } from '../../js/learn/timeline.js';
 import { ASPECT, FOCUS, Shots, viewBoxOf } from '../../js/learn/camera.js';
 import { FILES, INK, LINES, ROUTE, SHAPES, STATIONS, fractionNear, linePoints, offsetPath, pointAlong, polylineLength } from '../../js/learn/world.js';
 import { CAPTION_MAX, readSeconds } from '../../js/learn/captions.js';
-import { BYTES, CAPTIONS, Direction, PANELS, PLAN, QUESTION_SIZE, WORD } from '../../js/learn/episode01.js';
+import { BYTES, CAPTIONS, CUT, Direction, PANELS, PLAN, QUESTION_SIZE, WORD } from '../../js/learn/episode01.js';
 import { BREAK, CRACK, FRAC_STEP, REPAIR, TITLE, breakAndRebuild, crack, fracClass, repair, shatter, snapFrac, stepped, wholeAt } from '../../js/learn/frac.js';
 import { PANEL, panelOffset, panelWindow } from '../../js/learn/transitions.js';
 import { Direction as LanguagesBase } from '../../js/learn/episode02.js';
@@ -348,6 +348,15 @@ describe("l'habillage de l'épisode 1", () => {
     assert.deepEqual(seen.map((panel) => panel.number), [2, 3, 4, 5]);
     assert.deepEqual(seen.map((panel) => panel.kind), ['rise', 'fall', 'rise', 'fall']);
     assert.equal(direction.chrome(at('server', 6)).panel, null);
+  });
+
+  it('change de plan derrière chaque panneau, tant qu’il couvre l’image', () => {
+    for (const { beat } of PANELS) {
+      const b = direction.timeline.beat(beat).start;
+      for (let t = b - CUT.lead; t <= b - CUT.lead + CUT.blend + 1e-9; t += 0.01) {
+        assert.ok(panelOffset(t, b) <= 0.05, `${beat} à ${t.toFixed(2)} s : le panneau ne couvre plus l’image`);
+      }
+    }
   });
 
   it('se pose, en mouvement réduit, sur chaque battement sans panneau, sans titre, son sous-titre entier', () => {

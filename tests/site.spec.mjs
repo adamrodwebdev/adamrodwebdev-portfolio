@@ -656,6 +656,55 @@ test('film : le contrat de l’outil de tournage (?film, window.EPISODE) tient, 
   await expect(page.locator('.learn-corner').first()).toBeVisible();
 });
 
+test('film : aucun texte rogné par le cadre, les octets dans la zone sûre, le paquet loin du serveur, le numéro sous la plaque (1.19.0)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'le cadre du film se règle ici à la main (1080 × 1920)');
+  await page.setViewportSize({ width: 1080, height: 1920 });
+  await page.goto('/learn/1/?film');
+  await page.waitForFunction(() => window.EPISODE);
+  await page.evaluate(() => window.EPISODE.ready);
+  const faults = await page.evaluate(() => {
+    const { EPISODE } = window;
+    // La zone sûre des vidéos courtes, à 1080 px de large : les boutons des applis occupent la droite.
+    const SAFE = { left: 32, right: 918 };
+    const seen = (element) => {
+      let opacity = 1;
+      for (let node = element; node && node instanceof SVGElement; node = node.parentNode) opacity *= Number.parseFloat(node.getAttribute('opacity') ?? '1');
+      return opacity > 0.05;
+    };
+    const found = [];
+    for (let t = 0; t <= EPISODE.duration; t += 0.25) {
+      EPISODE.render(t);
+      const at = t.toFixed(2);
+      // Un panneau posé cache tout ce qui est sous son bord haut.
+      const cover = [...document.querySelectorAll('[data-learn-overlay] > g')].filter((group) => group.getAttribute('opacity') === '1')
+        .map((group) => group.querySelector('path').getBoundingClientRect().top)[0] ?? Infinity;
+      for (const text of document.querySelectorAll('[data-learn-scene] text')) {
+        if (!text.textContent.trim() || !seen(text)) continue;
+        const box = text.getBoundingClientRect();
+        // Un texte tout entier hors de l'image ne se voit pas ; un texte coupé par le bord se lit comme une erreur.
+        if (box.right <= 0 || box.left >= innerWidth || box.bottom <= 0 || box.top >= innerHeight || box.top >= cover) continue;
+        if (box.left < 0 || box.right > innerWidth || box.top < 0 || box.bottom > innerHeight) found.push(`${at} s : « ${text.textContent} » rogné par le cadre`);
+        const floating = text.classList.contains('learn-bits') || text.classList.contains('learn-word');
+        if (floating && (box.left < SAFE.left || box.right > SAFE.right)) found.push(`${at} s : « ${text.textContent} » hors de la zone sûre`);
+      }
+      const packet = document.querySelector('.learn-packet');
+      if (seen(packet)) {
+        const gap = document.querySelector('.learn-server').getBoundingClientRect().left - packet.getBoundingClientRect().right;
+        if (gap < 40) found.push(`${at} s : le paquet à ${Math.round(gap)} px du serveur`);
+      }
+      const plate = document.querySelector('[data-learn-plate]');
+      for (const index of document.querySelectorAll('[data-learn-overlay] .learn-index')) {
+        if (!seen(index) || plate.hidden) continue;
+        const top = index.getBoundingClientRect().top;
+        const below = plate.getBoundingClientRect().bottom;
+        if (top < below) found.push(`${at} s : le numéro ${index.textContent} passe sous la plaque (${Math.round(top)} < ${Math.round(below)})`);
+      }
+    }
+    return found;
+  });
+  expect(faults).toEqual([]);
+});
+
 test('épisode : choisir un battement montre sa scène, jamais son panneau en travers (1.19.0)', async ({ page }) => {
   await page.goto('/learn/1/');
   await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
