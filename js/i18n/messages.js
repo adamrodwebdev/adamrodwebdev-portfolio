@@ -30,6 +30,8 @@ export const learnPage = {
     },
     series: 'Comment marche le Web',
     episode: 'Épisode 1',
+    // La ligne d'état de l'image : l'épisode, puis le battement en cours (ses noms : beats).
+    status: 'Ép. 01',
     title: 'Le voyage d’une page',
     lede: 'Ce qui se passe entre le moment où l’on touche un lien et celui où la page arrive, sans aucun mot laissé à deviner : chaque mot est expliqué avant d’être employé.',
     stage: 'Animation : un téléphone envoie un message par Internet, des appareils reliés par des câbles et des ondes radio ; le message devient des 0 et des 1 et arrive à un serveur, allumé jour et nuit, qui renvoie trois documents au téléphone.',
@@ -78,6 +80,7 @@ export const learnPage = {
     },
     series: 'How the web works',
     episode: 'Episode 1',
+    status: 'Ep. 01',
     title: 'A page’s journey',
     lede: 'What happens between tapping a link and the page arriving, with no word left to guesswork: every word is explained before it is used.',
     stage: 'Animation: a phone sends a message over the internet, devices linked by cables and radio waves; the message becomes 0s and 1s and reaches a server, on day and night, which sends three documents back to the phone.',

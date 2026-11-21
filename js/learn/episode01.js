@@ -9,10 +9,12 @@
  * retour des trois documents ; la fin. Chaque moment est écrit en secondes « prévues » dans son
  * battement ; quand la voix fixe la vraie durée d'un battement, ses moments s'étirent avec lui.
  */
-import { EASE, clamp, phase, pulse } from './ease.js';
+import { EASE, phase, pulse } from './ease.js';
 import { Shots } from './camera.js';
 import { Timeline } from './timeline.js';
 import { LINES, STATIONS, fractionNear, linePoints, pointAlong } from './world.js';
+import { PANEL, panelOffset } from './transitions.js';
+import { REPAIR, TITLE, breakAndRebuild, crack, repair, shatter, wholeAt, windows } from './frac.js';
 
 /** Les battements tels que prévus avant la voix (secondes) : 50,7 s, calés sur le français. */
 export const PLAN = Object.freeze([
@@ -24,35 +26,54 @@ export const PLAN = Object.freeze([
   Object.freeze({ id: 'done', seconds: 2.5 }),
 ]);
 
+/** Un sous-titre : son début et sa fin, chacun dans son battement, en secondes prévues. */
+const cue = ([beat, from], [endBeat, to]) => Object.freeze({ beat, from, endBeat, to });
+
 /**
- * Les onze sous-titres (leurs textes sont dans les traductions de la page), placés dans leur battement.
- * Chacun reste au moins (caractères ÷ 15) + 1,5 s à l'écran, en français comme en anglais (un test le
- * vérifie) : la voix fixera les vrais temps, langue par langue. Un sous-titre peut déborder sur le
- * battement suivant (`to` au-delà de sa durée prévue) : le second du binaire finit sur le serveur.
+ * Les douze sous-titres (leurs textes sont dans les traductions de la page). Chacun arrive brisé, se répare
+ * en REPAIR secondes, puis reste entier au moins (caractères ÷ 15) + 1,5 s, en français comme en anglais :
+ * le temps de la réparation s'ajoute à celui de la lecture, il ne le prend jamais (un test le vérifie).
+ * Le premier attend la fin du titre ; aucun ne se répare pendant qu'un numéro de panneau se fêle ou que
+ * « PAGE ? » se brise. Un sous-titre peut finir dans le battement suivant (`endBeat`) : chaque bout suit
+ * la vraie durée de son battement quand la voix l'étire.
  */
 export const CAPTIONS = Object.freeze([
-  Object.freeze({ beat: 'ask', from: 0.4, to: 3.2 }),
-  Object.freeze({ beat: 'ask', from: 3.25, to: 6.65 }),
-  Object.freeze({ beat: 'ask', from: 6.7, to: 10.4 }),
-  Object.freeze({ beat: 'internet', from: 0.3, to: 4.3 }),
-  Object.freeze({ beat: 'internet', from: 4.4, to: 10.4 }),
-  Object.freeze({ beat: 'binary', from: 0.3, to: 3.6 }),
-  Object.freeze({ beat: 'binary', from: 3.65, to: 7.3 }),
-  Object.freeze({ beat: 'server', from: 0.8, to: 4.6 }),
-  Object.freeze({ beat: 'server', from: 4.7, to: 8.4 }),
-  Object.freeze({ beat: 'server', from: 8.5, to: 12.6 }),
-  Object.freeze({ beat: 'back', from: 0.3, to: 4.2 }),
-  Object.freeze({ beat: 'back', from: 4.3, to: 8.0 }),
+  cue(['ask', 1.05], ['ask', 4.15]),
+  cue(['ask', 4.2], ['ask', 7.95]),
+  cue(['ask', 8.0], ['internet', 1.4]),
+  cue(['internet', 1.45], ['internet', 5.55]),
+  cue(['internet', 5.6], ['internet', 10.0]),
+  cue(['binary', 0.4], ['binary', 3.95]),
+  cue(['binary', 4.0], ['server', 1.45]),
+  cue(['server', 1.5], ['server', 5.5]),
+  cue(['server', 5.55], ['server', 9.55]),
+  cue(['server', 9.6], ['back', 0.65]),
+  cue(['back', 0.7], ['back', 4.2]),
+  cue(['back', 4.25], ['done', 0.15]),
 ]);
 
 /**
- * Le message en binaire, tel qu'il voyage : « page? » en ASCII, huit bits par lettre. Le jeton montre
- * une lettre à la fois, ses huit bits entiers (01110000 pour p) : chaque image arrêtée se lit, ce sont
- * de vrais bits, pas un décor.
+ * Les battements qu'ouvre un panneau, montant puis descendant tour à tour (la marche monte, puis descend,
+ * comme les sections du site). Ni le premier (le titre l'ouvre) ni la fin (la boucle se referme sur le
+ * téléphone, sans coupe).
+ */
+export const PANELS = Object.freeze([
+  Object.freeze({ beat: 'internet', kind: 'rise' }),
+  Object.freeze({ beat: 'binary', kind: 'fall' }),
+  Object.freeze({ beat: 'server', kind: 'rise' }),
+  Object.freeze({ beat: 'back', kind: 'fall' }),
+]);
+
+/** Le mot qui se brise dans le binaire : il se lit pareil en français et en anglais. */
+export const WORD = 'PAGE ?';
+/** Quand il se brise (secondes prévues dans « binary ») : après le premier sous-titre du binaire, réparé. */
+const WORD_BREAK = 0.8;
+
+/**
+ * Le message en binaire, tel qu'il voyage : « page? » en ASCII, huit bits par lettre (01110000 pour p).
+ * Quand « PAGE ? » se brise, ses cinq octets flottent autour de lui : de vrais bits, pas un décor.
  */
 export const BYTES = Object.freeze([...'page?'].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')));
-/** Lettres montrées par seconde. */
-const BYTES_PER_SECOND = 3;
 
 /** Le jeton suit sa plume de ce retard (s) ; il apparaît et s'efface en ce temps (s). */
 const LAG = 0.3;
@@ -132,9 +153,60 @@ export class Direction {
     return beat.start + (seconds / this.planned.get(id)) * (beat.end - beat.start);
   }
 
-  /** Les sous-titres et leurs temps absolus, dans l'ordre. */
+  /**
+   * Les sous-titres et leurs temps absolus, dans l'ordre : `start` (il arrive brisé), `whole` (il est réparé :
+   * sa lecture commence) et `end`.
+   */
   captions() {
-    return CAPTIONS.map((caption, index) => ({ index, start: this.at(caption.beat, caption.from), end: this.at(caption.beat, caption.to) }));
+    return CAPTIONS.map((caption, index) => {
+      const start = this.at(caption.beat, caption.from);
+      return { index, start, whole: wholeAt(start), end: this.at(caption.endBeat, caption.to) };
+    });
+  }
+
+  /** L'instant où « PAGE ? » se brise, et celui où il commence à se réparer (entier à l'arrivée au serveur). */
+  get word() {
+    return { breaks: this.at('binary', WORD_BREAK), rebuilds: this.request.arrive - REPAIR };
+  }
+
+  /**
+   * Toutes les fenêtres où une fracture change, dans l'ordre : le titre, chaque sous-titre qui se répare,
+   * chaque numéro de panneau qui se fêle, le mot qui se brise puis se répare. Elles ne doivent jamais se
+   * chevaucher (un test le vérifie) : une seule fracture à la fois.
+   */
+  fractures() {
+    const { breaks, rebuilds } = this.word;
+    return [
+      { kind: 'title', window: windows.title(0) },
+      ...this.captions().map((caption) => ({ kind: `caption ${caption.index + 1}`, window: windows.repair(caption.start) })),
+      ...PANELS.map((panel) => ({ kind: `panel ${panel.beat}`, window: windows.crack(this.timeline.beat(panel.beat).start - PANEL.crackLead) })),
+      { kind: 'word breaks', window: windows.break(breaks) },
+      { kind: 'word rebuilds', window: windows.repair(rebuilds) },
+    ].sort((a, b) => a.window[0] - b.window[0]);
+  }
+
+  /**
+   * L'habillage de l'image au temps `t`, au-dessus de la scène : le titre de la première seconde, la ligne
+   * d'état (le battement en cours), le panneau d'un changement de battement et le sous-titre. Les textes sont
+   * dans la langue de la page ; l'état ne donne que des numéros et des valeurs FRAC.
+   */
+  chrome(t) {
+    const index = this.timeline.indexAt(t);
+    const panel = PANELS.map((item, k) => ({ item, k, b: this.timeline.beat(item.beat).start }))
+      .map(({ item, k, b }) => ({ item, k, b, offset: panelOffset(t, b) }))
+      .find(({ offset }) => offset !== null);
+    const caption = this.captions().find((item) => t >= item.start && t < item.end);
+    return {
+      title: { shown: t < TITLE.duration, frac: shatter(t, 0) },
+      status: { shown: t >= TITLE.duration, index },
+      panel: panel ? {
+        kind: panel.item.kind,
+        number: this.timeline.beats.findIndex((beat) => beat.id === panel.item.beat) + 1,
+        offset: panel.offset,
+        frac: crack(t, panel.b - PANEL.crackLead),
+      } : null,
+      caption: caption ? { index: caption.index, frac: repair(t, caption.start) } : null,
+    };
   }
 
   /** Ce que la plume d'une ligne a tracé (0 à 1). La demande s'arrête au globe le temps d'Internet. */
@@ -149,9 +221,11 @@ export class Direction {
   }
 
   /**
-   * Le jeton de la demande : « ? », puis ses bits qui défilent une fois sorti d'Internet ; null hors de son
-   * voyage. `scale` le fait apparaître et s'effacer ; `size` grossit le « ? » (QUESTION_SIZE) et revient à 1
-   * juste avant les bits.
+   * Le jeton de la demande ; null hors de son voyage. D'abord un hexagone d'or et son « ? » (`form: 'mark'`),
+   * grossi (QUESTION_SIZE) pour se lire dans le plan large ; il revient à 1 juste avant le binaire. Dans le
+   * binaire, le mot « PAGE ? » (`form: 'word'`) : entier, il se brise en bits (ses cinq octets flottent
+   * autour), voyage brisé, puis se répare pour arriver entier au serveur. `scale` le fait apparaître et
+   * s'effacer.
    */
   token(t) {
     const { start, arrive } = this.request;
@@ -160,15 +234,12 @@ export class Direction {
     const appear = phase(t, start, start + FADE);
     const leave = 1 - phase(t, arrive + LAG, arrive + LAG + FADE);
     const binaryFrom = this.at('binary', 0.4);
-    const letter = Math.floor(Math.max(0, t - binaryFrom) * BYTES_PER_SECOND) % BYTES.length;
     const shrink = EASE.inOut(phase(t, binaryFrom - QUESTION_SHRINK, binaryFrom));
-    return {
-      line: 'request',
-      label: t >= binaryFrom ? BYTES[letter] : '?',
-      along,
-      scale: EASE.out(Math.min(appear, leave)),
-      size: QUESTION_SIZE + (1 - QUESTION_SIZE) * shrink,
-    };
+    const base = { line: 'request', along, scale: EASE.out(Math.min(appear, leave)), size: QUESTION_SIZE + (1 - QUESTION_SIZE) * shrink };
+    if (t < binaryFrom) return { ...base, form: 'mark', label: '?' };
+    const { breaks, rebuilds } = this.word;
+    const scattered = phase(t, breaks, breaks + 0.45) * (1 - phase(t, rebuilds, arrive));
+    return { ...base, form: 'word', label: WORD, frac: breakAndRebuild(t, breaks, rebuilds), bits: scattered, bytes: BYTES };
   }
 
   /** Les trois documents en route vers le téléphone. */
@@ -261,7 +332,8 @@ export class Direction {
 
   /** L'écran du téléphone : la page de liens, l'attente, puis les trois documents reçus. */
   #screen(t) {
-    const tap = this.at('ask', 0.8);
+    // Le doigt touche le lien une fois le titre passé.
+    const tap = this.at('ask', 1.2);
     const tapping = phase(t, tap, tap + 0.6);
     const sent = this.request.start;
     const arrived = this.returns.at(-1).end + LAG;

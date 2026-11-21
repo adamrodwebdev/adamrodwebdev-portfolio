@@ -3,6 +3,14 @@
  * battement. Il fait avancer le temps et appelle `episode.render(t)` ; l'horloge lui est donnée (aucune
  * heure cachée). Avec le mouvement réduit, il passe d'un battement posé au suivant, sans travelling.
  */
+import { PANEL } from './transitions.js';
+
+/**
+ * Où le mouvement réduit pose un battement : un peu avant sa fin, avant que le panneau du suivant ne
+ * monte. Le battement y est complet, son sous-titre entier, aucune fracture en cours.
+ */
+const REST_BEFORE_END = PANEL.rise + 0.1;
+
 export class Player {
   /**
    * @param {{
@@ -37,10 +45,20 @@ export class Player {
     this.#show(this.reducedMotion ? this.#settled(0) : 0);
   }
 
-  /** L'instant où le battement `index` est posé : sa fin, juste avant le suivant (le mouvement réduit s'y arrête). */
+  /** L'instant où le battement `index` est posé, avant le panneau du suivant (le mouvement réduit s'y arrête). */
   #settled(index) {
     const beat = this.episode.beats[index];
-    return Math.max(beat.start, beat.end - 0.05);
+    return Math.max(beat.start, beat.end - REST_BEFORE_END);
+  }
+
+  /**
+   * L'instant où l'on arrive en choisissant le battement `index` : son début, une fois son panneau reparti
+   * (sinon l'image s'arrêterait sur le panneau, sans la scène). Le premier s'ouvre sur le titre.
+   */
+  #landing(index) {
+    if (index === 0) return 0;
+    const beat = this.episode.beats[index];
+    return Math.min(beat.end, beat.start + PANEL.hold + PANEL.leave);
   }
 
   #beatIndex() {
@@ -63,18 +81,19 @@ export class Player {
     this.#paint();
   }
 
-  /** Le battement suivant (+1) ou précédent (−1), à son début (ou posé, mouvement réduit). */
+  /** Le battement suivant (+1) ou précédent (−1), à son arrivée (ou posé, mouvement réduit). */
   step(direction) {
     const beats = this.episode.beats;
     const current = this.#beatIndex();
-    const atStart = this.time - beats[current].start < 0.4;
+    // Juste après l'arrivée sur un battement, « Précédent » mène au battement d'avant, sinon au début de celui-ci.
+    const atStart = this.time - this.#landing(current) < 0.4;
     const target = direction > 0 ? current + 1 : atStart ? current - 1 : current;
     this.seekBeat(Math.min(beats.length - 1, Math.max(0, target)));
   }
 
   seekBeat(index) {
     this.pause();
-    this.#show(this.reducedMotion ? this.#settled(index) : this.episode.beats[index].start);
+    this.#show(this.reducedMotion ? this.#settled(index) : this.#landing(index));
   }
 
   #tick(now) {

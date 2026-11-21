@@ -23,3 +23,16 @@ export function svgText(content, attributes, parent) {
 
 /** Un nombre arrondi au centième pour un attribut (des fichiers stables, des images identiques d'un rendu à l'autre). */
 export const fixed = (value) => Math.round(value * 100) / 100;
+
+/**
+ * Le tracé d'une plaque chanfreinée, la coupe du site : coins coupés en haut à gauche et en bas à droite.
+ * @param {{ x: number, y: number, width: number, height: number }} box
+ * @param {number} cut la taille de la coupe
+ */
+export function chamfer({ x, y, width, height }, cut) {
+  const c = Math.min(cut, width / 2, height / 2);
+  return `M${fixed(x + c)} ${fixed(y)}H${fixed(x + width)}V${fixed(y + height - c)}L${fixed(x + width - c)} ${fixed(y + height)}H${fixed(x)}V${fixed(y + c)}Z`;
+}
+
+/** Les points d'une forme (sommets sur un rayon de 1) posée en (`x`, `y`), de rayon `r`, pour un <polygon>. */
+export const shapePoints = (vertices, x, y, r) => vertices.map(([vx, vy]) => `${fixed(x + vx * r)},${fixed(y + vy * r)}`).join(' ');

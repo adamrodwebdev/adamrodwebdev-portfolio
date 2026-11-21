@@ -49,40 +49,42 @@
   <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->
   <style>[[@css]]</style>
   <style>
-    /* La série « Comment marche le Web » : ses parties propres. En-tête, pied de page, jetons, thèmes,
-       boutons : style.css. La scène garde son fond noir dans les deux thèmes, comme le film. */
-    :root {
-      --learn-green: #22c37b;
-      --learn-red: #ff4b44;
-      --learn-blue: #4d86ff;
-      --learn-amber: #ffb400;
-      --learn-ink: #f6f4ef;
-    }
-    .learn-episode {
-      display: grid; justify-items: center; gap: 1.25rem;
-      padding-block: calc(var(--header-h) + 2rem) 2rem;
-    }
-    .learn-intro { max-width: 40rem; text-align: center; display: grid; gap: 0.5rem; }
-    .learn-eyebrow {
-      margin: 0; display: inline-flex; gap: 0.5rem; align-items: center; justify-self: center;
-      font: 600 var(--step--1)/1.4 var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold);
-    }
-    .learn-eyebrow::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--learn-green); }
-    .learn-title { margin: 0; font: 700 var(--step-3)/1.02 var(--font-display); letter-spacing: 0.01em; text-wrap: balance; }
-    .learn-lede { margin: 0; color: var(--muted); font-size: var(--step-0); text-wrap: pretty; }
+    /* La série « Comment marche le Web » : ses parties propres, aux couleurs du site. En-tête, pied de page,
+       jetons, thèmes, boutons, panneau à marche, étiquette de section : style.css. L'image garde le noir du
+       film dans les deux thèmes ; aucune couleur hors des jetons du site (ni rouge, ni bleu, ni jaune). */
+    /* L'en-tête défile avec la page, comme sur les autres pages générées (licence, Lumirift) : sans îlot Vue,
+       rien ne lui donnerait son fond une fois la page défilée, et le texte passerait dessous. */
+    .site-header { position: relative; inset: auto; }
+    .learn-episode.panel { position: relative; margin-top: 1.5rem; padding-block: clamp(2.75rem, 2rem + 4vw, 4.5rem) 3rem; }
+    .learn-layout { display: grid; gap: clamp(2rem, 1.5rem + 3vw, 3.5rem); align-items: center; }
+    @media (width >= 64rem) { .learn-layout { grid-template-columns: minmax(0, 5fr) minmax(0, 4fr); } }
+    .learn-head { display: grid; justify-items: start; max-width: 36rem; }
+    .learn-head .section__tag { margin-bottom: 0.9rem; }
+    .learn-title { margin: 0; font: 700 var(--step-3)/1.02 var(--font-display); text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance; }
+    .learn-lede { margin: 1.1rem 0 0; color: var(--muted); font-size: var(--step-1); line-height: 1.5; text-wrap: pretty; max-width: 58ch; }
+    .learn-player { display: grid; gap: 1rem; justify-items: center; width: 100%; }
 
+    /* Le cadre du lecteur : chanfreiné comme les plaques du site, deux équerres d'or (HUD). */
     .learn-stage {
-      position: relative; margin: 0; width: min(100%, 26rem); aspect-ratio: 9 / 16;
-      container: learn-stage / inline-size;
-      border-radius: 28px; overflow: hidden; background: #000; border: 1px solid var(--line); box-shadow: var(--shadow);
+      --cut: clamp(14px, 4cqi, 22px);
+      position: relative; margin: 0; width: min(100%, 25rem); aspect-ratio: 9 / 16;
+      /* Sur un écran bas, le lecteur et son bouton Lire tiennent ensemble dans la hauteur. */
+      max-width: max(16rem, (100svh - 15rem) * 9 / 16);
+      container: learn-stage / inline-size; overflow: hidden; background: #000; color: #f6f4ef;
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+      user-select: none;
     }
-    .learn-scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-    /* La bande des sous-titres, vide de toute phrase : un dégradé sombre sur le haut de l'image, le même
-       dans le film et la page. Les sous-titres de chaque langue s'y posent. */
+    .learn-scene, .learn-overlay { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+    /* La bande des sous-titres : un dégradé sombre sur le haut de l'image, le même dans le film et la page. */
     .learn-scrim {
       position: absolute; inset: 0 0 auto; height: 27%; pointer-events: none;
-      background: linear-gradient(to bottom, #000 0%, #000 46%, rgb(0 0 0 / 0) 100%);
+      background: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.86) 46%, rgb(0 0 0 / 0) 100%);
     }
+    .learn-corner { position: absolute; width: 7cqi; height: 7cqi; border: 0.6cqi solid #e0b04a; pointer-events: none; }
+    .learn-corner--tl { top: 4.5%; left: 4.5%; border-right: 0; border-bottom: 0; }
+    .learn-corner--br { bottom: 22%; right: 4.5%; border-left: 0; border-top: 0; }
+
+    /* Les textes de la scène (SVG) : Barlow pour les noms, Clivage pour ce qui se brise et se répare. */
     .learn-scene text { font-family: var(--font-body); }
     .learn-url { font-size: 17px; font-weight: 500; }
     .learn-code { font-size: 22px; font-weight: 600; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
@@ -90,50 +92,98 @@
     .learn-heart { font-size: 26px; font-weight: 600; }
     .learn-count { font-size: 24px; font-weight: 600; }
     .learn-token { font-size: 21px; font-weight: 600; }
-    .learn-caption {
-      position: absolute; inset-inline: 6%; top: 10%; margin: 0; text-align: center;
-      font: 600 clamp(1rem, 6.2cqi, 1.75rem)/1.12 var(--font-body); color: var(--learn-ink); text-wrap: balance;
-      text-shadow: 0 2px 0 #000, 0 0 14px #000;
-    }
-    .learn-noscript { position: absolute; inset: auto 1.25rem 1.25rem; margin: 0; color: var(--learn-ink); font-size: 1rem; }
+    .learn-bits { font-size: 23px; font-weight: 600; }
+    .learn-file-name { font-size: 17px; font-weight: 600; }
+    .learn-scene .learn-mark, .learn-scene .learn-word, .learn-scene .learn-file-label, .learn-overlay .learn-index { font-family: var(--font-signature); font-weight: 700; }
+    .learn-mark { font-size: 40px; }
+    .learn-word { font-size: 80px; letter-spacing: 0.01em; }
+    .learn-file-label { font-size: 26px; letter-spacing: 0.04em; }
+    .learn-index { font-size: 400px; }
 
-    .learn-controls { display: flex; gap: 0.5rem; width: min(100%, 26rem); }
+    /* La ligne d'état : l'épisode, le battement en cours, n / 6. */
+    .learn-status {
+      position: absolute; top: 7.5%; inset-inline: 8%; margin: 0; display: flex; justify-content: space-between; gap: 1rem;
+      font: 600 3.6cqi/1.2 var(--font-signature); letter-spacing: 0.1em; text-transform: uppercase; color: #e0b04a;
+    }
+    .learn-status i { font-style: normal; color: #a8a193; }
+    /* La plaque du sous-titre, celle du kit vidéo (.helpers/social-video-style, mesures à 1080 px de large) :
+       chanfreinée, liseré d'or tracé par une plaque intérieure. Le sous-titre en capitales de Clivage arrive
+       brisé et se répare ; dans le film, l'étiquette de la série au-dessus et le pseudo en dessous, entiers. */
+    .learn-plate {
+      --cut: 2.22cqi;
+      position: absolute; top: 12.1%; left: 5.37%; max-width: 75.9%; padding: 2.78cqi 3.33cqi; isolation: isolate;
+      background: rgb(224 176 74 / 0.55);
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    }
+    .learn-plate::before { content: ""; position: absolute; inset: max(1px, 0.185cqi); z-index: -1; background: #0e0c08; clip-path: inherit; }
+    .learn-caption {
+      margin: 0; font: 700 clamp(0.85rem, 5.93cqi, 4rem)/1 var(--font-signature); text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance; color: #f6f4ef;
+    }
+    .learn-plate__tag {
+      display: none; align-items: center; gap: 1.3cqi; margin: 0 0 1.3cqi;
+      font: 700 3.33cqi/1 var(--font-signature); letter-spacing: 0.12em; text-transform: uppercase; color: #e0b04a;
+    }
+    .learn-plate__tag::before { content: ""; width: 3.7cqi; height: max(2px, 0.28cqi); background: currentColor; }
+    .learn-plate__handle { display: none; margin: 1.3cqi 0 0; font: 600 3.15cqi/1.1 var(--font-body); color: #a8a193; }
+    .learn-film .learn-plate__tag { display: flex; }
+    .learn-film .learn-plate__handle { display: block; }
+    /* Le titre de la première seconde : le nom de la série se brise et se répare. */
+    .learn-titlecard { position: absolute; inset: 0; display: grid; place-content: center; gap: 3cqi; padding: 8%; text-align: center; background: #000; }
+    .learn-titlecard__series {
+      margin: 0; font: 700 15cqi/0.9 var(--font-signature); text-transform: uppercase; text-wrap: balance;
+      color: transparent; background: linear-gradient(100deg, #9a7420, #f5cf6e 40%, #e0b04a 60%, #9a7420); -webkit-background-clip: text; background-clip: text;
+    }
+    .learn-titlecard__episode { margin: 0; font: 600 4cqi/1.3 var(--font-body); color: #a8a193; }
+    .learn-titlecard[hidden], .learn-status[hidden], .learn-plate[hidden] { display: none; }
+    .learn-noscript { position: absolute; inset: auto 1.25rem 1.25rem; margin: 0; color: #f6f4ef; font-size: 1rem; }
+
+    /* La fracture de Clivage, par paliers de 5 (js/learn/frac.js) : la CSP refuse l'attribut style. */
+    .frac-0 { font-variation-settings: "FRAC" 0; } .frac-5 { font-variation-settings: "FRAC" 5; } .frac-10 { font-variation-settings: "FRAC" 10; }
+    .frac-15 { font-variation-settings: "FRAC" 15; } .frac-20 { font-variation-settings: "FRAC" 20; } .frac-25 { font-variation-settings: "FRAC" 25; }
+    .frac-30 { font-variation-settings: "FRAC" 30; } .frac-35 { font-variation-settings: "FRAC" 35; } .frac-40 { font-variation-settings: "FRAC" 40; }
+    .frac-45 { font-variation-settings: "FRAC" 45; } .frac-50 { font-variation-settings: "FRAC" 50; } .frac-55 { font-variation-settings: "FRAC" 55; }
+    .frac-60 { font-variation-settings: "FRAC" 60; } .frac-65 { font-variation-settings: "FRAC" 65; } .frac-70 { font-variation-settings: "FRAC" 70; }
+    .frac-75 { font-variation-settings: "FRAC" 75; } .frac-80 { font-variation-settings: "FRAC" 80; } .frac-85 { font-variation-settings: "FRAC" 85; }
+    .frac-90 { font-variation-settings: "FRAC" 90; } .frac-95 { font-variation-settings: "FRAC" 95; } .frac-100 { font-variation-settings: "FRAC" 100; }
+
+    /* Les commandes : les boutons du site ; une pastille par battement, un hexagone qui s'allume. */
+    .learn-controls { display: flex; gap: 0.5rem; width: min(100%, 25rem); max-width: max(16rem, (100svh - 15rem) * 9 / 16); }
     .learn-controls .btn { min-height: 48px; padding: 0 16px; }
     .learn-controls .btn--gold { flex: 1; }
-    .learn-dots { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; list-style: none; margin: 0; padding: 0; width: min(100%, 26rem); }
+    .learn-dots { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; list-style: none; margin: 0; padding: 0; width: min(100%, 25rem); }
     .learn-step {
-      min-height: 44px; padding: 0 0.85rem; border-radius: 999px; display: inline-flex; gap: 0.45rem; align-items: center;
-      border: 1px solid var(--line); background: transparent; color: var(--muted); font: 600 0.95rem var(--font-body);
+      --cut: 8px;
+      min-height: 44px; padding: 0 0.85rem; display: inline-flex; gap: 0.5rem; align-items: center;
+      border: 1px solid var(--line); background: transparent; color: var(--muted);
+      font: 600 0.9rem var(--font-signature); letter-spacing: 0.08em; text-transform: uppercase;
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
     }
-    .learn-step::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--dot, var(--fg)); }
-    .learn-step--green { --dot: var(--learn-green); }
-    .learn-step--red { --dot: var(--learn-red); }
-    .learn-step--blue { --dot: var(--learn-blue); }
-    .learn-step--amber { --dot: var(--learn-amber); }
-    .learn-step--gold { --dot: var(--gold); }
-    .learn-step[aria-current="step"] { color: var(--fg); border-color: var(--fg); }
-    .learn-step:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
+    .learn-step::before { content: ""; width: 0.62rem; aspect-ratio: 1; background: var(--line); clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); }
+    .learn-step[aria-current="step"] { color: var(--fg); border-color: var(--gold); }
+    .learn-step[aria-current="step"]::before { background: var(--gold); }
+    .learn-step:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: -5px; }
     .learn-episode:not(.is-ready) .learn-controls,
     .learn-episode:not(.is-ready) .learn-dots { display: none; }
 
-    .learn-transcript { max-width: 44rem; padding-block: 1rem 4rem; }
-    .learn-transcript h2 { font: 700 var(--step-2)/1.1 var(--font-display); margin: 0 0 1rem; }
+    .learn-transcript { max-width: 46rem; padding-block: 1rem 3.5rem; }
+    .learn-transcript h2, .learn-glossary h2 { font: 700 var(--step-2)/1.1 var(--font-display); text-transform: uppercase; margin: 0 0 1.25rem; }
     .learn-lines { display: grid; gap: 0.9rem; margin: 0; padding-left: 1.4rem; }
     .learn-lines li { padding-left: 0.3rem; font-size: var(--step-0); line-height: 1.55; }
     .learn-lines li::marker { color: var(--gold); font-weight: 700; }
-    .learn-glossary { max-width: 44rem; padding-block: 0 4rem; }
-    .learn-glossary h2 { font: 700 var(--step-2)/1.1 var(--font-display); margin: 0 0 1rem; }
+    .learn-glossary { max-width: 46rem; padding-block: 0 4rem; }
     .learn-words { display: grid; gap: 0.75rem; margin: 0; }
-    .learn-words div { display: grid; gap: 0.15rem; padding: 0.75rem 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-    .learn-words dt { font-weight: 700; color: var(--gold); }
+    .learn-words div { display: grid; gap: 0.2rem; padding: 0.8rem 1rem 0.8rem 1.1rem; background: color-mix(in srgb, var(--gold) 6%, transparent); border-left: 2px solid var(--line); }
+    .learn-words dt { font: 600 0.95rem var(--font-signature); letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); }
     .learn-words dd { margin: 0; line-height: 1.5; }
 
-    /* Le tournage (?film) : la scène seule, plein cadre, sans sous-titres ni commandes. */
+    /* Le tournage (?film) : l'image seule, plein cadre ; ?film&captions=off cache aussi ses textes. */
     .learn-film body { background: #000; }
-    .learn-film .site-header, .learn-film .site-footer, .learn-film .skip-link, .learn-film .learn-intro,
-    .learn-film .learn-controls, .learn-film .learn-dots, .learn-film .learn-transcript, .learn-film .learn-caption { display: none; }
-    .learn-film .learn-episode { padding: 0; }
-    .learn-film .learn-stage { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+    .learn-film .site-header, .learn-film .site-footer, .learn-film .skip-link, .learn-film .learn-head, .learn-film .learn-controls,
+    .learn-film .learn-dots, .learn-film .learn-transcript, .learn-film .learn-glossary, .learn-film .panel__index { display: none; }
+    .learn-film .learn-episode.panel { margin: 0; padding: 0; }
+    .learn-film .learn-episode.panel::before, .learn-film .learn-episode.panel::after { display: none; }
+    .learn-film .learn-stage { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; clip-path: none; }
+    .learn-film--clean .learn-plate, .learn-film--clean .learn-titlecard, .learn-film--clean .learn-status { display: none; }
   </style>
 </head>
 <body>
@@ -169,28 +219,45 @@
   </header>
 
   <main id="contenu">
-    <section class="learn-episode container" data-learn aria-labelledby="learn-title">
-      <div class="learn-intro">
-        <p class="learn-eyebrow">[[page.series]] · [[page.episode]]</p>
-        <h1 class="learn-title" id="learn-title">[[page.title]]</h1>
-        <p class="learn-lede">[[page.lede]]</p>
+    <section class="learn-episode panel panel--rise" data-learn aria-labelledby="learn-title">
+      <span class="panel__index" data-index="01" aria-hidden="true"></span>
+      <div class="container learn-layout">
+        <div class="learn-head">
+          <p class="section__tag">[[page.series]] · [[page.episode]]</p>
+          <h1 class="learn-title" id="learn-title">[[page.title]]</h1>
+          <p class="learn-lede">[[page.lede]]</p>
+        </div>
+        <div class="learn-player">
+          <figure class="learn-stage">
+            <svg class="learn-scene" data-learn-scene aria-hidden="true" focusable="false"></svg>
+            <svg class="learn-overlay" data-learn-overlay aria-hidden="true" focusable="false"></svg>
+            <div class="learn-scrim" aria-hidden="true"></div>
+            <i class="learn-corner learn-corner--tl" aria-hidden="true"></i>
+            <i class="learn-corner learn-corner--br" aria-hidden="true"></i>
+            <p class="learn-status" data-learn-status aria-hidden="true" hidden><span>[[page.status]] — <b data-learn-status-beat></b></span><i data-learn-status-count></i></p>
+            <div class="learn-plate" data-learn-plate aria-hidden="true" hidden>
+              <p class="learn-plate__tag" data-learn-tag>[[page.series]]</p>
+              <p class="learn-caption" data-learn-caption></p>
+              <p class="learn-plate__handle" data-learn-handle>@adamrodwebdev</p>
+            </div>
+            <div class="learn-titlecard" data-learn-titlecard aria-hidden="true">
+              <p class="learn-titlecard__series">[[page.series]]</p>
+              <p class="learn-titlecard__episode">[[page.episode]] · [[page.title]]</p>
+            </div>
+            <figcaption class="visually-hidden">[[page.stage]]</figcaption>
+            <noscript><p class="learn-noscript">[[page.noscript]]</p></noscript>
+          </figure>
+          <div class="learn-controls">
+            <button class="btn btn--ghost" type="button" data-learn-back><span>[[page.controls.back]]</span></button>
+            <button class="btn btn--gold" type="button" data-learn-play
+              data-play="[[page.controls.play]]" data-pause="[[page.controls.pause]]" data-replay="[[page.controls.replay]]"><span>[[page.controls.play]]</span></button>
+            <button class="btn btn--ghost" type="button" data-learn-next><span>[[page.controls.next]]</span></button>
+          </div>
+          <ol class="learn-dots" aria-label="[[page.controls.steps]]">
+            [[@dots]]
+          </ol>
+        </div>
       </div>
-      <figure class="learn-stage">
-        <svg class="learn-scene" data-learn-scene aria-hidden="true" focusable="false"></svg>
-        <div class="learn-scrim" aria-hidden="true"></div>
-        <p class="learn-caption" data-learn-caption aria-hidden="true"></p>
-        <figcaption class="visually-hidden">[[page.stage]]</figcaption>
-        <noscript><p class="learn-noscript">[[page.noscript]]</p></noscript>
-      </figure>
-      <div class="learn-controls">
-        <button class="btn btn--ghost" type="button" data-learn-back><span>[[page.controls.back]]</span></button>
-        <button class="btn btn--gold" type="button" data-learn-play
-          data-play="[[page.controls.play]]" data-pause="[[page.controls.pause]]" data-replay="[[page.controls.replay]]"><span>[[page.controls.play]]</span></button>
-        <button class="btn btn--ghost" type="button" data-learn-next><span>[[page.controls.next]]</span></button>
-      </div>
-      <ol class="learn-dots" aria-label="[[page.controls.steps]]">
-        [[@dots]]
-      </ol>
     </section>
 
     <section class="learn-transcript container" aria-labelledby="learn-transcript">

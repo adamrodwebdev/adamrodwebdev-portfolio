@@ -1,21 +1,30 @@
 /**
- * L'entrée de /learn/ (1.19.0), chargée une fois le premier affichage signalé : elle monte l'épisode et
- * son lecteur. Avec `?film`, la page ne montre que la scène, sans sous-titres (l'habillage du film les
- * dessine par langue), et expose `window.EPISODE` pour l'outil de tournage : la durée, les temps des
- * sous-titres, `render(t)`, `retime(beats)` (les battements fixés par la voix), `plan` (les battements
- * prévus, que la voix ne raccourcit jamais) et `ready`, la promesse des polices chargées. Ce contrat est
- * celui de l'outil de tournage : on y ajoute, on n'y change rien sans le prévenir (test « film : … »).
+ * L'entrée de /learn/ (1.19.0), chargée une fois le premier affichage signalé : elle monte l'épisode, son
+ * habillage et son lecteur. Avec `?film`, la page ne montre que l'image, plein cadre : la scène et son
+ * habillage (titre, ligne d'état, panneaux, sous-titres dans la langue de la page, peints d'après t) ;
+ * `?film&captions=off` cache les textes (titre, ligne d'état, sous-titres) pour un film sans langue.
+ * Elle expose `window.EPISODE` pour l'outil de tournage : la durée, les temps des sous-titres
+ * ({ index, start, whole, end }), `render(t)`, `retime(beats)` (les battements fixés par la voix), `plan`
+ * (les battements prévus, que la voix ne raccourcit jamais) et `ready`, la promesse des polices chargées,
+ * Clivage comprise. Ce contrat est celui de l'outil de tournage : on y ajoute, on n'y change rien sans le
+ * prévenir (test « film : … »).
  */
 import { cleanText, textLength } from '../input.js';
 import { Direction, PLAN } from './episode01.js';
+import { Chrome } from './chrome.js';
 import { Episode } from './episode.js';
 import { Player } from './player.js';
 import { ThemeToggle } from './theme.js';
 
 /** Longueur maximale d'un sous-titre lu dans la page (caractères) : au-delà, il est refusé, pas coupé. */
 const CAPTION_MAX = 80;
-/** Les graisses que la scène emploie : le film les attend avant sa première image. */
-const FACES = Object.freeze(['500 20px Barlow', '600 20px Barlow']);
+/** Longueur maximale d'un nom de battement lu dans la page (caractères). */
+const BEAT_MAX = 40;
+/**
+ * Les polices que l'image emploie, avec un texte qui choisit le bon fichier : Barlow (la scène), Clivage
+ * et son axe FRAC (titre, sous-titres, numéros, « PAGE ? »). Le film les attend avant sa première image.
+ */
+const FACES = Object.freeze([['500 20px Barlow', 'a'], ['600 20px Barlow', 'a'], ['700 40px Clivage', 'PAGE ?']]);
 
 /** Les retours à la ligne et tabulations : un sous-titre tient en une phrase, il n'en a aucun. */
 const BREAKS = /[\t\n\v\f\r\u2028\u2029]/u;
@@ -34,6 +43,14 @@ function readCaptions(list) {
   });
 }
 
+/** Les noms des battements, ceux des pastilles du lecteur : du texte nettoyé d'une ligne, borné, sinon rien. */
+function readBeats(dots) {
+  return dots.map((dot) => {
+    const text = cleanText(dot.textContent ?? '').trim();
+    return textLength(text) <= BEAT_MAX ? text : '';
+  });
+}
+
 /** Attend qu'une condition soit vraie (toutes les 25 ms, 10 s au plus). */
 async function until(test) {
   for (let waited = 0; waited < 10_000; waited += 25) {
@@ -48,7 +65,7 @@ async function until(test) {
 async function fontsReady() {
   const sheet = await until(() => document.querySelector('link[rel="stylesheet"][href="/css/fonts.css"]'));
   if (!sheet.sheet) await new Promise((resolve) => sheet.addEventListener('load', resolve, { once: true }));
-  await Promise.all(FACES.map((face) => document.fonts.load(face)));
+  await Promise.all(FACES.map(([face, sample]) => document.fonts.load(face, sample)));
   await document.fonts.ready;
   return true;
 }
@@ -69,24 +86,41 @@ async function sceneTurn() {
 
 const root = document.querySelector('[data-learn]');
 if (root) {
-  // Un seul drapeau possible dans l'adresse : sa présence suffit, sa valeur n'est jamais lue.
-  const film = new URLSearchParams(window.location.search).has('film');
+  // Deux réglages dans l'adresse, lus comme une liste fermée : `film` (sa présence suffit) et
+  // `captions=off` (seule valeur reconnue ; toute autre est ignorée).
+  const params = new URLSearchParams(window.location.search);
+  const film = params.has('film');
+  const clean = film && params.get('captions') === 'off';
   const createEpisode = () => new Episode({
     svg: root.querySelector('[data-learn-scene]'),
     direction: new Direction(),
-    caption: film ? null : root.querySelector('[data-learn-caption]'),
-    captions: readCaptions(document.querySelector('[data-learn-captions]')),
+    chrome: new Chrome({
+      overlay: root.querySelector('[data-learn-overlay]'),
+      title: root.querySelector('[data-learn-titlecard]'),
+      titleSeries: root.querySelector('[data-learn-titlecard] .learn-titlecard__series'),
+      status: root.querySelector('[data-learn-status]'),
+      statusBeat: root.querySelector('[data-learn-status-beat]'),
+      statusCount: root.querySelector('[data-learn-status-count]'),
+      plate: root.querySelector('[data-learn-plate]'),
+      caption: root.querySelector('[data-learn-caption]'),
+      texts: {
+        captions: readCaptions(document.querySelector('[data-learn-captions]')),
+        beats: readBeats([...root.querySelectorAll('[data-learn-dot]')]),
+      },
+    }),
   });
 
   if (film) {
     const episode = createEpisode();
     document.documentElement.classList.add('learn-film');
+    if (clean) document.documentElement.classList.add('learn-film--clean');
     episode.render(0);
     window.EPISODE = Object.freeze({
       get duration() {
         return episode.duration;
       },
-      // Les temps des sous-titres ({ index, start, end }, secondes) : l'habillage du film les dessine par langue.
+      // Les temps des sous-titres ({ index, start, whole, end }, secondes) : `whole`, l'instant où le sous-titre est
+      // réparé, ouvre sa fenêtre de lecture ; les fichiers SRT gardent `start`.
       get captions() {
         return Object.freeze(episode.captionTimes.map((caption) => Object.freeze({ ...caption })));
       },
@@ -122,6 +156,8 @@ if (root) {
       player.mount();
       root.classList.add('is-ready');
     });
+    // Le titre de la page se répare, comme ceux du site, une fois Clivage arrivée.
+    fontsReady().then(() => document.getElementById('learn-title')?.classList.add('is-repairing'), () => {});
   }
 
   const themeButton = document.querySelector('[data-theme-toggle]');

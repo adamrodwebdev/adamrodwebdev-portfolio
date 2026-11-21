@@ -8,30 +8,52 @@
  */
 export const WORLD = Object.freeze({ width: 900, height: 1600 });
 
-/** Les couleurs du plan, sur le fond noir du site. */
+/**
+ * Les jetons du site, sur son fond noir (le film garde ce noir dans les deux thèmes) : l'or en trois tons,
+ * la crème, le gris chaud, les plaques sombres. Aucune autre couleur : ni rouge, ni bleu, ni jaune.
+ */
 export const INK = Object.freeze({
   ground: '#000000',
-  groundGlow: '#17140d',
-  paper: '#e0b04a',
+  plate: '#0e0c08',
+  plateHi: '#17140d',
+  gold: '#e0b04a',
+  goldHi: '#f5cf6e',
+  goldDeep: '#9a7420',
   cream: '#f6f4ef',
   muted: '#a8a193',
-  gold: '#e0b04a',
-  device: '#0b0a07',
-  page: '#ffffff',
-  pageInk: '#111111',
-  pageMuted: '#8a8f98',
-  bar: '#f2efe7',
+  faint: '#57514a',
 });
 
 /**
- * Les quatre lignes, côte à côte de gauche à droite vues du téléphone : la demande (vert), puis ce qui
- * revient, HTML (rouge), CSS (bleu), JavaScript (ambre). `offset` : écart au tracé central.
+ * Les trois formes qui distinguent les fichiers, à la place des couleurs : l'hexagone (HTML), le losange
+ * (CSS), l'éclat (JavaScript). Sommets sur un rayon de 1, centrés sur 0 ; celles du logo et du site.
+ */
+export const SHAPES = Object.freeze({
+  hex: Object.freeze([[0, -1], [0.866, -0.5], [0.866, 0.5], [0, 1], [-0.866, 0.5], [-0.866, -0.5]]),
+  diamond: Object.freeze([[0, -1], [1, 0], [0, 1], [-1, 0]]),
+  shard: Object.freeze([[0, -1], [1, 0.76], [-1, 0.28]]),
+});
+
+/**
+ * Les trois fichiers d'une page : leur forme, son remplissage (plein ou contour), et des noms qui se lisent
+ * pareil dans toutes les langues.
+ */
+export const FILES = Object.freeze({
+  html: Object.freeze({ shape: 'hex', fill: INK.goldHi, outline: false, label: 'HTML', name: 'index.html' }),
+  css: Object.freeze({ shape: 'diamond', fill: INK.cream, outline: true, label: 'CSS', name: 'style.css' }),
+  js: Object.freeze({ shape: 'shard', fill: INK.gold, outline: false, label: 'JS', name: 'script.js' }),
+});
+
+/**
+ * Les quatre lignes, côte à côte de gauche à droite vues du téléphone : la demande (l'or clair), puis ce
+ * qui revient, HTML (or), CSS (crème), JavaScript (or en tirets). `offset` : écart au tracé central ;
+ * `dash` : le motif d'une ligne en tirets ; `file` : le fichier qu'elle rapporte.
  */
 export const LINES = Object.freeze([
-  Object.freeze({ key: 'request', colour: '#22c37b', offset: -24, from: 'phone' }),
-  Object.freeze({ key: 'html', colour: '#ff4b44', offset: -8, from: 'server' }),
-  Object.freeze({ key: 'css', colour: '#4d86ff', offset: 8, from: 'server' }),
-  Object.freeze({ key: 'js', colour: '#ffb400', offset: 24, from: 'server' }),
+  Object.freeze({ key: 'request', ink: INK.goldHi, dash: null, offset: -24, from: 'phone' }),
+  Object.freeze({ key: 'html', ink: INK.gold, dash: null, offset: -8, from: 'server', file: 'html' }),
+  Object.freeze({ key: 'css', ink: INK.cream, dash: null, offset: 8, from: 'server', file: 'css' }),
+  Object.freeze({ key: 'js', ink: INK.gold, dash: '16 12', offset: 24, from: 'server', file: 'js' }),
 ]);
 
 /**
@@ -54,12 +76,12 @@ export const STATIONS = Object.freeze({
 });
 
 /**
- * Le globe d'Internet, à côté de sa correspondance, du côté vide du plan (à gauche de la diagonale) :
- * quand il s'ouvre sur le réseau, le plan d'Internet n'a pas le serveur dans son cadre.
+ * Internet, à côté de sa correspondance, du côté vide du plan (à gauche de la diagonale) : un hexagone
+ * (la station du réseau). Quand il s'ouvre sur le réseau, le plan d'Internet n'a pas le serveur dans son cadre.
  */
 export const GLOBE = Object.freeze({ x: 300, y: 470, r: 30 });
 
-/** Le serveur : une baie de trois unités, son port sur le flanc gauche. */
+/** Le serveur : une baie de trois plaques chanfreinées, son port sur le flanc gauche. */
 export const SERVER = Object.freeze({ x: 600, y: 320, width: 160, height: 200, units: 3 });
 
 /** Le fond déborde largement du monde : la caméra peut reculer au-delà pour le plan large. */
