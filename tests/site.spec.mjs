@@ -2,7 +2,7 @@
 //  - chaque page ne demande rien à un autre domaine, ne déclenche aucune violation de CSP ni aucune erreur ;
 //  - les fichiers internes du dépôt ne sont pas servis ;
 //  - le formulaire de contact envoie le consentement et garde le pot de miel, avec et sans JavaScript.
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 /** Les pages publiées, d'après les fichiers HTML de dist/. */
@@ -509,6 +509,20 @@ test('accueil : l’offre d’abord, les sites puis les jeux, chacun son carrous
   expect(links).toEqual(['#offres', '#services', '#projets', '#creations', '#contact']);
 });
 
+test('en-tête : chaque page qui en a un porte la marque et le menu de l’accueil (1.19.0)', async ({ page }) => {
+  // Les pages générées hors de Vue (Lumirift, la licence, /learn/) recopient l'en-tête : il ne doit pas vieillir.
+  const anchors = ['#offres', '#services', '#projets', '#creations', '#contact'];
+  for (const path of PAGES) {
+    await page.goto(path);
+    const links = page.locator('.site-header .nav__links a');
+    if ((await links.count()) === 0) continue; // 404, merci, mentions légales : pas d'en-tête de site
+    expect(await links.evaluateAll((as) => as.map((a) => new URL(a.href).hash)), path).toEqual(anchors);
+    const names = await page.locator('.brand__name').allTextContents();
+    expect(names.length, path).toBeGreaterThan(0);
+    for (const name of names) expect(name, path).toBe('AdamRodWebTech');
+  }
+});
+
 test('témoignages, réservation et Malt : absents tant que leur donnée manque (1.17.0)', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.testimonials, .contact__booking')).toHaveCount(0);
@@ -526,6 +540,215 @@ test('marque : AdamRodWebTech sur chaque page, plus jamais AdamRodWebDev (1.17.0
   await page.goto('/');
   await expect(page.locator('.site-header .brand__name')).toHaveText('AdamRodWebTech');
   await expect(page).toHaveTitle(/^AdamRodWebTech \|/);
+});
+
+test('épisode : chaque épisode à son adresse, /learn/ y renvoie par netlify.toml (1.19.0)', async ({ page }) => {
+  // Le serveur local ne joue pas les redirections de Netlify : les règles se lisent dans netlify.toml.
+  const toml = readFileSync('netlify.toml', 'utf8');
+  const rules = [...toml.matchAll(/\[\[redirects\]\]\s+from = "([^"]+)"\s+to = "([^"]+)"\s+status = (\d+)/g)]
+    .map(([, from, to, status]) => ({ from, to, status: Number(status) }));
+  const firstLanguage404 = rules.findIndex((rule) => rule.status === 404);
+  for (const [series, episode, lang] of [['/learn/', '/learn/1/', 'fr'], ['/en/learn/', '/en/learn/1/', 'en']]) {
+    const index = rules.findIndex((rule) => rule.from === series);
+    expect(rules[index], series).toEqual({ from: series, to: episode, status: 302 });
+    expect(index, `${series} avant les pages 404 de langue`).toBeLessThan(firstLanguage404);
+    expect(existsSync(`dist${series}index.html`), `aucune page restée à ${series}`).toBe(false);
+    await page.goto(episode);
+    await expect(page.locator('html')).toHaveAttribute('lang', lang);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://adamrodwebdev.com${episode}`);
+  }
+  const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((links) => links.map((l) => `${l.hreflang} ${new URL(l.href).pathname}`));
+  expect(alternates).toEqual(['fr /learn/1/', 'en /en/learn/1/', 'x-default /en/learn/1/']);
+});
+
+test('épisode : les sous-titres gardent leurs espaces insécables, « Internet : » ne se coupe pas avant ses deux-points', async ({ page }) => {
+  await page.goto('/learn/1/');
+  await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
+  // Le battement d'Internet, puis lecture : son premier sous-titre arrive 0,3 s après.
+  await page.locator('[data-learn-dot]').nth(1).click();
+  await page.locator('[data-learn-play]').click();
+  const caption = page.locator('[data-learn-caption]');
+  await expect(caption).toContainText('Internet');
+  expect(await caption.textContent()).toContain('Internet\u00a0:');
+});
+
+test('film : le contrat de l’outil de tournage (?film, window.EPISODE) tient, et l’image ne dépend pas de la langue (1.19.0)', async ({ page }) => {
+  // L'outil de tournage filme ces pages : on ajoute au contrat, on n'y change rien sans le prévenir.
+  // Depuis le changement de style, la page peint elle-même son titre et ses sous-titres d'après t.
+  const pictures = [];
+  for (const path of ['/learn/1/?film', '/en/learn/1/?film']) {
+    await page.goto(path);
+    await page.waitForFunction(() => window.EPISODE);
+    await page.evaluate(() => window.EPISODE.ready);
+    await expect(page.locator('html')).toHaveClass(/learn-film/);
+    await expect(page.locator('#learn-title')).toHaveCount(1);
+    await expect(page.locator('.learn-scrim')).toHaveCount(1);
+    const shape = await page.evaluate(() => {
+      const { EPISODE } = window;
+      // L'image sans langue : la scène et le calque des panneaux (des chiffres seulement).
+      const picture = () => document.querySelector('[data-learn-scene]').outerHTML + document.querySelector('[data-learn-overlay]').outerHTML;
+      const caption = document.querySelector('[data-learn-caption]');
+      const plate = document.querySelector('[data-learn-plate]');
+      const captionState = () => `${caption.className}|${caption.textContent}|${plate.hidden}`;
+      EPISODE.render(30);
+      const at30 = picture() + captionState();
+      EPISODE.render(5);
+      EPISODE.render(30);
+      const again = picture() + captionState();
+      const plan = EPISODE.plan;
+      const planned = EPISODE.duration;
+      EPISODE.retime(plan.map(({ id, seconds }) => ({ id, seconds: seconds + 1 })));
+      const stretched = EPISODE.duration;
+      EPISODE.retime(plan.map(({ id, seconds }) => ({ id, seconds })));
+      const cues = EPISODE.captions;
+      const first = cues[0];
+      EPISODE.render(first.start + 0.01);
+      const arriving = caption.className;
+      EPISODE.render((first.whole + first.end) / 2);
+      const box = caption.getBoundingClientRect();
+      return {
+        frozen: Object.isFrozen(EPISODE) && Object.isFrozen(plan) && plan.every(Object.isFrozen) && cues.every(Object.isFrozen),
+        functions: ['render', 'retime'].map((name) => typeof EPISODE[name]),
+        planIds: plan.map((beat) => beat.id),
+        planSum: Math.round(plan.reduce((sum, beat) => sum + beat.seconds, 0) * 1000),
+        planned: Math.round(planned * 1000),
+        stretched: Math.round((stretched - planned) * 1000),
+        cues: cues.filter((c) => ['index', 'start', 'whole', 'end'].every((k) => typeof c[k] === 'number') && c.start < c.whole && c.whole < c.end).length,
+        texts: document.querySelectorAll('[data-learn-captions] [data-caption]').length,
+        repair: Math.round((first.whole - first.start) * 1000),
+        arriving,
+        whole: caption.className,
+        shown: !plate.hidden && box.height > 0 && caption.textContent.length > 0,
+        kit: ['[data-learn-tag]', '[data-learn-handle]'].map((selector) => {
+          const element = plate.querySelector(selector);
+          return element.getBoundingClientRect().height > 0 ? element.textContent.trim() : '';
+        }),
+        series: document.querySelector('.learn-titlecard__series').textContent.trim(),
+        pure: at30 === again,
+        picture: (EPISODE.render(20), picture()),
+      };
+    });
+    expect(shape.frozen, path).toBe(true);
+    expect(shape.functions, path).toEqual(['function', 'function']);
+    expect(shape.planIds, path).toEqual(['ask', 'internet', 'binary', 'server', 'back', 'done']);
+    expect(shape.planned, `${path} : la durée suit le plan`).toBe(shape.planSum);
+    expect(shape.stretched, `${path} : retime allonge chaque battement`).toBe(6000);
+    expect(shape.cues, `${path} : chaque sous-titre { index, start, whole, end }`).toBe(shape.texts);
+    expect(shape.repair, `${path} : un sous-titre se répare en 0,35 s`).toBe(350);
+    expect(shape.arriving, `${path} : il arrive brisé`).toMatch(/\bfrac-100\b/);
+    expect(shape.whole, `${path} : entier pendant sa lecture`).toMatch(/\bfrac-0\b/);
+    expect(shape.shown, `${path} : le sous-titre se voit et se mesure en mode film`).toBe(true);
+    expect(shape.kit, `${path} : l’étiquette de la série et le pseudo sur la plaque du film`).toEqual([shape.series, '@adamrodwebdev']);
+    expect(shape.pure, `${path} : render(t) ne dépend que de t`).toBe(true);
+    pictures.push(shape.picture);
+  }
+  expect(pictures[1], 'la même image en français et en anglais').toBe(pictures[0]);
+
+  // Le film sans textes : ni titre, ni ligne d'état, ni sous-titre ; la scène, les panneaux et les équerres restent.
+  await page.goto('/learn/1/?film&captions=off');
+  await page.waitForFunction(() => window.EPISODE);
+  await page.evaluate(() => window.EPISODE.ready);
+  await expect(page.locator('html')).toHaveClass(/learn-film--clean/);
+  for (const t of [0.5, 3, 10.5]) {
+    await page.evaluate((x) => window.EPISODE.render(x), t);
+    await expect(page.locator('.learn-titlecard, .learn-status, .learn-plate').filter({ visible: true }), `à ${t} s`).toHaveCount(0);
+  }
+  await expect(page.locator('.learn-corner').first()).toBeVisible();
+});
+
+test('film : aucun texte rogné par le cadre, les octets dans la zone sûre, le paquet loin du serveur, le numéro sous la plaque (1.19.0)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'le cadre du film se règle ici à la main (1080 × 1920)');
+  await page.setViewportSize({ width: 1080, height: 1920 });
+  await page.goto('/learn/1/?film');
+  await page.waitForFunction(() => window.EPISODE);
+  await page.evaluate(() => window.EPISODE.ready);
+  const faults = await page.evaluate(() => {
+    const { EPISODE } = window;
+    // La zone sûre des vidéos courtes, à 1080 px de large : les boutons des applis occupent la droite.
+    const SAFE = { left: 32, right: 918 };
+    const seen = (element) => {
+      let opacity = 1;
+      for (let node = element; node && node instanceof SVGElement; node = node.parentNode) opacity *= Number.parseFloat(node.getAttribute('opacity') ?? '1');
+      return opacity > 0.05;
+    };
+    const found = [];
+    for (let t = 0; t <= EPISODE.duration; t += 0.25) {
+      EPISODE.render(t);
+      const at = t.toFixed(2);
+      // Un panneau posé cache tout ce qui est sous son bord haut.
+      const cover = [...document.querySelectorAll('[data-learn-overlay] > g')].filter((group) => group.getAttribute('opacity') === '1')
+        .map((group) => group.querySelector('path').getBoundingClientRect().top)[0] ?? Infinity;
+      for (const text of document.querySelectorAll('[data-learn-scene] text')) {
+        if (!text.textContent.trim() || !seen(text)) continue;
+        const box = text.getBoundingClientRect();
+        // Un texte tout entier hors de l'image ne se voit pas ; un texte coupé par le bord se lit comme une erreur.
+        if (box.right <= 0 || box.left >= innerWidth || box.bottom <= 0 || box.top >= innerHeight || box.top >= cover) continue;
+        if (box.left < 0 || box.right > innerWidth || box.top < 0 || box.bottom > innerHeight) found.push(`${at} s : « ${text.textContent} » rogné par le cadre`);
+        const floating = text.classList.contains('learn-bits') || text.classList.contains('learn-word');
+        if (floating && (box.left < SAFE.left || box.right > SAFE.right)) found.push(`${at} s : « ${text.textContent} » hors de la zone sûre`);
+      }
+      const packet = document.querySelector('.learn-packet');
+      if (seen(packet)) {
+        const gap = document.querySelector('.learn-server').getBoundingClientRect().left - packet.getBoundingClientRect().right;
+        if (gap < 40) found.push(`${at} s : le paquet à ${Math.round(gap)} px du serveur`);
+      }
+      const plate = document.querySelector('[data-learn-plate]');
+      for (const index of document.querySelectorAll('[data-learn-overlay] .learn-index')) {
+        if (!seen(index) || plate.hidden) continue;
+        const top = index.getBoundingClientRect().top;
+        const below = plate.getBoundingClientRect().bottom;
+        if (top < below) found.push(`${at} s : le numéro ${index.textContent} passe sous la plaque (${Math.round(top)} < ${Math.round(below)})`);
+      }
+    }
+    return found;
+  });
+  expect(faults).toEqual([]);
+});
+
+test('épisode : choisir un battement montre sa scène, jamais son panneau en travers (1.19.0)', async ({ page }) => {
+  await page.goto('/learn/1/');
+  await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
+  const dots = page.locator('[data-learn-dot]');
+  for (let k = 1; k < 6; k++) {
+    await dots.nth(k).dispatchEvent('click');
+    const panels = await page.locator('[data-learn-overlay] > g').evaluateAll((groups) => groups.map((group) => group.getAttribute('opacity')));
+    expect(panels, `battement ${k + 1}`).toEqual(['0', '0']);
+    await expect(dots.nth(k)).toHaveAttribute('aria-current', 'step');
+  }
+});
+
+test('épisode : avec le mouvement réduit, chaque battement se pose, sans panneau ni fracture en cours (1.19.0)', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/learn/1/');
+  await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
+  for (let k = 0; k < 6; k++) {
+    if (k > 0) await page.locator('[data-learn-next]').dispatchEvent('click');
+    const state = await page.evaluate(() => ({
+      current: [...document.querySelectorAll('[data-learn-dot]')].findIndex((dot) => dot.getAttribute('aria-current') === 'step'),
+      panels: [...document.querySelectorAll('[data-learn-overlay] > g')].map((group) => group.getAttribute('opacity')),
+      title: document.querySelector('[data-learn-titlecard]').hidden,
+      caption: document.querySelector('[data-learn-caption]').className,
+    }));
+    expect(state.current, `battement ${k + 1}`).toBe(k);
+    expect(state.panels, `battement ${k + 1} : aucun panneau`).toEqual(['0', '0']);
+    expect(state.title, `battement ${k + 1} : pas de titre`).toBe(true);
+    expect(state.caption, `battement ${k + 1} : un sous-titre entier`).toMatch(/\bfrac-0\b/);
+  }
+});
+
+test('épisode : aucun défilement horizontal de 320 à 2560 px, et le lecteur tient à 1280 × 800 avec son bouton Lire (1.19.0)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'les largeurs se règlent ici à la main');
+  for (const path of ['/learn/1/', '/en/learn/1/']) {
+    for (const width of [320, 360, 390, 768, 1024, 1280, 1920, 2560]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(path);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), `${path} à ${width} px`).toBe(0);
+    }
+  }
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/learn/1/');
+  await expect(page.locator('[data-learn]')).toHaveClass(/is-ready/);
+  expect(await page.locator('[data-learn-play]').evaluate((button) => button.getBoundingClientRect().bottom)).toBeLessThanOrEqual(800);
 });
 
 test.describe('sans JavaScript', () => {

@@ -11,8 +11,8 @@
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { messages, lumiriftPage } from '../js/i18n/messages.js';
-import { LANGUAGES, DEFAULT_LANGUAGE } from '../js/i18n/languages.js';
+import { messages, lumiriftPage, learnPage } from '../js/i18n/messages.js';
+import { LANGUAGES, DEFAULT_LANGUAGE, languageOf } from '../js/i18n/languages.js';
 import { config } from '../js/config.js';
 import { projects } from '../js/data/projects.js';
 import { playLinks } from '../js/data/platforms.js';
@@ -102,6 +102,28 @@ const LUMIRIFT = {
     instagram: 'https://www.instagram.com/adamrodwebdev/',
   },
 };
+
+/**
+ * La série « Comment marche le Web » (1.19.0) : l'épisode 1, en français (/learn/1/) et en anglais
+ * (/en/learn/1/) d'abord. Les autres langues mènent à la page anglaise tant que leur voix n'est pas
+ * enregistrée : aucune page en anglais sous /it/ ou /ru/ (doublons, hreflang faux). Pas d'îlot Vue :
+ * son module se charge après le premier affichage, comme les îlots de l'accueil.
+ *
+ * Chaque épisode garde son adresse pour toujours : un lien partagé le jour de sa diffusion montre
+ * toujours cet épisode. /learn/ et /en/learn/ renvoient à l'épisode 1 (302, netlify.toml) jusqu'à ce
+ * qu'elles deviennent la page de la série.
+ */
+const LEARN = {
+  languages: ['fr', 'en'],
+  // La langue montrée aux autres (x-default) : l'anglais, comme pour la licence des polices.
+  fallback: 'en',
+  episode: 1,
+  entry: '/js/learn/main.js',
+  // Classes que le module de la page ajoute lui-même : leurs règles restent dans la feuille copiée.
+  runtimeClasses: ['is-dark', 'is-ready', 'is-repairing', 'learn-film', 'learn-film--clean'],
+};
+/** L'adresse de l'épisode dans une langue : /learn/1/, /en/learn/1/. */
+const episodePath = (code) => `${languageOf(code).base}learn/${LEARN.episode}/`;
 
 /**
  * Le menu des langues de l'en-tête (1.10.0), tel qu'avant le montage de Vue : un <details> qui marche
@@ -203,4 +225,39 @@ export async function buildPages({ root, out, imports }) {
 
   // La licence des polices Ressac (1.18.0), en français et en anglais
   await buildLicencePages({ root, out, origin: ORIGIN, siteCss, fonts: FONTS });
+
+  // « Comment marche le Web » : une page par langue enregistrée, ses modules préchargés après le premier affichage.
+  const learnTemplate = await readFile(join(root, 'templates/learn.html'), 'utf8');
+  const learnModules = (await moduleGraph(out, [LEARN.entry], imports)).filter((url) => url !== LEARN.entry);
+  for (const code of LEARN.languages) {
+    const page = learnPage[code];
+    const language = languageOf(code);
+    const other = LEARN.languages.find((candidate) => candidate !== code);
+    const base = episodePath(code);
+    const html = render(learnTemplate, { ...messages[code], page }, {
+      lang: code,
+      url: ORIGIN + base,
+      alternates: [
+        ...LEARN.languages.map((c) => `<link rel="alternate" hreflang="${c}" href="${ORIGIN}${episodePath(c)}">`),
+        `<link rel="alternate" hreflang="x-default" href="${ORIGIN}${episodePath(LEARN.fallback)}">`,
+      ].join('\n  '),
+      home: language.base,
+      otherHref: episodePath(other),
+      otherLang: other,
+      otherCode: other.toUpperCase(),
+      legal: language.legal,
+      legalHreflang: language.legal.startsWith(language.base) ? '' : ' hreflang="en"',
+      fonts: FONTS,
+      css: CSS_SLOT,
+      afterFirstPaint: afterFirstPaintScript({ stylesheets: [FONTS], modules: learnModules, entry: LEARN.entry }),
+      dots: page.beats
+        .map((name) => `<li><button class="learn-step" type="button" data-learn-dot>${escape(name)}</button></li>`)
+        .join('\n        '),
+      narration: page.narration.map((line) => `<li>${escape(line)}</li>`).join('\n        '),
+      glossary: page.glossary.map(([term, meaning]) => `<div><dt>${escape(term)}</dt><dd>${escape(meaning)}</dd></div>`).join('\n        '),
+      captions: page.captions.map((caption) => `<li data-caption>${escape(caption)}</li>`).join('\n      '),
+    }, `learn-${code}`);
+    const css = purgeCss(siteCss, pageNames(html, LEARN.runtimeClasses), html);
+    await writePage(out, `${base.slice(1)}index.html`, html.replace(CSS_SLOT, () => css));
+  }
 }
