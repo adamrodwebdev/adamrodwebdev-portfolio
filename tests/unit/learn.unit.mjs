@@ -5,9 +5,11 @@ import { describe, it } from 'node:test';
 import { EASE, clamp, phase, pulse } from '../../js/learn/ease.js';
 import { Timeline } from '../../js/learn/timeline.js';
 import { ASPECT, FOCUS, Shots, viewBoxOf } from '../../js/learn/camera.js';
-import { LINES, ROUTE, STATIONS, fractionNear, linePoints, offsetPath, pointAlong, polylineLength } from '../../js/learn/world.js';
+import { FILES, INK, LINES, ROUTE, SHAPES, STATIONS, fractionNear, linePoints, offsetPath, pointAlong, polylineLength } from '../../js/learn/world.js';
 import { CAPTION_MAX, readSeconds } from '../../js/learn/captions.js';
-import { BYTES, CAPTIONS, Direction, PLAN, QUESTION_SIZE } from '../../js/learn/episode01.js';
+import { BYTES, CAPTIONS, Direction, PANELS, PLAN, QUESTION_SIZE, WORD } from '../../js/learn/episode01.js';
+import { BREAK, CRACK, FRAC_STEP, REPAIR, TITLE, breakAndRebuild, crack, fracClass, repair, shatter, snapFrac, stepped, wholeAt } from '../../js/learn/frac.js';
+import { PANEL, panelOffset, panelWindow } from '../../js/learn/transitions.js';
 import { Direction as LanguagesBase } from '../../js/learn/episode02.js';
 import { learnEpisode2, learnPage } from '../../js/i18n/messages.js';
 
@@ -129,22 +131,29 @@ describe("l'épisode 1, « Le voyage d'une page »", () => {
     assert.ok(atGlobe > 0.3 && atGlobe < 0.75, `au globe : ${atGlobe}`);
   });
 
-  it('montre « ? » au départ, puis seulement des 0 et des 1 une fois dans le binaire', () => {
+  it('montre « ? » dans son hexagone, puis « PAGE ? » qui se brise en bits et arrive entier au serveur', () => {
     assert.equal(direction.token(at('ask', 1)), null, 'pas de message avant le lien touché');
-    assert.equal(direction.token(at('ask', 8)).label, '?');
-    for (let s = 0.5; s < 5.4; s += 0.37) {
-      const { label } = direction.token(at('binary', s));
-      assert.match(label, /^[01]{8}$/, `binaire à ${s.toFixed(2)} s`);
-    }
+    const question = direction.token(at('ask', 8));
+    assert.equal(question.form, 'mark');
+    assert.equal(question.label, '?');
+    const { breaks, rebuilds } = direction.word;
+    const before = direction.token(breaks - 0.01);
+    assert.equal(before.form, 'word');
+    assert.equal(before.label, WORD);
+    assert.equal(before.frac, 0, 'entier avant de se briser');
+    assert.equal(direction.token((breaks + rebuilds) / 2).frac, 100, 'brisé pendant le voyage');
+    assert.equal(direction.token(direction.request.arrive).frac, 0, 'entier à son arrivée au serveur');
     assert.equal(direction.token(direction.duration), null);
   });
 
-  it('montre des octets entiers : chaque image arrêtée se lit comme une lettre de « page? »', () => {
+  it('fait flotter autour du mot brisé les vrais octets de « page? », et les range quand il se répare', () => {
     assert.equal(BYTES.join(''), [...'page?'].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')).join(''));
-    for (let s = 0.5; s < 5.4; s += 0.13) {
-      const letter = String.fromCharCode(Number.parseInt(direction.token(at('binary', s)).label, 2));
-      assert.ok('page?'.includes(letter), `à ${s.toFixed(2)} s : « ${letter} »`);
-    }
+    const { breaks, rebuilds } = direction.word;
+    const broken = direction.token((breaks + rebuilds) / 2);
+    assert.deepEqual(broken.bytes, BYTES);
+    assert.equal(broken.bits, 1, 'les bits se voient quand le mot est brisé');
+    assert.equal(direction.token(breaks - 0.01).bits, 0, 'aucun bit tant que le mot est entier');
+    assert.equal(direction.token(direction.request.arrive).bits, 0, 'aucun bit une fois réparé');
   });
 
   it('grossit le « ? » pour qu’il se lise, et le ramène à la taille des bits sans saut', () => {
@@ -217,17 +226,23 @@ describe("l'épisode 1, « Le voyage d'une page »", () => {
     }
   });
 
-  it('laisse chaque sous-titre assez longtemps pour le lire, en français et en anglais (prévu avant la voix)', () => {
+  it('laisse chaque sous-titre assez longtemps pour le lire une fois réparé, en français et en anglais (prévu avant la voix)', () => {
     const times = direction.captions();
     assert.equal(times.length, CAPTIONS.length);
     for (const lang of ['fr', 'en']) {
       const texts = learnPage[lang].captions;
       assert.equal(texts.length, CAPTIONS.length, `${lang} : autant de sous-titres que de places`);
-      for (const { index, start, end } of times) {
-        assert.ok(end - start >= readSeconds(texts[index]) - 1e-9, `${lang} n° ${index + 1} « ${texts[index]} » : ${(end - start).toFixed(2)} s pour ${readSeconds(texts[index]).toFixed(2)} s`);
+      for (const { index, start, whole, end } of times) {
+        assert.ok(near(whole - start, REPAIR), `n° ${index + 1} : réparé en ${REPAIR} s`);
+        assert.ok(end - whole >= readSeconds(texts[index]) - 1e-9, `${lang} n° ${index + 1} « ${texts[index]} » : ${(end - whole).toFixed(2)} s de lecture pour ${readSeconds(texts[index]).toFixed(2)} s`);
         assert.ok([...texts[index]].length <= CAPTION_MAX, `${lang} n° ${index + 1} dépasse ${CAPTION_MAX} caractères`);
       }
     }
+  });
+
+  it('attend la fin du titre pour son premier sous-titre et pour le doigt qui touche le lien', () => {
+    assert.ok(direction.captions()[0].start >= TITLE.duration);
+    assert.equal(direction.state(TITLE.duration - 0.01).screen.ripple.opacity, 0, 'le lien n’est pas encore touché sous le titre');
   });
 
   it('ne fait jamais se chevaucher deux sous-titres', () => {
@@ -240,6 +255,134 @@ describe("l'épisode 1, « Le voyage d'une page »", () => {
     assert.equal(learnPage.fr.glossary.length, learnPage.en.glossary.length);
     assert.equal(learnPage.fr.beats.length, PLAN.length);
     assert.equal(learnPage.en.beats.length, PLAN.length);
+  });
+});
+
+describe('la fracture de Clivage', () => {
+  const onGrid = (value) => Number.isInteger(value / FRAC_STEP) && value >= 0 && value <= 100;
+
+  it('avance par paliers comme steps(n, end), toujours sur la grille de 5', () => {
+    const spec = { start: 1, duration: 1, from: 100, to: 0, steps: 4 };
+    assert.equal(stepped(0.5, spec), 100);
+    assert.equal(stepped(1.1, spec), 100, 'le premier palier tient jusqu’à la fin de son intervalle');
+    assert.equal(stepped(1.3, spec), 75);
+    assert.equal(stepped(2, spec), 0);
+    assert.equal(snapFrac(37), 35);
+    assert.equal(snapFrac(-3), 0);
+    assert.equal(snapFrac(140), 100);
+    assert.equal(fracClass(83), 'frac-85');
+  });
+
+  it('répare un texte de 100 à 0 en REPAIR secondes, sans jamais revenir en arrière', () => {
+    assert.equal(repair(9.99, 10), 100);
+    assert.equal(repair(wholeAt(10), 10), 0);
+    let last = 100;
+    for (let t = 10; t <= 10.5; t += 1 / 60) {
+      const value = repair(t, 10);
+      assert.ok(onGrid(value) && value <= last, `${t.toFixed(3)} : ${value}`);
+      last = value;
+    }
+  });
+
+  it('brise le titre d’un coup puis le répare, entier au début et à la fin de sa seconde', () => {
+    assert.equal(shatter(0, 0), 0);
+    assert.equal(shatter(TITLE.duration * TITLE.breakShare, 0), 100);
+    assert.equal(shatter(TITLE.duration, 0), 0);
+  });
+
+  it('fêle le numéro d’un panneau de 35 à 85, puis le ramène à 35', () => {
+    assert.equal(crack(4.9, 5), CRACK.rest);
+    assert.equal(crack(5 + CRACK.rise, 5), CRACK.peak);
+    assert.equal(crack(5 + CRACK.rise + CRACK.fall, 5), CRACK.rest);
+  });
+
+  it('brise un mot, le garde brisé, puis le répare', () => {
+    assert.equal(breakAndRebuild(0.99, 1, 4), 0);
+    assert.equal(breakAndRebuild(1 + BREAK.duration, 1, 4), 100);
+    assert.equal(breakAndRebuild(3.99, 1, 4), 100);
+    assert.equal(breakAndRebuild(4 + REPAIR, 1, 4), 0);
+  });
+});
+
+describe('les panneaux entre les battements', () => {
+  it('montent, se posent au début du battement, puis redescendent ; rien hors de leur fenêtre', () => {
+    const [from, to] = panelWindow(10);
+    assert.equal(panelOffset(from - 0.01, 10), null);
+    assert.ok(near(panelOffset(from, 10), 1));
+    assert.equal(panelOffset(10, 10), 0);
+    assert.equal(panelOffset(10 + PANEL.hold, 10), 0);
+    assert.equal(panelOffset(to, 10), null);
+    let last = 1;
+    for (let t = from; t < 10; t += 0.02) {
+      const offset = panelOffset(t, 10);
+      assert.ok(offset <= last + 1e-9, `il monte sans redescendre (${t.toFixed(2)})`);
+      last = offset;
+    }
+  });
+});
+
+describe("l'habillage de l'épisode 1", () => {
+  const direction = new Direction();
+  const at = (id, seconds) => direction.at(id, seconds);
+
+  it('ne fait jamais deux fractures à la fois, ni sur les battements prévus ni sur une voix plus lente', () => {
+    const slower = new Direction(new Timeline(PLAN.map((beat) => ({ id: beat.id, seconds: beat.seconds * 1.25 }))));
+    for (const [name, d] of [['prévu', direction], ['voix plus lente', slower]]) {
+      const fractures = d.fractures();
+      for (let k = 1; k < fractures.length; k++) {
+        assert.ok(fractures[k].window[0] >= fractures[k - 1].window[1] - 1e-9, `${name} : « ${fractures[k - 1].kind} » et « ${fractures[k].kind} » se chevauchent`);
+      }
+    }
+  });
+
+  it('ouvre sur le titre pendant une seconde, puis montre la ligne d’état du battement en cours', () => {
+    assert.equal(direction.chrome(0.5).title.shown, true);
+    assert.equal(direction.chrome(0.5).status.shown, false);
+    assert.equal(direction.chrome(0.5).caption, null, 'aucun sous-titre sous le titre');
+    assert.equal(direction.chrome(TITLE.duration).title.shown, false);
+    assert.equal(direction.chrome(at('server', 3)).status.index, 3);
+  });
+
+  it('pose un panneau à chaque battement qui en a un, numéroté, montant puis descendant tour à tour', () => {
+    const seen = PANELS.map(({ beat }) => direction.chrome(at(beat, 0)).panel);
+    assert.deepEqual(seen.map((panel) => panel.number), [2, 3, 4, 5]);
+    assert.deepEqual(seen.map((panel) => panel.kind), ['rise', 'fall', 'rise', 'fall']);
+    assert.equal(direction.chrome(at('server', 6)).panel, null);
+  });
+
+  it('se pose, en mouvement réduit, sur chaque battement sans panneau, sans titre, son sous-titre entier', () => {
+    for (const beat of direction.timeline.beats) {
+      const chrome = direction.chrome(Math.max(beat.start, beat.end - (PANEL.rise + 0.1)));
+      assert.equal(chrome.panel, null, beat.id);
+      assert.equal(chrome.title.shown, false, beat.id);
+      if (chrome.caption) assert.equal(chrome.caption.frac, 0, beat.id);
+    }
+  });
+
+  it('garde le même habillage pour le même instant, dans n’importe quel ordre', () => {
+    const times = [0.4, 21.9, 10.5, 44.6, 26.2];
+    const first = times.map((t) => JSON.stringify(direction.chrome(t)));
+    assert.deepEqual([...times].reverse().map((t) => JSON.stringify(direction.chrome(t))).reverse(), first);
+  });
+});
+
+describe('les couleurs du site, et rien d’autre', () => {
+  const PALETTE = ['#000000', '#0e0c08', '#17140d', '#e0b04a', '#f5cf6e', '#9a7420', '#f6f4ef', '#a8a193', '#57514a'];
+
+  it('n’emploie que les jetons du site, et distingue les fichiers par leur forme', () => {
+    for (const colour of Object.values(INK)) assert.ok(PALETTE.includes(colour), colour);
+    for (const line of LINES) assert.ok(PALETTE.includes(line.ink), line.key);
+    assert.deepEqual(Object.values(FILES).map((file) => file.shape), ['hex', 'diamond', 'shard']);
+    for (const file of Object.values(FILES)) assert.ok(SHAPES[file.shape], file.label);
+  });
+
+  it('n’écrit aucune autre couleur dans la scène ni dans l’habillage', async () => {
+    const { readFile } = await import('node:fs/promises');
+    for (const name of ['scene.js', 'chrome.js']) {
+      const source = await readFile(new URL(`../../js/learn/${name}`, import.meta.url), 'utf8');
+      const colours = [...source.matchAll(/#[0-9a-f]{3,8}\b/gi)].map(([hex]) => hex.toLowerCase()).filter((hex) => hex !== '#fff');
+      assert.deepEqual(colours, [], name);
+    }
   });
 });
 

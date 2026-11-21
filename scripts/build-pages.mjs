@@ -119,10 +119,8 @@ const LEARN = {
   fallback: 'en',
   episode: 1,
   entry: '/js/learn/main.js',
-  // La pastille de chaque battement prend la couleur de la ligne de métro qu'il emprunte (or : le serveur).
-  beatColours: ['green', 'green', 'green', 'gold', 'red', ''],
   // Classes que le module de la page ajoute lui-même : leurs règles restent dans la feuille copiée.
-  runtimeClasses: ['is-dark', 'is-ready', 'learn-film'],
+  runtimeClasses: ['is-dark', 'is-ready', 'is-repairing', 'learn-film', 'learn-film--clean'],
 };
 /** L'adresse de l'épisode dans une langue : /learn/1/, /en/learn/1/. */
 const episodePath = (code) => `${languageOf(code).base}learn/${LEARN.episode}/`;
@@ -253,7 +251,7 @@ export async function buildPages({ root, out, imports }) {
       css: CSS_SLOT,
       afterFirstPaint: afterFirstPaintScript({ stylesheets: [FONTS], modules: learnModules, entry: LEARN.entry }),
       dots: page.beats
-        .map((name, i) => `<li><button class="learn-step${LEARN.beatColours[i] ? ` learn-step--${LEARN.beatColours[i]}` : ''}" type="button" data-learn-dot>${escape(name)}</button></li>`)
+        .map((name) => `<li><button class="learn-step" type="button" data-learn-dot>${escape(name)}</button></li>`)
         .join('\n        '),
       narration: page.narration.map((line) => `<li>${escape(line)}</li>`).join('\n        '),
       glossary: page.glossary.map(([term, meaning]) => `<div><dt>${escape(term)}</dt><dd>${escape(meaning)}</dd></div>`).join('\n        '),
