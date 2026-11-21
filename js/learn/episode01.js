@@ -12,7 +12,7 @@
 import { EASE, phase, pulse } from './ease.js';
 import { Shots } from './camera.js';
 import { Timeline } from './timeline.js';
-import { LINES, STATIONS, fractionNear, linePoints, pointAlong } from './world.js';
+import { LINES, PACKET, STATIONS, fractionNear, linePoints, pointAlong } from './world.js';
 import { PANEL, panelOffset } from './transitions.js';
 import { REPAIR, TITLE, breakAndRebuild, crack, repair, shatter, wholeAt, windows } from './frac.js';
 
@@ -64,6 +64,12 @@ export const PANELS = Object.freeze([
   Object.freeze({ beat: 'back', kind: 'fall' }),
 ]);
 
+/**
+ * Le changement de plan caché par un panneau : il commence `lead` secondes avant le battement et dure
+ * `blend` secondes, tant que le panneau couvre l'image (un test le vérifie).
+ */
+export const CUT = Object.freeze({ lead: 0.15, blend: 0.45 });
+
 /** Le mot qui se brise dans le binaire : il se lit pareil en français et en anglais. */
 export const WORD = 'PAGE ?';
 /** Quand il se brise (secondes prévues dans « binary ») : après le premier sous-titre du binaire, réparé. */
@@ -95,6 +101,9 @@ const FRAMES = Object.freeze({
   network: Object.freeze({ cx: 230, cy: 560, width: 560 }),
   // Serré sur le jour et la nuit (y 267), la baie et le plateau (y 580) : ils tiennent entre 27 % et 78 %.
   server: Object.freeze({ cx: 680, cy: 424, width: 360 }),
+  // Le binaire en plan large, du téléphone au serveur : la ligne part du téléphone dans l'image, la barre
+  // d'adresse tient entière au-dessus de la légende des applis, le serveur sous la bande des sous-titres.
+  route: Object.freeze({ cx: 470, cy: 542, width: 640 }),
 });
 
 /** Les trois documents qui reviennent : leur ligne, et leur départ décalé (secondes prévues dans « back »). */
@@ -239,7 +248,9 @@ export class Direction {
     if (t < binaryFrom) return { ...base, form: 'mark', label: '?' };
     const { breaks, rebuilds } = this.word;
     const scattered = phase(t, breaks, breaks + 0.45) * (1 - phase(t, rebuilds, arrive));
-    return { ...base, form: 'word', label: WORD, frac: breakAndRebuild(t, breaks, rebuilds), bits: scattered, bytes: BYTES };
+    // Le paquet voyage sous la tête et glisse à gauche en approchant du serveur : il s'arrête avant la baie.
+    const packet = { dx: -PACKET.shift * EASE.inOut(phase(t, this.request.leave, arrive)), dy: PACKET.drop };
+    return { ...base, form: 'word', label: WORD, frac: breakAndRebuild(t, breaks, rebuilds), bits: scattered, bytes: BYTES, packet };
   }
 
   /** Les trois documents en route vers le téléphone. */
@@ -265,15 +276,20 @@ export class Direction {
   #shots() {
     const still = (framing) => () => framing;
     const at = (id, seconds) => this.at(id, seconds);
+    // Aux battements qu'ouvre un panneau, la caméra change de plan derrière lui, pendant qu'il couvre l'image
+    // (CUT) : à son départ, le nouveau plan est déjà cadré, et aucun texte ne glisse coupé par le bord.
+    const behindPanel = (id) => this.timeline.beat(id).start - CUT.lead;
     return [
       { at: 0, blend: 0, frame: still(FRAMES.screen) },
       { at: at('ask', 6.5), blend: 1.0, frame: this.#ride('request', 470) },
-      { at: at('internet', 0.3), blend: 1.4, frame: still(FRAMES.network) },
-      { at: at('binary', 0.2), blend: 1.0, frame: this.#ride('request', 470) },
-      { at: at('server', 0.2), blend: 1.0, frame: still(FRAMES.server) },
-      { at: at('back', 0.3), blend: 1.0, frame: this.#ride('html', 560) },
-      // La fin reste sur le téléphone et ses trois fichiers, cadrée comme le début : la boucle se referme.
-      { at: at('back', 4.4), blend: 1.0, frame: still(FRAMES.screen) },
+      { at: behindPanel('internet'), blend: CUT.blend, frame: still(FRAMES.network) },
+      { at: behindPanel('binary'), blend: CUT.blend, frame: still(FRAMES.route) },
+      { at: behindPanel('server'), blend: CUT.blend, frame: still(FRAMES.server) },
+      // Le retour dans le même plan large que l'aller : les trois fichiers parcourent tout le trajet.
+      { at: behindPanel('back'), blend: CUT.blend, frame: still(FRAMES.route) },
+      // La fin reste sur le téléphone et ses trois fichiers, cadrée comme le début : la boucle se referme. La
+      // caméra s'y avance pendant que les fichiers arrivent, et l'a cadré avant qu'ils ne s'affichent à l'écran.
+      { at: at('back', 3.6), blend: 1.0, frame: still(FRAMES.screen) },
     ];
   }
 

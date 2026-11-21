@@ -116,6 +116,13 @@ export const DAY_NIGHT = Object.freeze({ x: 680, y: 284, r: 17 });
 /** Le plateau du serveur, sous la baie : il y pose les trois documents, comme un serveur au restaurant. */
 export const TRAY = Object.freeze({ x: 610, y: 566, width: 140 });
 
+/**
+ * Le paquet de données du binaire : « PAGE ? » sur sa plaque, relié à la tête de la ligne par un filet d'or.
+ * Il voyage sous la tête (`drop`) et glisse vers la gauche (`shift`) à l'approche du serveur : sa plaque
+ * (352 × 104 à l'échelle 1) s'arrête à 40 unités au moins de la baie, et ses octets restent dans l'image.
+ */
+export const PACKET = Object.freeze({ scale: 0.75, drop: 120, shift: 190, plate: Object.freeze({ width: 352, height: 104 }) });
+
 /** Un document : sa largeur et sa hauteur, le coin plié. */
 export const DOC = Object.freeze({ width: 30, height: 40, fold: 9 });
 

@@ -5,7 +5,7 @@
  * la scène le peint. Les fichiers se distinguent par leur forme (hexagone, losange, éclat), jamais par
  * une couleur. Aucune phrase dans l'image : une seule image sert toutes les langues.
  */
-import { BAR, DAY_NIGHT, DOC, FILES, GLOBE, GROUND, INK, LINES, NETWORK, PAGE, PHONE, SCREEN, SERVER, SHAPES, STATIONS, TRAY, WORLD, linePoints, pointAlong, polylineLength } from './world.js';
+import { BAR, DAY_NIGHT, DOC, FILES, GLOBE, GROUND, INK, LINES, NETWORK, PACKET, PAGE, PHONE, SCREEN, SERVER, SHAPES, STATIONS, TRAY, WORLD, linePoints, pointAlong, polylineLength } from './world.js';
 import { chamfer, fixed, shapePoints, svg, svgText } from './svg.js';
 import { fracClass } from './frac.js';
 import { lerp } from './ease.js';
@@ -54,7 +54,7 @@ const CODE = Object.freeze([
 /** Les octets qui flottent autour du mot brisé, à leur place autour de lui (unités du jeton). */
 const BIT_PLACES = Object.freeze([[-196, -96], [84, -118], [-170, 116], [120, 102], [-24, 158]]);
 /** La plaque du mot en route, un paquet de données : assez large pour « PAGE ? » en Clivage à 80. */
-const WORD_PLATE = Object.freeze({ x: -176, y: -58, width: 352, height: 104 });
+const WORD_PLATE = Object.freeze({ x: -PACKET.plate.width / 2, y: -58, width: PACKET.plate.width, height: PACKET.plate.height });
 
 const toRgb = (hex) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
 /** Une couleur entre `a` et `b` (#rrggbb), pour `f` entre 0 et 1. */
@@ -256,7 +256,7 @@ export class Scene {
   #server() {
     const { x, y, width, height, units } = SERVER;
     const group = svg('g', {}, this.root);
-    svg('path', { d: chamfer({ x, y, width, height }, 18), fill: INK.plateHi, stroke: INK.gold, 'stroke-width': 3.5, 'stroke-linejoin': 'round' }, group);
+    svg('path', { class: 'learn-server', d: chamfer({ x, y, width, height }, 18), fill: INK.plateHi, stroke: INK.gold, 'stroke-width': 3.5, 'stroke-linejoin': 'round' }, group);
     const leds = [];
     for (let k = 0; k < units; k++) {
       const top = y + 18 + k * 60;
@@ -394,15 +394,17 @@ export class Scene {
     const mark = svg('g', {}, group);
     svg('polygon', { points: shapePoints(SHAPES.hex, 0, 0, 30), fill: INK.goldHi }, mark);
     const markLabel = svgText('?', { x: 0, y: 13, class: 'learn-mark', fill: INK.ground, 'text-anchor': 'middle' }, mark);
+    // Le filet qui relie le paquet à la tête de la ligne (une légende, comme dans une interface augmentée).
+    const leader = svg('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: INK.gold, 'stroke-width': 2, 'stroke-opacity': 0.8 }, group);
     const word = svg('g', {}, group);
     const bits = BIT_PLACES.map(([x, y]) => svgText('', { x, y, class: 'learn-bits', fill: INK.gold, 'text-anchor': 'middle' }, word));
     // La plaque sépare le mot de la ligne et de sa plume qu'il chevauche.
-    svg('path', { d: chamfer(WORD_PLATE, 18), fill: INK.ground, 'fill-opacity': 0.86, stroke: INK.gold, 'stroke-opacity': 0.5, 'stroke-width': 2 }, word);
+    svg('path', { class: 'learn-packet', d: chamfer(WORD_PLATE, 18), fill: INK.ground, 'fill-opacity': 0.86, stroke: INK.gold, 'stroke-opacity': 0.5, 'stroke-width': 2 }, word);
     const wordText = svgText('', { x: 0, y: 22, class: 'learn-word frac-0', fill: 'url(#learn-gold)', 'text-anchor': 'middle' }, word);
     const pill = svg('g', {}, group);
     const pillBody = svg('path', { d: chamfer({ x: -60, y: -21, width: 120, height: 42 }, 10), fill: INK.goldHi }, pill);
     const pillLabel = svgText('', { x: 0, y: 8, class: 'learn-token', fill: INK.ground, 'text-anchor': 'middle' }, pill);
-    return { group, mark, markLabel, word, wordText, bits, pill, pillBody, pillLabel };
+    return { group, mark, markLabel, leader, word, wordText, bits, pill, pillBody, pillLabel };
   }
 
   /** Peint un état (calculé par la mise en scène) : caméra, lignes, stations, serveur, jeton, écran. */
@@ -503,7 +505,7 @@ export class Scene {
    * apparaissent quand il est brisé.
    */
   #applyToken(token) {
-    const { group, mark, markLabel, word, wordText, bits, pill, pillBody, pillLabel } = this.token;
+    const { group, mark, markLabel, leader, word, wordText, bits, pill, pillBody, pillLabel } = this.token;
     if (!token) {
       group.setAttribute('opacity', 0);
       return;
@@ -511,11 +513,17 @@ export class Scene {
     const form = token.form ?? 'pill';
     mark.setAttribute('opacity', form === 'mark' ? 1 : 0);
     word.setAttribute('opacity', form === 'word' ? 1 : 0);
+    leader.setAttribute('opacity', form === 'word' ? 1 : 0);
     pill.setAttribute('opacity', form === 'pill' ? 1 : 0);
     if (form === 'mark') {
       if (markLabel.textContent !== token.label) markLabel.textContent = token.label;
     } else if (form === 'word') {
       if (wordText.textContent !== token.label) wordText.textContent = token.label;
+      const { dx, dy } = token.packet ?? { dx: 0, dy: 0 };
+      word.setAttribute('transform', `translate(${fixed(dx)} ${fixed(dy)}) scale(${PACKET.scale})`);
+      // Du centre de la tête au bord haut de la plaque.
+      leader.setAttribute('x2', fixed(dx));
+      leader.setAttribute('y2', fixed(dy + WORD_PLATE.y * PACKET.scale));
       setClass(wordText, `learn-word ${fracClass(token.frac)}`);
       bits.forEach((bit, k) => {
         const value = token.bytes[k] ?? '';

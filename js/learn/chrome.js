@@ -18,11 +18,12 @@ const FRAME = Object.freeze({ width: 900, height: 1600 });
 
 /**
  * Les deux panneaux, comme les marches du site : la marche qui monte (34 % de la largeur, numéro à droite)
- * et celle qui descend (60 %, numéro à gauche). Le bord haut se pose sous la bande des sous-titres.
+ * et celle qui descend (60 %, numéro à gauche). Le bord haut se pose sous la plaque des sous-titres (vers
+ * 31 % de la hauteur) ; le numéro est à cheval sur ce bord, comme ceux du site, et se lit d'un coup d'œil.
  */
 const PANELS = Object.freeze({
-  rise: Object.freeze({ plate: 'M0 330H306L346 290H900V1600H0Z', edge: 'M0 330H306L346 290H900', index: { x: 870, y: 560, anchor: 'end' }, shard: { x: 270, y: 262, angle: 18 } }),
-  fall: Object.freeze({ plate: 'M0 250H540L580 290H900V1600H0Z', edge: 'M0 250H540L580 290H900', index: { x: 30, y: 520, anchor: 'start' }, shard: { x: 618, y: 238, angle: -24 } }),
+  rise: Object.freeze({ plate: 'M0 540H306L346 500H900V1600H0Z', edge: 'M0 540H306L346 500H900', index: { x: 870, y: 840, anchor: 'end' }, shard: { x: 270, y: 472, angle: 18 } }),
+  fall: Object.freeze({ plate: 'M0 460H540L580 500H900V1600H0Z', edge: 'M0 460H540L580 500H900', index: { x: 30, y: 820, anchor: 'start' }, shard: { x: 618, y: 448, angle: -24 } }),
 });
 
 /** Pose une classe ou un texte seulement s'ils changent : une valeur qui ne bouge pas ne coûte rien. */
