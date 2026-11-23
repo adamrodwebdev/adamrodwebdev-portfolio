@@ -19,8 +19,8 @@ const mount = (component, selector, messages, provided = {}) => {
 
 /**
  * Monte un îlot quand son élément approche de l'écran (1.17.0), une fois et demie la hauteur de la fenêtre
- * avant d'y arriver : le carrousel des créations, sept écrans sous l'arrivée, ne pèse plus sur le démarrage, et
- * son remplacement de la liste statique se fait hors de la vue (aucun saut visible).
+ * avant d'y arriver : les deux carrousels, quatre à sept écrans sous l'arrivée, ne pèsent plus sur le
+ * démarrage, et leur remplacement de la liste statique se fait hors de la vue (aucun saut visible).
  */
 const mountNear = (component, selector, messages, provided) => {
   const el = document.querySelector(selector);
@@ -51,8 +51,9 @@ export async function mountIslands() {
   const soundtrack = createSoundtrack({ engineOptions: { voices: (navigator.hardwareConcurrency || 8) <= 4 ? 2 : 3 } });
   return inTurn([
     () => mount(NavBar, '#nav-app', messages, { soundtrack }),
-    // Deux carrousels (1.17.0) : les réalisations au démarrage, les créations à l'approche de leur section
-    () => mount(ProjectSwiper, PROJECT_GROUPS.work, messages, { projectGroup: 'work' }),
+    // Deux carrousels (1.17.0), chacun à l'approche de sa section (1.18.1) : monté au démarrage, celui des
+    // réalisations mettait en page ses diapositives dans la même tâche, la plus longue du chargement sur mobile.
+    () => mountNear(ProjectSwiper, PROJECT_GROUPS.work, messages, { projectGroup: 'work' }),
     () => mountNear(ProjectSwiper, PROJECT_GROUPS.lab, messages, { projectGroup: 'lab' }),
     () => mount(SoundtrackPlayer, '#soundtrack-app', messages, { soundtrack }),
     () => mount(ContactForm, '#contact-app', messages),

@@ -75,7 +75,9 @@ export default {
       if (state.playing) frame = requestAnimationFrame(draw);
     }
     watch(() => state.playing, () => { cancelAnimationFrame(frame); draw(); });
-    onMounted(draw);
+    // Le premier tracé lit la taille du canevas : à l'image suivante, la mise en page faite, jamais pendant le
+    // montage (la lecture forçait la mise en page de toute la page dans la tâche de l'îlot).
+    onMounted(() => { frame = requestAnimationFrame(draw); });
     onBeforeUnmount(() => cancelAnimationFrame(frame));
 
     return {
