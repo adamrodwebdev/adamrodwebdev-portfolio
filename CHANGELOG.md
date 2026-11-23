@@ -2,6 +2,16 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.20.0] - 2026-11-23
+
+### Ajouté
+- **L'emblème du hero arrive en éclats** : l'hexagone d'or et son A, dessiné en relief (bord d'or, biseau, face de verre, A en relief), se forme de 42 éclats qui arrivent du côté de l'œil, se posent dans un éclair d'or ; les coutures se referment par paliers, puis un reflet passe. Le geste du film de la marque, refait en code : aucune vidéo, aucune requête de plus, environ 4 Ko compressés.
+- **Entier quand il le faut** : sans JavaScript, avec le mouvement réduit, hors de l'écran, ou si l'effet n'a pas commencé au bout de 4 s.
+
+### Modifié
+- **L'emblème dessiné au trait laisse la place à l'emblème en relief** ; ses anneaux restent.
+- **Le panneau du hero passe sous l'emblème** : il recouvrait son coin, et la moitié du A sur téléphone.
+
 ## [1.18.0] - 2026-11-18
 
 ### Ajouté

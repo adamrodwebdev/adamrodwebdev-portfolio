@@ -17,4 +17,8 @@ import('./islands.js').then(({ mountIslands }) => mountIslands());
 // Effets décoratifs lancés quand le navigateur est disponible (préserve les performances)
 const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
 const afterLoad = (fn) => (document.readyState === 'complete' ? fn() : addEventListener('load', fn, { once: true }));
-afterLoad(() => idle(() => { initShards(); initCursor(); initTilt(); }));
+afterLoad(() => idle(() => {
+  initShards(); initCursor(); initTilt();
+  // L'emblème du hero arrive en éclats (1.20.0) : son module n'est demandé qu'ici, jamais au premier chargement.
+  import('./fx/emblem3d.js').then(({ playEmblem }) => playEmblem(document));
+}));
