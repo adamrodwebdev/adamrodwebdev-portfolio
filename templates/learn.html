@@ -106,6 +106,9 @@
       font: 600 3.6cqi/1.2 var(--font-signature); letter-spacing: 0.1em; text-transform: uppercase; color: #e0b04a;
     }
     .learn-status i { font-style: normal; color: #a8a193; }
+    /* Dans le film, la ligne d'état reste dans la zone sûre des applis (kit vidéo : x 32 à 918, y dès 192 à
+       1080 × 1920), alignée sur la plaque, et finit avant elle (y 232). */
+    .learn-film .learn-status { top: 10%; left: 5.37%; right: 15%; font-size: 2.6cqi; line-height: 1.15; }
     /* La plaque du sous-titre, celle du kit vidéo (.helpers/social-video-style, mesures à 1080 px de large) :
        chanfreinée, liseré d'or tracé par une plaque intérieure. Le sous-titre en capitales de Clivage arrive
        brisé et se répare ; dans le film, l'étiquette de la série au-dessus et le pseudo en dessous, entiers. */
@@ -127,6 +130,10 @@
     .learn-plate__handle { display: none; margin: 1.3cqi 0 0; font: 600 3.15cqi/1.1 var(--font-body); color: #a8a193; }
     .learn-film .learn-plate__tag { display: flex; }
     .learn-film .learn-plate__handle { display: block; }
+    /* Dans le film, les mesures exactes du kit : 2 px de liseré et un tiret de 3 px à 1080 px de large, sans
+       les minimums qui servent au petit lecteur de la page (à 360 px, ils doublaient l'un et l'autre). */
+    .learn-film .learn-plate::before { inset: 0.185cqi; }
+    .learn-film .learn-plate__tag::before { height: 0.28cqi; }
     /* Le titre de la première seconde : le nom de la série se brise et se répare. */
     .learn-titlecard { position: absolute; inset: 0; display: grid; place-content: center; gap: 3cqi; padding: 8%; text-align: center; background: #000; }
     .learn-titlecard__series {

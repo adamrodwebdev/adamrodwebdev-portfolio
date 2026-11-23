@@ -693,6 +693,13 @@ test('film : aucun texte rogné par le cadre, les octets dans la zone sûre, le 
         if (gap < 40) found.push(`${at} s : le paquet à ${Math.round(gap)} px du serveur`);
       }
       const plate = document.querySelector('[data-learn-plate]');
+      const status = document.querySelector('[data-learn-status]');
+      if (!status.hidden) {
+        const box = status.getBoundingClientRect();
+        if (box.left < SAFE.left || box.right > SAFE.right || box.top < 192) found.push(`${at} s : la ligne d'état hors de la zone sûre`);
+        if (!plate.hidden && box.bottom > plate.getBoundingClientRect().top) found.push(`${at} s : la ligne d'état touche la plaque`);
+      }
+      if (!plate.hidden && /\u202f/.test(document.querySelector('[data-learn-caption]').textContent)) found.push(`${at} s : une espace fine que Clivage n'a pas`);
       for (const index of document.querySelectorAll('[data-learn-overlay] .learn-index')) {
         if (!seen(index) || plate.hidden) continue;
         const top = index.getBoundingClientRect().top;
@@ -703,6 +710,18 @@ test('film : aucun texte rogné par le cadre, les octets dans la zone sûre, le 
     return found;
   });
   expect(faults).toEqual([]);
+  // Les mesures du kit, filmées à 360 px de large (× 3) : 2 px de liseré, un tiret de 3 px.
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page.goto('/learn/1/?film');
+  await page.waitForFunction(() => window.EPISODE);
+  await page.evaluate(() => window.EPISODE.ready);
+  await page.evaluate(() => window.EPISODE.render(3));
+  const kit = await page.evaluate(() => ({
+    edge: Number.parseFloat(getComputedStyle(document.querySelector('[data-learn-plate]'), '::before').top) * 3,
+    dash: Number.parseFloat(getComputedStyle(document.querySelector('[data-learn-tag]'), '::before').height) * 3,
+  }));
+  expect(Math.round(kit.edge), 'le liseré de la plaque, en pixels du film').toBe(2);
+  expect(Math.round(kit.dash), 'le tiret de l’étiquette, en pixels du film').toBe(3);
 });
 
 test('épisode : choisir un battement montre sa scène, jamais son panneau en travers (1.19.0)', async ({ page }) => {
