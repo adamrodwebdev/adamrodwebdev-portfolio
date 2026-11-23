@@ -22,10 +22,16 @@
   --danger: #ff6b5e;
   --shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
 
-  /* La police signature (1.14.0) : Clivage pour tout l'affichage, son repli calé juste après */
-  --font-signature: "Clivage", "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  /* La police signature (1.14.0) : Clivage pour tout l'affichage, son repli calé juste après. Chaque pile
+     existe aussi sans la police du site (« local ») : l'accueil s'en sert tant qu'un bloc n'a pas reçu ses
+     polices (1.18.1, règle « Polices bloc par bloc » plus bas). */
+  --font-signature-local: "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  --font-signature-web: "Clivage", var(--font-signature-local);
+  --font-body-local: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body-web: "Barlow", var(--font-body-local);
+  --font-signature: var(--font-signature-web);
   --font-display: var(--font-signature);
-  --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-body-web);
 
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.92rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
@@ -1194,5 +1200,26 @@ span.sound-deck__viz {
 /* Russe : la signature parle russe (1.15.0), l'affichage la garde. Barlow n'a pas de cyrillique : le texte
    courant prend des polices système qui en ont, plutôt qu'un mélange au hasard. */
 :root:lang(ru) {
-  --font-body: "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+  --font-body-local: "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+  --font-body-web: var(--font-body-local);
 }
+
+/* Polices bloc par bloc (1.18.1). Sur mobile, l'arrivée des polices du site remettait toute la page en
+   page dans une seule tâche, la plus longue du chargement : Chrome mesure chaque lettre de chaque taille
+   d'une police web, et l'accueil en compte des dizaines. Le chargeur de l'accueil (scripts/after-first-paint.mjs)
+   pose fonts-staged avant le premier affichage, charge les polices, puis les donne aux blocs de la page un
+   par un (fonts-on), ceux de l'écran d'abord, chacun dans sa tâche. Le menu mobile, déplacé dans body par
+   Vue, les prend directement. Sans JavaScript, rien de tout cela : les piles complètes s'appliquent. */
+html.fonts-staged {
+  --font-signature: var(--font-signature-local);
+  --font-display: var(--font-signature);
+  --font-body: var(--font-body-local);
+}
+html.fonts-staged :is(.fonts-on, .mobile-menu) {
+  --font-signature: var(--font-signature-web);
+  --font-display: var(--font-signature);
+  --font-body: var(--font-body-web);
+}
+/* Le texte courant d'un bloc hérite de body, qui garde la pile locale : le bloc la redéclare, sans rien
+   imposer aux éléments qui ont leur propre police (spécificité nulle). */
+:where(html.fonts-staged :is(.fonts-on, .mobile-menu)) { font-family: var(--font-body); }

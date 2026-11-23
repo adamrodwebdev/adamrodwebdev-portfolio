@@ -37,24 +37,29 @@ export function repair(el) {
 }
 
 /* Le hero s'affiche entier ; une fois la signature chargée et son entrée (slice-in) finie, il se brise
-   puis se répare. Sans la police, ou sans JavaScript, il reste simplement entier. */
+   puis se répare. Sans la police, ou sans JavaScript, il reste simplement entier. Quand la page donne ses
+   polices bloc par bloc (1.18.1, classe fonts-staged), il attend aussi que la sienne lui soit donnée. */
 const SIGNATURE = 'Clivage';
 const HERO_ENTRY_MS = 1600; // slice-in : 1,1 s, plus 0,15 s pour la seconde ligne, compté depuis la navigation
 export function initShatterHero() {
   const lines = document.querySelectorAll('.hero [data-repair]');
   if (reduce || !lines.length || !document.fonts) return;
+  const staged = document.documentElement.classList.contains('fonts-staged');
   const loaded = () => [...document.fonts].some((face) => face.family.replace(/["']/g, '') === SIGNATURE && face.status === 'loaded');
+  const ready = () => loaded() && (!staged || [...lines].every((el) => el.closest('.fonts-on')));
   const start = () => {
     const wait = Math.max(0, HERO_ENTRY_MS - performance.now());
     lines.forEach((el, i) => setTimeout(() => el.classList.add('is-shattering'), wait + i * 160));
   };
-  if (loaded()) { start(); return; }
+  if (ready()) { start(); return; }
   const onDone = () => {
-    if (!loaded()) return;
+    if (!ready()) return;
     document.fonts.removeEventListener('loadingdone', onDone);
+    document.removeEventListener('fontsapplied', onDone);
     start();
   };
   document.fonts.addEventListener('loadingdone', onDone);
+  document.addEventListener('fontsapplied', onDone);
 }
 
 /* ---------- Curseur personnalisé ---------- */

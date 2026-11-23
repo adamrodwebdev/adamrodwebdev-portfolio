@@ -2,6 +2,15 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.18.1] - 2026-11-23
+
+### Corrigé
+- **L'accueil ne bloque plus le téléphone pendant son chargement.** Sur mobile, Lighthouse le notait de 96 à 99 par le seul temps de blocage. Trois causes, mesurées par des traces de Chrome au ralenti 4 ×, variante par variante :
+  - **L'arrivée des polices remettait toute la page en page d'un coup** (300 à 400 ms au ralenti). Chrome mesure chaque lettre de chaque taille d'une police web à sa première mise en page (0,3 ms par lettre et par taille pour Barlow, 0,6 pour Clivage, sur un téléphone simulé), et l'accueil emploie Clivage à 19 tailles et Barlow à 14 avant ses îlots. Ce n'est ni l'axe variable ni le dessin de Clivage : une copie fixe de la police, ou Barlow sous son nom, coûtent autant. Les polices sont maintenant chargées, puis données aux morceaux de la page un par un, ceux de l'écran d'abord, chacun dans sa tâche (`scripts/after-first-paint.mjs`, règle « Polices bloc par bloc » de `css/style.css`). Le titre du hero attend la sienne pour se briser. Sans JavaScript, rien ne change.
+  - **Le carrousel des réalisations se montait au démarrage**, quatre à sept écrans sous l'arrivée, et mettait ses diapositives en page dans la même tâche (180 ms au ralenti) : il se monte maintenant à l'approche de sa section, comme celui des créations.
+  - **Le lecteur de la bande-son lisait la taille de son canevas pendant son montage**, ce qui forçait la mise en page : son premier tracé attend l'image suivante.
+- Mesures, sur le serveur local qui applique les en-têtes de Netlify, machine au repos, en passages alternés avec la version précédente : temps de blocage médian au ralenti 4 × de 631 à 649 ms → 49 ms ; Lighthouse mobile, cinq passages chacun, 96 à 99 (blocage simulé médian 164 ms) → 99 à 100 (74 ms). Ce qui reste vient de la première mise en page de la page, avant le premier affichage, que la simulation de Lighthouse place parfois juste après : sa durée suit le nombre de tailles de police différentes.
+
 ## [1.18.0] - 2026-11-18
 
 ### Ajouté
