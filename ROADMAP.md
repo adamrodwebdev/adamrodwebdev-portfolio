@@ -108,6 +108,8 @@ Statut : demandée le 24 novembre 2026 par la session du jeu, à la demande de l
 - **Le texte** : celui de la session du jeu (anglais, français, indonésien, russe), mis aux règles du site : sa feuille, la marque AdamRodWebTech (le texte disait AdamRodWebDev), l'éditeur identifié comme dans les mentions légales, l'adresse de contact publique du site (`contact@adamrodwebdev.com`), la typographie française. Toute modification se fait d'abord dans le dépôt du jeu, puis ici, avec sa date.
 - **Un lien** depuis le pied de la page du jeu.
 
+- **La sauvegarde Android** (1.18.3, même jour) : la section sur le stockage dit où va la copie et comment la couper, d'après le dépôt du jeu (commit 7e9c50c).
+
 ### Ensuite
 - `app-ads.txt` à la racine du site, quand l'utilisateur aura son identifiant d'éditeur AdMob.
 
