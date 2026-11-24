@@ -67,6 +67,7 @@ assets/                 Favicons, icônes PWA, image Open Graph
 fonts/                  Clivage (la police signature, exclusive : latin et cyrillique), Barlow, Unbounded (titre de Lumirift) : WOFF2
 lumirift/               Médias de la page du jeu Lumirift ; privacy/ : la politique de confidentialité de son application Android (page écrite à la main, adresse donnée à Google Play : ne pas la déplacer)
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
+googled16b9e042ea88c46.html  Validation Google Search Console (1.18.4), servie telle quelle : ne pas supprimer
 robots.txt, sitemap.xml, manifest.webmanifest
 
 scripts/build.mjs       La génération : enchaîne les étapes ci-dessous et écrit dist/
