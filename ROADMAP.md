@@ -99,6 +99,18 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.18.2 : la politique de confidentialité de l'application Lumirift
+
+Statut : demandée le 24 novembre 2026 par la session du jeu, à la demande de l'utilisateur : Google Play exige une adresse publique avant le test fermé de l'application Android (Capacitor, `com.adamrodwebdev.lumirift`). Réalisée sur la branche `feat/1.18.2-lumirift-privacy` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur, avant le test fermé.
+
+### Ce qui a été décidé (24 novembre 2026)
+- **L'adresse** : `/lumirift/privacy/`, à côté de la page du jeu. Elle va dans la fiche Google Play et dans l'application : elle ne bouge plus.
+- **Le texte** : celui de la session du jeu (anglais, français, indonésien, russe), mis aux règles du site : sa feuille, la marque AdamRodWebTech (le texte disait AdamRodWebDev), l'éditeur identifié comme dans les mentions légales, l'adresse de contact publique du site (`contact@adamrodwebdev.com`), la typographie française. Toute modification se fait d'abord dans le dépôt du jeu, puis ici, avec sa date.
+- **Un lien** depuis le pied de la page du jeu.
+
+### Ensuite
+- `app-ads.txt` à la racine du site, quand l'utilisateur aura son identifiant d'éditeur AdMob.
+
 ## 1.18.1 : l'accueil sans temps de blocage sur mobile
 
 Statut : demandée le 23 novembre 2026 (« Yes, fix it »), une fois mesuré que la note mobile de l'accueil (96 à 99) ne venait d'aucune branche en cours ; réalisée sur la branche `perf/home-blocking-time` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
