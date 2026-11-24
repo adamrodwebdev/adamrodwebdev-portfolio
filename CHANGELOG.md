@@ -2,6 +2,11 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.18.2] - 2026-11-24
+
+### Ajouté
+- **La politique de confidentialité de l'application Android de Lumirift**, `/lumirift/privacy/`, en anglais, français, indonésien et russe : ce qui reste sur le téléphone, ce que traitent Google AdMob (publicités, formulaire de consentement) et Google Play (l'achat « sans pub »), les autorisations, le contact (`contact@adamrodwebdev.com`). Google Play exige cette adresse avant le test fermé ; elle ne bouge plus. La page du jeu y mène depuis son pied de page.
+
 ## [1.18.1] - 2026-11-23
 
 ### Corrigé
