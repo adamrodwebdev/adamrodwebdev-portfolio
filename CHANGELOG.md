@@ -12,6 +12,11 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - **L'emblème dessiné au trait laisse la place à l'emblème en relief** ; ses anneaux restent.
 - **Le panneau du hero passe sous l'emblème** : il recouvrait son coin, et la moitié du A sur téléphone.
 
+## [1.18.3] - 2026-11-24
+
+### Modifié
+- **La politique de confidentialité de l'application Lumirift dit où va la sauvegarde** (« Where your progress is kept », dans les quatre langues) : l'utilisateur a activé la sauvegarde Android des parties le 24 novembre 2026. Si la sauvegarde du téléphone est activée, Android copie la sauvegarde du jeu, et elle seule, dans le compte Google du joueur (chiffrée avec le verrouillage de l'écran depuis Android 9) ; nous ne la voyons jamais, et la page dit comment la couper. Texte repris mot pour mot du dépôt du jeu (adamrodwebdev/lumirift#75, `docs/privacy/index.html`, commit 7e9c50c), qui reste la source. La date de la page ne change pas (même jour).
+
 ## [1.18.2] - 2026-11-24
 
 ### Ajouté
