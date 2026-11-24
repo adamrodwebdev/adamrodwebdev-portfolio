@@ -22,10 +22,16 @@
   --danger: #ff6b5e;
   --shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
 
-  /* La police signature (1.14.0) : Clivage pour tout l'affichage, son repli calé juste après */
-  --font-signature: "Clivage", "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  /* La police signature (1.14.0) : Clivage pour tout l'affichage, son repli calé juste après. Chaque pile
+     existe aussi sans la police du site (« local ») : l'accueil s'en sert tant qu'un bloc n'a pas reçu ses
+     polices (1.18.1, règle « Polices bloc par bloc » plus bas). */
+  --font-signature-local: "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
+  --font-signature-web: "Clivage", var(--font-signature-local);
+  --font-body-local: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body-web: "Barlow", var(--font-body-local);
+  --font-signature: var(--font-signature-web);
   --font-display: var(--font-signature);
-  --font-body: "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-body-web);
 
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.92rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
@@ -36,6 +42,17 @@
      d'un cheveu le paragraphe en espagnol : dévoilé de gauche à droite, il devient le plus grand élément à la fin
      de son entrée, vers 0,9 s sur ordinateur, au lieu du paragraphe affiché dès le premier rendu (Lighthouse à 99). */
   --step-4: clamp(3.2rem, 2rem + 6.6vw, 8.2rem);
+
+  /* Tailles fixes de l'interface, une par rôle (1.18.1). Des tailles voisines de quelques dixièmes de pixel
+     (0,85, 0,92, 0,95 rem…) coûtaient chacune une mesure de toutes leurs lettres dans les polices du site, à
+     la première mise en page (voir README, Lighthouse) ; une par rôle allège le chargement sans rien changer
+     à l'échelle fluide (--step-*). */
+  --size-tag: 0.8rem;    /* étiquettes, compteurs : Barlow */
+  --size-label: 0.9rem;  /* libellés en capitales : Clivage */
+  --size-note: 0.9rem;   /* petit texte, notes, erreurs : Barlow */
+  --size-text: 1rem;     /* paragraphes et listes des cartes : Barlow */
+  --size-ui: 1rem;       /* boutons, menus, numéros : Clivage */
+  --size-name: 1.25rem;  /* titres de carte : Clivage */
 
   --cut: 14px;
   /* Profondeur (1.11.0) : recouvrement des panneaux, hauteur de leur marche, décalage des plaques */
@@ -202,7 +219,7 @@ body::before {
   --bcut: 12px;
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   min-height: 52px; padding: 0 28px;
-  font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--size-ui); letter-spacing: 0.08em; text-transform: uppercase;
   text-decoration: none; border: 0; cursor: pointer; isolation: isolate;
   clip-path: polygon(var(--bcut) 0, 100% 0, 100% calc(100% - var(--bcut)), calc(100% - var(--bcut)) 100%, 0 100%, 0 var(--bcut));
   transition: transform 0.4s var(--ease-out), color 0.3s, background-color 0.3s;
@@ -245,7 +262,7 @@ body::before {
 .nav__links { display: flex; gap: clamp(12px, 2.4vw, 36px); }
 .nav__links a, .nav__link {
   position: relative; text-decoration: none; font-family: var(--font-display); font-weight: 600;
-  font-size: 1.05rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 2px; color: var(--fg);
+  font-size: var(--size-ui); letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 2px; color: var(--fg);
 }
 .nav__links a::after, .nav__link::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 2px; background: var(--gold);
@@ -323,7 +340,7 @@ body::before {
 .hero__copy { min-width: 0; }
 .hero__status {
   display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px;
-  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem;
+  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label);
   color: var(--gold); padding: 6px 14px 6px 12px; border: 1px solid var(--line);
 }
 .pulse-dot { width: 8px; height: 8px; background: var(--gold-hi); border-radius: 50%; box-shadow: 0 0 0 0 var(--glow); animation: pulse 2s infinite; }
@@ -418,7 +435,7 @@ body::before {
 .section__head { max-width: 760px; margin-bottom: clamp(40px, 6vw, 72px); }
 .section__tag {
   display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px;
-  font-family: var(--font-display); font-weight: 600; font-size: 1rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
+  font-family: var(--font-display); font-weight: 600; font-size: var(--size-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
 }
 .section__tag::before { content: ""; width: 36px; height: 2px; background: currentColor; }
 .section__title { font-size: var(--step-3); text-transform: uppercase; letter-spacing: 0.01em; }
@@ -568,7 +585,7 @@ body::before {
 .is-in .aug__icon path, .is-in .aug__icon circle, html:not(.js) .aug__icon * { stroke-dashoffset: 0; }
 .aug__title { font-size: var(--step-2); text-transform: uppercase; margin-bottom: 12px; }
 .aug__text { color: var(--muted); }
-.aug__meta { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.9rem; color: var(--gold); }
+.aug__meta { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); color: var(--gold); }
 
 /* ---------- Carrousel de projets ---------- */
 .section--projects { overflow-x: clip; }
@@ -614,7 +631,7 @@ body::before {
 .slide__body { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px 24px; padding: 22px 28px 26px; }
 .slide__status {
   grid-column: 1 / -1; display: inline-flex; width: fit-content; align-items: center; gap: 8px;
-  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.85rem;
+  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: var(--size-label);
   color: var(--gold);
 }
 .slide__status::before { content: ""; width: 8px; height: 8px; background: currentColor; transform: rotate(45deg); }
@@ -622,7 +639,7 @@ body::before {
 .slide__title { font-size: var(--step-3); text-transform: uppercase; }
 .slide__desc { grid-column: 1 / 2; color: var(--muted); max-width: 52ch; }
 .slide__tags { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; }
-.slide__tags li { font-size: 0.85rem; padding: 3px 10px; border: 1px solid var(--line); color: var(--fg); }
+.slide__tags li { font-size: var(--size-tag); padding: 3px 10px; border: 1px solid var(--line); color: var(--fg); }
 /* Un lien par plateforme où jouer (Playgama, puis d'autres) */
 .slide__links { grid-column: 2; grid-row: 2 / 4; align-self: center; display: flex; flex-wrap: wrap; gap: 4px 20px; }
 .slide__link {
@@ -635,7 +652,7 @@ body::before {
 .slide__more {
   grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-block: -10px -4px; padding: 0;
   background: none; border: 0; cursor: pointer; color: var(--gold);
-  font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--size-label); letter-spacing: 0.08em; text-transform: uppercase;
 }
 .slide__more svg { width: 16px; height: 16px; transition: transform 0.4s var(--ease-out); }
 .slide__more[aria-expanded="true"] svg { transform: rotate(180deg); }
@@ -680,10 +697,10 @@ body::before {
 .protocol__step::after { z-index: -1; }
 .protocol__num {
   position: absolute; top: 0; left: 22px; width: 54px; height: 54px; display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: var(--on-gold); background: var(--gold-hi);
+  font-family: var(--font-display); font-weight: 700; font-size: var(--size-name); color: var(--on-gold); background: var(--gold-hi);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
-.protocol__step h3 { font-size: clamp(1.3rem, 1.1rem + 0.7vw, 1.75rem); overflow-wrap: anywhere; hyphens: auto; text-transform: uppercase; margin-bottom: 10px; }
+.protocol__step h3 { font-size: clamp(var(--size-name), 1.05rem + 0.7vw, 1.75rem); overflow-wrap: anywhere; hyphens: auto; text-transform: uppercase; margin-bottom: 10px; }
 .protocol__step p { color: var(--muted); }
 
 /* ---------- Bandeau défilant ---------- */
@@ -721,7 +738,7 @@ body::before {
 .cform::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 .field { position: relative; display: grid; gap: 8px; min-width: 0; }
 .field--full, .cform .field:has(textarea), .field--check, .cform > .btn, .cform__actions { grid-column: 1 / -1; }
-.field label, .field__label { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.92rem; }
+.field label, .field__label { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); }
 .field__label small { color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
 .field input:not([type="checkbox"]), .field select, .field textarea {
   width: 100%; min-height: 50px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 0;
@@ -737,8 +754,8 @@ body::before {
 .field__bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--gold-hi); transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease-out); pointer-events: none; }
 .field:focus-within .field__bar { transform: scaleX(1); }
 .field.has-error input, .field.has-error textarea, .field.has-error select { border-color: var(--danger); }
-.field__error { color: var(--danger); font-size: 0.9rem; display: flex; gap: 6px; align-items: center; }
-.field__count { position: absolute; right: 0; top: 2px; font-size: 0.82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.field__error { color: var(--danger); font-size: var(--size-note); display: flex; gap: 6px; align-items: center; }
+.field__count { position: absolute; right: 0; top: 2px; font-size: var(--size-tag); color: var(--muted); font-variant-numeric: tabular-nums; }
 .shake { animation: shake 0.45s var(--ease-out); }
 
 .chips { display: flex; flex-wrap: wrap; gap: 10px; border: 0; padding: 0; margin: 0; min-width: 0; }
@@ -753,14 +770,14 @@ body::before {
 .chip input:focus-visible + span { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
 
 .field--check { display: flex; align-items: flex-start; gap: 12px; }
-.field--check label { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.95rem; color: var(--muted); }
+.field--check label { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-weight: 400; font-size: var(--size-note); color: var(--muted); }
 .check { appearance: none; flex: none; width: 24px; height: 24px; margin: 0; border: 1.5px solid var(--gold); display: grid; place-items: center; cursor: pointer; transition: background-color 0.25s; }
 .check::after { content: ""; width: 12px; height: 7px; border: solid var(--on-gold); border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg) scale(0); transition: transform 0.3s var(--ease-out); margin-top: -3px; }
 .check:checked { background: var(--gold-hi); }
 .check:checked::after { transform: rotate(-45deg) scale(1); }
 
 .cform__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
-.cform__note { color: var(--muted); font-size: 0.9rem; }
+.cform__note { color: var(--muted); font-size: var(--size-note); }
 .submit-btn { min-width: 250px; overflow: hidden; }
 .submit-btn__progress { position: absolute; inset: auto 0 0 0; height: 3px; background: var(--on-gold); transform-origin: left; transform: scaleX(var(--p, 0)); transition: transform 0.6s var(--ease-out); }
 .cform__alert { grid-column: 1 / -1; padding: 12px 14px; border: 1px solid var(--danger); color: var(--danger); }
@@ -779,11 +796,11 @@ body::before {
 .success__ping { stroke-width: 2; opacity: 0; transform-origin: 75px 75px; animation: ping 1.6s var(--ease-out) 1.2s 2; }
 .success__title { font-size: var(--step-3); text-transform: uppercase; animation: rise 0.8s var(--ease-out) 1.2s both; }
 .success__text { color: var(--muted); max-width: 46ch; animation: rise 0.8s var(--ease-out) 1.35s both; }
-.success__log { display: grid; gap: 4px; text-align: left; font-family: var(--font-display); font-weight: 500; letter-spacing: 0.06em; color: var(--muted); font-size: 0.95rem; }
+.success__log { display: grid; gap: 4px; text-align: left; font-family: var(--font-display); font-weight: 500; letter-spacing: 0.06em; color: var(--muted); font-size: var(--size-label); }
 .success__log li { opacity: 0; animation: rise 0.5s var(--ease-out) both; }
 .success__log li b { color: var(--gold); font-weight: 700; }
 .success .btn { animation: rise 0.8s var(--ease-out) 2.1s both; }
-.success__demo { font-size: 0.85rem; color: var(--muted); border: 1px dashed var(--line); padding: 6px 12px; }
+.success__demo { font-size: var(--size-tag); color: var(--muted); border: 1px dashed var(--line); padding: 6px 12px; }
 
 /* Transitions Vue */
 .swap-enter-active { transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), clip-path 0.9s var(--ease-in-out); }
@@ -917,7 +934,7 @@ span.sound-deck__viz {
   color: transparent;
   background: linear-gradient(100deg, var(--gold-deep), var(--gold-hi) 45%, var(--gold) 60%, var(--gold-deep)); -webkit-background-clip: text; background-clip: text;
 }
-.sound-deck__facts { margin-top: 8px; color: var(--muted); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.95rem; }
+.sound-deck__facts { margin-top: 8px; color: var(--muted); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); }
 .sound-deck__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
 .sound-deck__play { min-width: 11rem; }
 .sound-deck__play svg { position: relative; z-index: 1; width: 20px; height: 20px; }
@@ -939,7 +956,7 @@ span.sound-deck__viz {
 /* Le numéro : un hexagone liseré d'or (la plaque en or, son centre noir par-dessus), plein pour la partie en cours */
 .chapter__num {
   position: relative; display: grid; place-items: center; width: 44px; height: 44px; isolation: isolate;
-  font-family: var(--font-display); font-weight: 700; font-size: 1rem; color: var(--gold); background: var(--gold);
+  font-family: var(--font-display); font-weight: 700; font-size: var(--size-ui); color: var(--gold); background: var(--gold);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 .chapter__num::before {
@@ -947,7 +964,7 @@ span.sound-deck__viz {
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 .chapter__name { font-size: clamp(1.15rem, 1rem + 0.6vw, 1.45rem); text-transform: uppercase; }
-.chapter__text { color: var(--muted); font-size: 0.98rem; }
+.chapter__text { color: var(--muted); font-size: var(--size-text); }
 .chapter__play {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px;
   border: 1px solid var(--line); background: transparent; color: var(--gold); cursor: pointer;
@@ -1008,9 +1025,9 @@ span.sound-deck__viz {
   .slide { width: calc(100% - 2 * var(--gutter) - 24px); }
   .slide__body { gap: 10px; padding: 16px 18px 18px; }
   .slide__title { font-size: clamp(1.75rem, 1.3rem + 2.4vw, 2rem); }
-  .slide__desc { font-size: 0.96rem; line-height: 1.55; }
+  .slide__desc { font-size: var(--size-text); line-height: 1.55; }
   .slide__tags { gap: 6px; }
-  .slide__tags li { font-size: 0.8rem; padding: 2px 8px; }
+  .slide__tags li { font-size: var(--size-tag); padding: 2px 8px; }
   .slide__link { padding: 8px 0; font-size: clamp(0.85rem, 0.55rem + 1.6vw, 1rem); }
   .swiper__controls { margin-top: 20px; }
   .submit-btn { width: 100%; min-width: 0; }
@@ -1026,35 +1043,35 @@ span.sound-deck__viz {
 }
 .offer--pick { border-color: var(--gold); background: linear-gradient(180deg, var(--surface-2), var(--surface)); box-shadow: inset 0 0 0 1px var(--gold); }
 .offer__badge { position: absolute; top: 0; right: 1.6rem; margin: 0; padding: 0.3rem 0.7rem; background: var(--gold-hi); color: var(--on-gold); font: 700 0.75rem/1 var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; }
-.offer__name { margin: 0; font: 700 1.25rem/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); }
+.offer__name { margin: 0; font: 700 var(--size-name)/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); }
 .offer__price { margin: 0; font: 700 clamp(2.2rem, 1.9rem + 1.2vw, 3rem)/1 var(--font-display); color: var(--gold); white-space: nowrap; }
-.offer__price small { font: 600 0.95rem/1 var(--font-body); color: var(--muted); margin-right: 0.3rem; letter-spacing: 0; text-transform: none; }
+.offer__price small { font: 600 var(--size-note)/1 var(--font-body); color: var(--muted); margin-right: 0.3rem; letter-spacing: 0; text-transform: none; }
 .offer__price--quote { font-size: clamp(1.8rem, 1.6rem + 0.8vw, 2.3rem); }
-.offer__for { margin: 0; color: var(--fg); font: 500 1rem/1.5 var(--font-body); }
-.offer__list { display: grid; gap: 0.55rem; margin: 0.3rem 0 0; padding: 0; list-style: none; color: var(--muted); font: 1rem/1.45 var(--font-body); }
+.offer__for { margin: 0; color: var(--fg); font: 500 var(--size-text)/1.5 var(--font-body); }
+.offer__list { display: grid; gap: 0.55rem; margin: 0.3rem 0 0; padding: 0; list-style: none; color: var(--muted); font: var(--size-text)/1.45 var(--font-body); }
 .offer__list li { position: relative; padding-left: 1.3rem; }
 .offer__list li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.5rem; height: 0.5rem; background: var(--gold); transform: rotate(45deg); }
 .offer__cta { margin-top: auto; align-self: flex-start; }
 
 .care { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
-.care__title { margin: 0 0 1.2rem; font: 700 1.15rem/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); }
+.care__title { margin: 0 0 1.2rem; font: 700 var(--size-name)/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); }
 .care__tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
 .care__tiers li { display: grid; align-content: start; gap: 0.4rem; padding: 1.2rem 1.3rem; border: 1px solid var(--line-soft); background: var(--surface); }
-.care__name { margin: 0; font: 700 1rem/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg); }
+.care__name { margin: 0; font: 700 var(--size-ui)/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg); }
 .care__price { margin: 0; font: 700 1.8rem/1 var(--font-display); color: var(--gold); }
-.care__price small { font: 600 0.9rem/1 var(--font-body); color: var(--muted); }
-.care__text { margin: 0; color: var(--muted); font: 0.95rem/1.45 var(--font-body); }
+.care__price small { font: 600 var(--size-note)/1 var(--font-body); color: var(--muted); }
+.care__text { margin: 0; color: var(--muted); font: var(--size-note)/1.45 var(--font-body); }
 .care__more { margin: 1rem 0 0; }
-.link-arrow { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; color: var(--gold); font: 600 1rem/1.3 var(--font-body); text-decoration: underline; text-underline-offset: 0.25em; }
+.link-arrow { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; color: var(--gold); font: 600 var(--size-text)/1.3 var(--font-body); text-decoration: underline; text-underline-offset: 0.25em; }
 .link-arrow::after { content: "→"; transition: transform 0.3s var(--ease-out); }
 .link-arrow:hover::after, .link-arrow:focus-visible::after { transform: translateX(4px); }
 
 /* Le pré-audit : son texte, puis son prix et son bouton, à côté dès que la place le permet (sans requête) */
 .audit { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem 2rem; margin-top: 2rem; padding: 1.6rem; background: var(--surface-2); border: 1px solid var(--line); }
 .audit__copy { flex: 1 1 26rem; }
-.audit__copy p { margin: 0; color: var(--muted); font: 1rem/1.5 var(--font-body); max-width: 65ch; }
+.audit__copy p { margin: 0; color: var(--muted); font: var(--size-text)/1.5 var(--font-body); max-width: 65ch; }
 .audit__copy .care__title { margin-bottom: 0.6rem; }
-.audit__copy .audit__law { margin-top: 0.7rem; font-size: 0.92rem; }
+.audit__copy .audit__law { margin-top: 0.7rem; font-size: var(--size-note); }
 .audit__side { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
 .offers__legal { margin: 1.5rem 0 0; color: var(--muted); font: 0.9rem/1.5 var(--font-body); }
 
@@ -1162,7 +1179,7 @@ span.sound-deck__viz {
 /* ---------- Menu des langues (1.10.0) : un <details>, utilisable sans JavaScript ---------- */
 .lang-btn {
   width: auto; min-width: 46px; padding: 0 12px; text-decoration: none;
-  font-family: var(--font-display); font-weight: 700; font-size: 1rem; letter-spacing: 0.1em;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--size-ui); letter-spacing: 0.1em;
 }
 .lang-menu { position: relative; }
 .lang-menu > summary { display: flex; align-items: center; gap: 6px; list-style: none; user-select: none; }
@@ -1182,7 +1199,7 @@ span.sound-deck__viz {
 .lang-menu:not([open]) .lang-menu__list { display: none; }
 .lang-menu__list a {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 0 12px;
-  text-decoration: none; color: var(--fg); font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: 0.04em;
+  text-decoration: none; color: var(--fg); font-family: var(--font-display); font-weight: 600; font-size: var(--size-ui); letter-spacing: 0.04em;
   transition: background-color 0.2s, color 0.2s;
 }
 .lang-menu__list a:hover, .lang-menu__list a:focus-visible { background: var(--surface-2); color: var(--gold); }
@@ -1218,5 +1235,26 @@ span.sound-deck__viz {
 /* Russe : la signature parle russe (1.15.0), l'affichage la garde. Barlow n'a pas de cyrillique : le texte
    courant prend des polices système qui en ont, plutôt qu'un mélange au hasard. */
 :root:lang(ru) {
-  --font-body: "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+  --font-body-local: "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+  --font-body-web: var(--font-body-local);
 }
+
+/* Polices bloc par bloc (1.18.1). Sur mobile, l'arrivée des polices du site remettait toute la page en
+   page dans une seule tâche, la plus longue du chargement : Chrome mesure chaque lettre de chaque taille
+   d'une police web, et l'accueil en compte des dizaines. Le chargeur de l'accueil (scripts/after-first-paint.mjs)
+   pose fonts-staged avant le premier affichage, charge les polices, puis les donne aux blocs de la page un
+   par un (fonts-on), ceux de l'écran d'abord, chacun dans sa tâche. Le menu mobile, déplacé dans body par
+   Vue, les prend directement. Sans JavaScript, rien de tout cela : les piles complètes s'appliquent. */
+html.fonts-staged {
+  --font-signature: var(--font-signature-local);
+  --font-display: var(--font-signature);
+  --font-body: var(--font-body-local);
+}
+html.fonts-staged :is(.fonts-on, .mobile-menu) {
+  --font-signature: var(--font-signature-web);
+  --font-display: var(--font-signature);
+  --font-body: var(--font-body-web);
+}
+/* Le texte courant d'un bloc hérite de body, qui garde la pile locale : le bloc la redéclare, sans rien
+   imposer aux éléments qui ont leur propre police (spécificité nulle). */
+:where(html.fonts-staged :is(.fonts-on, .mobile-menu)) { font-family: var(--font-body); }

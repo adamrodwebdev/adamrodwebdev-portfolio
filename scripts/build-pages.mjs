@@ -29,6 +29,17 @@ export const ORIGIN = 'https://adamrodwebdev.com';
 /** Les polices du site (css/fonts.css, fichiers dans fonts/), demandées une fois le premier affichage signalé. */
 const FONTS = '/css/fonts.css';
 
+/**
+ * Les polices de l'accueil (1.18.1), chargées ensemble puis données bloc par bloc (scripts/after-first-paint.mjs) :
+ * [police, texte] pour document.fonts.load, le texte choisissant le fichier par son unicode-range. Toutes celles que
+ * la page emploie, sinon un texte resterait en police locale : un test le vérifie dans chaque langue. Le russe
+ * prend aussi le cyrillique de Clivage, et pas Barlow (son texte courant est en polices système).
+ */
+export const HOME_FONTS = Object.freeze({
+  default: [['700 1em Clivage', 'A'], ['400 1em Barlow', 'A'], ['500 1em Barlow', 'A'], ['600 1em Barlow', 'A']],
+  ru: [['700 1em Clivage', 'A'], ['700 1em Clivage', 'Ж']],
+});
+
 /** La première plateforme où jouer à un jeu du carrousel (le contenu statique de l'accueil n'en cite qu'une). */
 const playUrl = (id) => playLinks(projects.find((project) => project.id === id))[0].url;
 
@@ -139,7 +150,12 @@ export async function buildPages({ root, out, imports }) {
     const others = pages.filter((other) => other.code !== locale);
     const m = messages[locale];
     // Ses seuls textes : préchargés avec les îlots, importés par js/i18n/index.js
-    const loader = afterFirstPaintScript({ stylesheets: [FONTS], modules: [...homeModules, `/js/i18n/locales/${locale}.js`], entry: ENTRY });
+    const loader = afterFirstPaintScript({
+      stylesheets: [FONTS],
+      modules: [...homeModules, `/js/i18n/locales/${locale}.js`],
+      entry: ENTRY,
+      fonts: HOME_FONTS[locale] ?? HOME_FONTS.default,
+    });
     const special = {
       lang: locale,
       url: ORIGIN + page.base,

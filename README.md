@@ -46,7 +46,7 @@ templates/ressac/       Licence des polices Ressac : gabarit et copies exactes d
 css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
 css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
-js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
+js/islands.js           Monte les composants Vue, chacun dans sa propre tâche, les carrousels à l'approche de leur section
 js/config.js            Mode d'envoi du formulaire, e-mail de contact, liens d'agenda et de profil Malt
 js/i18n/languages.js    Les cinq langues : code, nom, adresses, langue de l'heure
 js/i18n/locales/        Textes de l'accueil, un fichier par langue (fr, en, ru, it, es)
@@ -75,7 +75,7 @@ scripts/vendor.mjs      Vue et vue-i18n copiés de node_modules, version dans le
 scripts/vue-templates.mjs  Gabarits des composants précompilés (aucun unsafe-eval)
 scripts/build-pages.mjs Pages traduites et page de Lumirift (textes, feuille copiée, chargement différé)
 scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
-scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé
+scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé ; sur l'accueil, polices données bloc par bloc
 scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
 scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
 scripts/serve.mjs       Serveur local de dist/ qui applique dist/_headers
@@ -255,7 +255,9 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 - **Rien ne retient le premier affichage** : chaque page générée porte sa feuille de style (`scripts/css.mjs`).
 - **Le reste vient après** : polices, Vue, vue-i18n et îlots ne sont demandés qu'une fois le premier affichage signalé (`scripts/after-first-paint.mjs`). Lighthouse simule un téléphone lent à partir de ce qui est arrivé avant ce premier affichage : une requête partie plus tôt, même sans rien bloquer, allonge la durée simulée.
 - **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard. Le titre du hero entre en se dévoilant (`slice-in`, un `clip-path`) : Chrome ne le compte qu'à la fin de cette entrée, vers 0,9 s. Il doit donc rester plus petit que le paragraphe dans chaque langue, sinon il devient le plus grand élément en retard. Depuis « WebTech », il est réglé 4 % plus petit (`--step-4`, 1.18.0) ; vérifiez la langue au paragraphe le plus court (l'espagnol) après tout changement du titre ou de l'accroche.
-- **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
+- **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les deux carrousels à l'approche de leur section (1.18.1), les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
+- **Les polices de l'accueil, bloc par bloc** (1.18.1). À la première mise en page d'une police web, Chrome mesure chaque lettre à chaque taille : de 0,3 à 0,6 ms par lettre et par taille sur un téléphone simulé, quand une police du système, déjà prête, ne coûte presque rien. Avant ses îlots, l'accueil emploie Clivage à 19 tailles et Barlow à 14 ; données à toute la page d'un coup, les polices faisaient la plus longue tâche du chargement sur mobile (300 à 400 ms au ralenti 4 ×). Le chargeur (`scripts/after-first-paint.mjs`) pose `fonts-staged` avant le premier affichage, charge les polices, puis les donne aux morceaux de la page un par un (`fonts-on`), ceux de l'écran d'abord, chacun dans sa tâche ; `fonts-ready` marque la fin, et le titre du hero attend la sienne pour se briser. Les règles sont dans `css/style.css` (« Polices bloc par bloc »), la liste des polices de chaque langue dans `HOME_FONTS` (`scripts/build-pages.mjs`) : **une nouvelle graisse employée sur l'accueil s'y ajoute**, sinon son texte resterait en police locale (un test le vérifie dans les cinq langues). Sans JavaScript, la page prend ses polices comme avant.
+- **Une taille par rôle** (1.18.1) : chaque taille différente d'une police du site se paie à la première mise en page, même à quelques dixièmes de pixel d'une autre. En dehors de l'échelle fluide (`--step-*` : titres, texte courant, hero), l'interface prend ses tailles fixes dans six jetons de `css/style.css` : `--size-tag` (étiquettes), `--size-label` (libellés en capitales), `--size-note` (petit texte), `--size-text` (paragraphes des cartes), `--size-ui` (boutons, menus, numéros) et `--size-name` (titres de carte). Un nouvel élément prend la taille de son rôle plutôt qu'une valeur à lui.
 - Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
 
 - **Tout vient du site** (1.9.0) : plus de connexion à ouvrir vers Google Fonts ou jsDelivr, et la version d'exécution seule de Vue (113 Ko au lieu de 175, avant compression).

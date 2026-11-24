@@ -287,6 +287,8 @@ const signatureLoaded = (page) => page.waitForFunction((family) =>
   [...document.fonts].some((face) => face.family.replace(/["']/g, '') === family && face.status === 'loaded'), SIGNATURE);
 // Sans guillemets : Chromium écrit « "Clivage Fallback" », WebKit « Clivage Fallback »
 const fontOf = (locator) => locator.evaluate((element) => getComputedStyle(element).fontFamily.replace(/["']/g, ''));
+// L'accueil donne ses polices bloc par bloc (1.18.1) : la classe fonts-ready marque le dernier
+const fontsApplied = (page) => expect(page.locator('html')).toHaveClass(/\bfonts-ready\b/, { timeout: 10_000 });
 
 test('police signature : tout l’affichage en Clivage, le texte courant en Barlow, plus de Rajdhani', async ({ page }) => {
   const fonts = [];
@@ -295,6 +297,7 @@ test('police signature : tout l’affichage en Clivage, le texte courant en Barl
   // Les îlots Vue montés (la navigation remplace l'en-tête) : un élément détaché n'a pas de style calculé
   await page.waitForLoadState('networkidle');
   await signatureLoaded(page);
+  await fontsApplied(page);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
     expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, Clivage Fallback/);
   }
@@ -305,6 +308,67 @@ test('police signature : tout l’affichage en Clivage, le texte courant en Barl
   // Une page latine ne télécharge pas le fichier cyrillique (1.15.0)
   expect(fonts.filter((path) => path.includes('cyrillic'))).toEqual([]);
   expect(fonts.filter((path) => path.includes('rajdhani'))).toEqual([]);
+});
+
+test('polices bloc par bloc (1.18.1) : chaque texte de l’accueil finit dans une police du site chargée, dans chaque langue', async ({ page }) => {
+  for (const path of ['/', '/en/', '/es/', '/it/', '/ru/']) {
+    await page.goto(path);
+    await fontsApplied(page);
+    // Les carrousels montés eux aussi : ils arrivent à l'approche de leur section
+    for (const id of ['#projets', '#creations']) {
+      await page.locator(id).evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
+      await expect(page.locator(`${id} .slide`).first()).toBeAttached();
+    }
+    const problems = await page.evaluate(() => {
+      const ru = document.documentElement.lang === 'ru';
+      const faces = [...document.fonts].filter((face) => face.status === 'loaded');
+      const covered = (family, weight) => faces.some((face) => {
+        const [low, high = low] = face.weight.split(' ').map(Number);
+        return face.family.replace(/["']/g, '') === family && weight >= low && weight <= high;
+      });
+      const found = new Set();
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const text = walker.currentNode.textContent.trim();
+        const element = walker.currentNode.parentElement;
+        if (!text || element.closest('script, noscript, template') || !element.checkVisibility()) continue;
+        const style = getComputedStyle(element);
+        const family = style.fontFamily.split(',')[0].replace(/["']/g, '').trim();
+        const weight = Number(style.fontWeight);
+        // Une tête de pile locale (le repli de Clivage, ou Segoe UI hors du russe) : un bloc oublié ;
+        // une police du site sans fichier chargé à sa graisse : une police oubliée dans HOME_FONTS
+        const leftover = family === 'Clivage Fallback' || (family === 'Segoe UI' && !ru);
+        const missing = (family === 'Clivage' || family === 'Barlow') && !covered(family, weight);
+        if (leftover || missing) found.add(`${family} ${weight} : ${element.tagName.toLowerCase()}.${element.classList[0] ?? ''} « ${text.slice(0, 30)} »`);
+      }
+      return [...found];
+    });
+    expect(problems, path).toEqual([]);
+    // Le menu mobile, que Vue place dans body, hors des blocs
+    expect(await fontOf(page.locator('#menu-mobile a').first()), path).toMatch(/^Clivage, Clivage Fallback/);
+  }
+});
+
+test('polices bloc par bloc (1.18.1) : l’écran d’abord, chaque bloc dans sa tâche', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.fontBlocks = [];
+    // Une tâche ouverte par chaque bloc, fermée par la tâche suivante : un bloc qui la trouve encore ouverte
+    // a été servi dans la même tâche que le précédent
+    let open = false;
+    document.addEventListener('fontsapplied', (event) => {
+      const box = event.detail.getBoundingClientRect();
+      window.fontBlocks.push({ seen: box.bottom > 0 && box.top < innerHeight, shared: open });
+      open = true;
+      setTimeout(() => { open = false; }, 0);
+    });
+  });
+  await page.goto('/');
+  await fontsApplied(page);
+  const blocks = await page.evaluate(() => window.fontBlocks);
+  expect(blocks.length).toBeGreaterThan(10);
+  expect(blocks[0].seen).toBe(true);
+  expect(blocks.at(-1).seen).toBe(false);
+  expect(blocks.filter((block) => block.shared)).toEqual([]);
 });
 
 test('police signature : le menu des langues fermé n’est pas mis en page, le cyrillique ne vient qu’à son ouverture (1.15.0)', async ({ page }) => {
@@ -365,6 +429,7 @@ test('police signature : en russe aussi, tout l’affichage en Clivage, ses deux
   await page.goto('/ru/');
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready);
+  await fontsApplied(page);
   for (const selector of ['.brand__name', '.hero__title', '#services-title', '.hero__status', '.btn']) {
     expect(await fontOf(page.locator(selector).first()), selector).toMatch(/^Clivage, Clivage Fallback/);
   }
@@ -386,11 +451,14 @@ test('police signature : son arrivée ne décale rien (repli calé sur ses mesur
     await page.route('**/fonts/clivage-*.woff2', (route) => route.abort());
     await page.goto(path);
     await page.waitForLoadState('networkidle');
+    // Une police qui manque n'arrête pas les autres : les blocs reçoivent quand même les leurs (1.18.1)
+    await fontsApplied(page);
     const fallback = await boxes();
     await page.unroute('**/fonts/clivage-*.woff2');
     await page.goto(path);
     await page.waitForLoadState('networkidle');
     await page.evaluate(() => document.fonts.ready);
+    await fontsApplied(page);
     expect(await boxes(), path).toEqual(fallback);
   }
 });
@@ -550,9 +618,14 @@ test('accueil : l’offre d’abord, les sites puis les jeux, chacun son carrous
   expect(ids).toEqual(['accueil', 'offres', 'services', 'projets', 'methode', 'creations', 'bande-son', 'contact']);
   const indexes = await page.locator('main .panel__index').evaluateAll((spans) => spans.map((s) => s.dataset.index));
   expect(indexes).toEqual(['01', '02', '03', '04', '05', '06', '07']);
-  await expect(page.locator('#projects-app .slide')).toHaveCount(projectsOf('work').length);
-  // Le carrousel des créations se monte à l'approche de sa section : la liste statique tient jusque-là
+  // Chaque carrousel se monte à l'approche de sa section (1.18.1 pour les réalisations) : le dernier îlot est
+  // monté, les observateurs ont rendu leur premier avis (deux images), les listes statiques tiennent encore
+  await expect(page.locator('#contact-app form[aria-busy]')).toHaveCount(1);
+  await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+  await expect(page.locator('#projects-app .projects-static')).toHaveCount(1);
   await expect(page.locator('#creations-app .projects-static')).toHaveCount(1);
+  await page.locator('#projets').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
+  await expect(page.locator('#projects-app .slide')).toHaveCount(projectsOf('work').length);
   await page.locator('#creations').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
   await expect(page.locator('#creations-app .slide')).toHaveCount(projectsOf('lab').length);
   const links = await page.locator('.site-header .nav__links a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
@@ -600,6 +673,14 @@ test.describe('sans JavaScript', () => {
     await page.goto('/');
     await expect(page.locator('#bande-son .chapter')).toHaveCount(5);
     await expect(page.locator('#bande-son .no-js-only')).toHaveText(messages.fr.soundtrack.noscript);
+  });
+
+  test('polices (1.18.1) : sans JavaScript, toute la page prend les polices du site, sans attendre de bloc', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('html')).not.toHaveClass(/fonts-staged/);
+    await page.evaluate(() => document.fonts.ready);
+    expect(await fontOf(page.locator('.hero__title'))).toMatch(/^Clivage, Clivage Fallback/);
+    expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
   });
 
   test('menu des langues : il s’ouvre et mène à une autre langue', async ({ page }) => {

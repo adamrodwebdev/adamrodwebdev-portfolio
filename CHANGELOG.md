@@ -12,6 +12,21 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - **L'emblème dessiné au trait laisse la place à l'emblème en relief** ; ses anneaux restent.
 - **Le panneau du hero passe sous l'emblème** : il recouvrait son coin, et la moitié du A sur téléphone.
 
+## [1.18.1] - 2026-11-23
+
+### Corrigé
+- **L'accueil ne bloque plus le téléphone pendant son chargement.** Sur mobile, Lighthouse le notait de 96 à 99 par le seul temps de blocage. Trois causes, mesurées par des traces de Chrome au ralenti 4 ×, variante par variante :
+  - **L'arrivée des polices remettait toute la page en page d'un coup** (300 à 400 ms au ralenti). Chrome mesure chaque lettre de chaque taille d'une police web à sa première mise en page (0,3 ms par lettre et par taille pour Barlow, 0,6 pour Clivage, sur un téléphone simulé), et l'accueil emploie Clivage à 19 tailles et Barlow à 14 avant ses îlots. Ce n'est ni l'axe variable ni le dessin de Clivage : une copie fixe de la police, ou Barlow sous son nom, coûtent autant. Les polices sont maintenant chargées, puis données aux morceaux de la page un par un, ceux de l'écran d'abord, chacun dans sa tâche (`scripts/after-first-paint.mjs`, règle « Polices bloc par bloc » de `css/style.css`). Le titre du hero attend la sienne pour se briser. Sans JavaScript, rien ne change.
+  - **Le carrousel des réalisations se montait au démarrage**, quatre à sept écrans sous l'arrivée, et mettait ses diapositives en page dans la même tâche (180 ms au ralenti) : il se monte maintenant à l'approche de sa section, comme celui des créations.
+  - **Le lecteur de la bande-son lisait la taille de son canevas pendant son montage**, ce qui forçait la mise en page : son premier tracé attend l'image suivante.
+
+### Modifié
+- **Une taille par rôle** (validé le 23 novembre 2026 sur captures avant / après) : 35 tailles fixes voisines de quelques dixièmes de pixel (0,85, 0,92, 0,95 rem…) passent par six jetons nommés (`--size-tag`, `--size-label`, `--size-note`, `--size-text`, `--size-ui`, `--size-name`). Le téléphone mesure 26 combinaisons de police et de taille à l'arrivée des polices au lieu de 34 (30 au lieu de 38 sur ordinateur). Les écarts restent d'un pas de 0,05 à 0,1 rem : boutons et menus à 1 rem au lieu de 1,05, libellés en capitales à 0,9 rem ; le titre « Maintenance et hébergement » prend la taille des noms de formule voisins (1,25 rem au lieu de 1,15). L'échelle fluide (titres, texte courant, hero), les prix et le logo ne changent pas.
+- Mesures, sur le serveur local qui applique les en-têtes de Netlify, en passages alternés avec la 1.18.0, cinq passages Lighthouse mobile de chaque côté :
+  - machine au repos, avant la taille par rôle : temps de blocage médian au ralenti 4 × de 631 à 649 ms → 49 ms ; Lighthouse de 96 à 99 (blocage simulé médian 164 ms) → 99 à 100 (74 ms) ;
+  - avec la taille par rôle, machine au repos (24 novembre) : pire de trois passages mobiles à 100 dans les quatre catégories sur `/`, `/it/` et `/ru/`, et 99 en performance sur `/en/` et `/es/` (100 ailleurs) ; ordinateur à 100 partout, aucune erreur dans la console. Sur `/en/`, en passages alternés avec la 1.18.0 : 100 à chacun des cinq passages (blocage simulé médian 54 ms), contre 96 à 100 (91 ms).
+  - Ce qui reste vient de la première mise en page de la page, avant le premier affichage, que la simulation de Lighthouse place parfois juste après ; la taille par rôle la raccourcit.
+
 ## [1.18.0] - 2026-11-18
 
 ### Ajouté
