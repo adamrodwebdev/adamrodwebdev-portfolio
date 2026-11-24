@@ -110,6 +110,8 @@ Statut : demandée le 24 novembre 2026 par la session du jeu, à la demande de l
 
 - **La sauvegarde Android** (1.18.3, même jour) : la section sur le stockage dit où va la copie et comment la couper, d'après le dépôt du jeu (commit 7e9c50c).
 
+- **La validation Google Search Console** (1.18.4, même jour) : le fichier de Google à la racine, servi tel quel, demandé par l'utilisateur.
+
 ### Ensuite
 - `app-ads.txt` à la racine du site, quand l'utilisateur aura son identifiant d'éditeur AdMob.
 

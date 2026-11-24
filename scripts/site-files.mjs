@@ -9,6 +9,9 @@ import { basename, join } from 'node:path';
 /** Fichiers et dossiers publiés, à la racine du dépôt. Les pages générées s'y ajoutent ensuite. */
 export const PUBLIC_ENTRIES = [
   '404.html', 'merci.html', 'mentions-legales.html',
+  // Fichier de validation de Google Search Console (1.18.4), servi tel quel : à ne pas supprimer tant que
+  // la propriété adamrodwebdev.com est validée par ce fichier
+  'googled16b9e042ea88c46.html',
   'manifest.webmanifest', 'robots.txt', 'sitemap.xml',
   'assets', 'css', 'fonts', 'js', 'en', 'ru', 'it', 'es', 'lumirift',
 ];

@@ -12,6 +12,11 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - **L'emblème dessiné au trait laisse la place à l'emblème en relief** ; ses anneaux restent.
 - **Le panneau du hero passe sous l'emblème** : il recouvrait son coin, et la moitié du A sur téléphone.
 
+## [1.18.4] - 2026-11-24
+
+### Ajouté
+- **Le fichier de validation de Google Search Console**, `/googled16b9e042ea88c46.html`, à la racine du site, servi octet pour octet (une ligne, sans gabarit ni redirection) : il prouve que adamrodwebdev.com appartient à l'utilisateur, pour la fiche Google Play de Lumirift et, plus tard, AdMob. Ce n'est qu'un jeton public, sans secret. Il reste en place tant que la propriété est validée par ce fichier ; un test vérifie qu'il est servi tel quel.
+
 ## [1.18.3] - 2026-11-24
 
 ### Modifié
