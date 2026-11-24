@@ -759,6 +759,26 @@ test.describe('licence des polices Ressac (1.18.0)', () => {
   });
 });
 
+// La politique de confidentialité de l'application Android de Lumirift (1.18.2) : son adresse est dans la fiche
+// Google Play, elle ne bouge plus
+test('lumirift : la politique de confidentialité de l’application, en quatre langues, avec son contact (1.18.2)', async ({ page }) => {
+  await page.goto('/lumirift/privacy/');
+  await expect(page).toHaveTitle(/Lumirift app privacy policy/);
+  for (const lang of ['en', 'fr', 'id', 'ru']) {
+    const section = page.locator(`section#${lang}`);
+    await expect(section, lang).toHaveAttribute('lang', lang);
+    await expect(section.locator('a[href="mailto:contact@adamrodwebdev.com"]'), lang).toHaveCount(1);
+    await expect(section.locator('a[href^="/"][href*="legal"], a[href="/mentions-legales.html"]'), lang).toHaveCount(1);
+  }
+  const html = await page.content();
+  expect(html).not.toContain('[contact address]');
+  expect(html).not.toMatch(/TODO/);
+  // Le lien depuis la page du jeu
+  await page.goto('/lumirift/');
+  await page.locator('.site-footer a[href="/lumirift/privacy/"]').click();
+  await expect(page).toHaveURL(/\/lumirift\/privacy\/$/);
+});
+
 // La médiation de la consommation (1.18.0) : CM2C, dans les mentions légales
 test.describe('mentions légales : la médiation de la consommation (1.18.0)', () => {
   const CM2C = ['a[href="tel:+33189470014"]', 'a[href="https://www.cm2c.net/declarer-un-litige.php"]', 'a[href="mailto:litiges@cm2c.net"]'];
