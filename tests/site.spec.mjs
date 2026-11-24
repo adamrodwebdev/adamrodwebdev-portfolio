@@ -12,6 +12,9 @@ const PAGES = readdirSync('dist', { recursive: true })
   .map((file) => file.replace(/index\.html$/, ''))
   .sort();
 
+/** Les fichiers de validation de Google Search Console, servis tels quels à la racine (1.18.4). */
+const GOOGLE_VERIFICATION = /^\/google[0-9a-f]+\.html$/;
+
 /** Suit les requêtes vers un autre domaine, les violations de CSP et les erreurs d'une page. */
 async function watch(page, baseURL) {
   const origin = new URL(baseURL).origin;
@@ -68,6 +71,13 @@ test('en-têtes de sécurité : CSP stricte et protections attendues', async ({ 
   expect(headers['x-content-type-options']).toBe('nosniff');
   expect(headers['referrer-policy']).toBeTruthy();
   expect(headers['permissions-policy']).toBeTruthy();
+});
+
+test('google search console : le fichier de validation, servi octet pour octet à la racine (1.18.4)', async ({ request }) => {
+  const response = await request.get('/googled16b9e042ea88c46.html', { maxRedirects: 0 });
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toMatch(/^text\/html/);
+  expect(await response.text()).toBe('google-site-verification: googled16b9e042ea88c46.html');
 });
 
 test("les fichiers internes du dépôt ne sont pas servis", async ({ request }) => {
@@ -590,7 +600,8 @@ test('témoignages, réservation et Malt : absents tant que leur donnée manque 
 });
 
 test('marque : AdamRodWebTech sur chaque page, plus jamais AdamRodWebDev (1.17.0)', async ({ page }) => {
-  for (const path of PAGES) {
+  // Le fichier de validation de Google n'est qu'un jeton, sans marque (1.18.4)
+  for (const path of PAGES.filter((p) => !GOOGLE_VERIFICATION.test(p))) {
     await page.goto(path);
     const html = await page.content();
     expect(html, path).not.toContain('AdamRodWebDev');
