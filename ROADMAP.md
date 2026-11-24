@@ -99,6 +99,21 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.18.1 : l'accueil sans temps de blocage sur mobile
+
+Statut : demandée le 23 novembre 2026 (« Yes, fix it »), une fois mesuré que la note mobile de l'accueil (96 à 99) ne venait d'aucune branche en cours ; réalisée sur la branche `perf/home-blocking-time` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (23 novembre 2026)
+- **Mesurer avant de corriger** : une trace de Chrome au ralenti 4 × par variante de la page (sans polices, sans Clivage, sans Barlow, sans îlots, sans `text-wrap`, sans requêtes de conteneur, Clivage figée, Barlow sous le nom de Clivage, polices appliquées ensemble ou bloc par bloc), puis Lighthouse en passages alternés.
+- **Les polices bloc par bloc** plutôt qu'en une fois : le coût vient du nombre de lettres et de tailles qu'une police web doit mesurer, pas de Clivage elle-même. Le design ne change pas.
+- **Les deux carrousels à l'approche de leur section** ; le formulaire et le lecteur restent montés au démarrage (les boutons des offres choisissent le type de projet dans le formulaire, l'interrupteur de l'en-tête pilote le lecteur).
+- **Une taille par rôle** (« Yes, add them », sur une page de captures avant / après de chaque section, téléphone sombre et clair, ordinateur) : six jetons pour les tailles fixes de l'interface, dans la même version. Laissés tels quels exprès : le logo, le titre du hero, les prix, les titres de section, la paire 16 / 16,18 px (texte des cartes contre texte courant : la fondre grossirait le texte des cartes de 12 % sur ordinateur) et les graisses.
+
+### Vérifications (« fini » quand)
+- `npm test` passe, dont trois nouveaux tests : chaque texte de l'accueil finit dans une police du site chargée, dans les cinq langues, menu mobile compris ; les blocs de l'écran d'abord, un par tâche ; sans JavaScript, la page prend ses polices comme avant.
+- Lighthouse mobile en passages alternés avec la 1.18.0, machine au repos : temps de blocage simulé plus bas, note de 99 à 100.
+- Entrée 1.18.1 dans le CHANGELOG, README à jour.
+
 ## 1.18.0 : la licence des polices Ressac
 
 Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la »), réalisée sur la branche `feat/1.18-licence-ressac` (PR vers `dev`). La convention avec le médiateur CM2C, que nomme l'article 17, est signée le 18 novembre 2026 (valable jusqu'au 18 novembre 2029) : la licence finale, en vigueur depuis le 18 novembre 2026, est en place. Mise en ligne sur le feu vert de l'utilisateur.
