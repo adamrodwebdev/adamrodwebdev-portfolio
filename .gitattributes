@@ -1,3 +1,6 @@
 # Fins de ligne LF partout, même sous Windows (core.autocrlf) : les empreintes de la CSP et les
 # fichiers publiés restent les mêmes que sur Netlify (1.9.2).
 * text=auto eol=lf
+
+# Fichiers binaires du site (1.21.0) : jamais de conversion de fin de ligne
+*.bin binary
