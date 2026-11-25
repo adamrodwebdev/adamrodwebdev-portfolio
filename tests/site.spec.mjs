@@ -552,6 +552,30 @@ test('bande-son : avec « réduire les animations », le logo en grains s’affi
   expect(errors).toEqual([]);
 });
 
+// Les éclats de la scène de marque (1.22.0) : une nouvelle partie brise le logo, puis il se reforme
+test('bande-son : une nouvelle partie brise le logo le long des éclats, puis il se reforme (1.22.0)', async ({ page }) => {
+  const errors = [];
+  const asked = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('request', (request) => asked.push(new URL(request.url()).pathname));
+  await page.goto('/#bande-son');
+  const stage = page.locator('#soundtrack-app .sound-deck__stage');
+  await expect(stage).toHaveClass(/is-ready/, { timeout: 10_000 });
+  expect(asked).toContain('/assets/grains/emblem-shards.bin');
+  const chapters = page.locator('#soundtrack-app .chapter');
+  const canvas = stage.locator('canvas');
+  await chapters.nth(1).locator('.chapter__play').click();
+  await expect(chapters.nth(1)).toHaveAttribute('aria-current', 'time', { timeout: 10_000 });
+  // La partie suivante, le logo à l'écran (un clic qui ne fait pas défiler la page) : la cassure commence,
+  // puis se termine (le logo est revenu)
+  await stage.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await chapters.nth(2).locator('.chapter__play').dispatchEvent('click');
+  await expect(canvas).toHaveAttribute('data-breaking', '', { timeout: 5000 });
+  await expect(canvas).not.toHaveAttribute('data-breaking', /.*/, { timeout: 8000 });
+  await page.locator('#nav-app .sound-btn').click();
+  expect(errors).toEqual([]);
+});
+
 test('bande-son : chaque partie se joue depuis son début, et s’allume', async ({ page }) => {
   const { SECTIONS } = await import('../js/audio/score.js');
   await page.goto('/#bande-son');
