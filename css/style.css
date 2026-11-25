@@ -904,6 +904,15 @@ span.sound-deck__viz {
   background: var(--line-soft); border: 0;
   clip-path: polygon(50% 18%, 77% 34%, 77% 66%, 50% 82%, 23% 66%, 23% 34%);
 }
+/* Le logo en grains (1.21.0) : une scène carrée en tête du lecteur. Avant ses grains (ou sans eux), un hexagone
+   pâle tient la place ; il s'efface quand les grains arrivent. La taille est fixée d'avance : rien ne bouge. */
+.sound-deck__stage { position: relative; width: min(100%, 22rem); aspect-ratio: 1; justify-self: center; }
+.sound-deck__stage::before {
+  content: ""; position: absolute; inset: 14%; background: var(--line-soft);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); transition: opacity 0.8s var(--ease-out);
+}
+.sound-deck__stage.is-ready::before { opacity: 0; }
+.sound-deck__grains { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sound-deck__id { min-width: 0; }
 .sound-deck__title {
   font-family: var(--font-display); font-weight: 700; font-size: var(--step-3); line-height: 1; text-transform: uppercase; letter-spacing: 0.04em;
