@@ -57,13 +57,13 @@ js/data/offers.js       Les offres : prix des formules, de la maintenance et du 
 js/data/testimonials.js Les témoignages de clients (vide tant qu'il n'y a pas de vrai avis)
 js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
-js/fx/                  Effets (révélations, curseur, éclats, particules) ; le logo en grains de la bande-son (particle-silhouette.js, soundtrack-grains.js, grain-file.js)
+js/fx/                  Effets (révélations, curseur, éclats, particules) ; les formes en grains d’or (particle-silhouette.js, grain-file.js) : le logo de la bande-son (soundtrack-grains.js) et la devise des offres (clients-dust.js)
 js/audio/score.js       « Sfumato » : la partition (grille, mélodie, parties), sans son
 js/audio/sfumato.js     Le moteur : mixage, effets, lecture ; chargé à la première écoute
 js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, chœur, voix, synthés)
 js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
-assets/                 Favicons, icônes PWA, image Open Graph ; grains/ : les grains précalculés du logo (npm run bake:grains)
+assets/                 Favicons, icônes PWA, image Open Graph ; grains/ : les grains précalculés du logo et de la devise (npm run bake:grains)
 fonts/                  Clivage (la police signature, exclusive : latin et cyrillique), Barlow, Unbounded (titre de Lumirift) : WOFF2
 lumirift/               Médias de la page du jeu Lumirift ; privacy/ : la politique de confidentialité de son application Android (page écrite à la main, adresse donnée à Google Play : ne pas la déplacer)
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
@@ -76,7 +76,7 @@ scripts/vendor.mjs      Vue et vue-i18n copiés de node_modules, version dans le
 scripts/vue-templates.mjs  Gabarits des composants précompilés (aucun unsafe-eval)
 scripts/build-pages.mjs Pages traduites et page de Lumirift (textes, feuille copiée, chargement différé)
 scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
-scripts/bake-grains.mjs Précalcule les grains du logo de la bande-son (Chromium sans écran), à relancer quand le logo change
+scripts/bake-grains.mjs Précalcule les grains des formes en or (Chromium sans écran) : la devise par défaut, le logo avec « emblem » ; scripts/taglines.mjs tient la devise de chaque langue
 scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé ; sur l'accueil, polices données bloc par bloc
 scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
 scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
@@ -226,6 +226,7 @@ L'accueil s'ouvre sur les offres, avant les services ; les réalisations (sites 
 - **Les boutons des offres** choisissent le type de projet du formulaire (`data-project-type`, lu dans la liste fermée `PROJECT_TYPES`, dans l'ordre de `form.types`).
 - **Prendre rendez-vous et Malt** : renseignez `bookingUrl` (agenda Cal.com) et `maltUrl` (profil) dans `js/config.js`. Tant qu'ils sont vides, rien n'est généré : le second bouton du héros reste « Démarrer un projet ». Ce sont de simples liens qui s'ouvrent dans un nouvel onglet, aucun widget, rien chargé d'un autre domaine ; seules les adresses https de `cal.com` et `malt.fr` sont admises (la génération échoue sinon).
 - **Témoignages** : ajoutez un avis dans `js/data/testimonials.js` (nom, rôle et citation dans les cinq langues) ; la section apparaît dès le premier. **Uniquement de vrais avis, donnés par écrit, avec l'accord de la personne : n'en inventez jamais.**
+- **La devise en poussière d'or** (1.23.0) : en tête des offres, « Le client à cœur » en grains d'or que le curseur ou le doigt écarte (`js/fx/clients-dust.js`). La phrase lue vient de `offers.motto` ; la forme dessinée, en capitales et en deux lignes, de `scripts/taglines.mjs` (un test vérifie qu'elles disent la même chose). **Changer une devise** : modifier les deux, puis `npm run bake:grains` (seules les devises sont recalculées ; le logo de la bande-son ne l'est qu'avec `npm run bake:grains emblem`, et ses éclats doivent alors suivre).
 - **Marque** : le site s'affiche sous le nom commercial déclaré, AdamRodWebTech ; le domaine, l'e-mail et les comptes restent en « adamrodwebdev ».
 
 ## Profondeur (1.11.0)
