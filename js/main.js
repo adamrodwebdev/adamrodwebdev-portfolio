@@ -19,4 +19,18 @@ const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
 const afterLoad = (fn) => (document.readyState === 'complete' ? fn() : addEventListener('load', fn, { once: true }));
 afterLoad(() => idle(() => { initShards(); initCursor(); initTilt(); }));
 // La devise en poussière d’or en tête des offres (1.23.0) : son module ne vient qu’à l’arrivée de la bande à l’écran
-afterLoad(() => idle(() => import('./fx/clients-dust.js').then(({ initClientsDust }) => initClientsDust())));
+const dustBand = document.querySelector('.clients-dust');
+const startDust = () => import('./fx/clients-dust.js')
+  .then(({ ClientsDust }) => ClientsDust.start(dustBand, dustBand.querySelector('canvas')))
+  .catch((err) => console.warn('[clients-dust]', err));
+if (dustBand) {
+  afterLoad(() => idle(() => {
+    if (!('IntersectionObserver' in window)) { startDust(); return; }
+    const near = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      near.disconnect();
+      startDust();
+    });
+    near.observe(dustBand);
+  }));
+}
