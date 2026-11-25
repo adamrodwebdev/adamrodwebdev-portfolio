@@ -5,8 +5,8 @@
  *
  *  - Les grains sont précalculés, une forme par langue (scripts/bake-grains.mjs, assets/grains/tagline-*.bin) :
  *    le navigateur n'échantillonne rien et ne charge que la langue de la page.
- *  - Le module ne se charge qu'à l'arrivée de la bande à l'écran, après le chargement et un temps libre : le
- *    premier affichage n'en paie rien.
+ *  - Ce module ne se charge qu'à l'arrivée de la bande à l'écran (js/main.js la guette après le chargement et
+ *    un temps libre) : une visite qui ne descend pas jusqu'aux offres n'en télécharge rien.
  *  - L'ambiance « poussière », l'or du thème sombre ou l'or foncé du thème clair, qui suit le bouton de thème.
  *  - La souris par pointermove, le doigt par touchmove passif : la page défile toujours (touch-action: pan-y).
  *  - En mouvement réduit, les grains restent en place (le module coupe le champ). Rien n'est alloué par image.
@@ -121,22 +121,4 @@ export class ClientsDust {
     this.media.removeEventListener('change', this.onTheme);
     this.fx.destroy();
   }
-}
-
-/**
- * Lance la devise quand sa bande arrive à l'écran (appelé par js/main.js après le chargement et un temps libre).
- * Sans bande sur la page, ne fait rien.
- */
-export function initClientsDust(doc = document) {
-  const band = doc.querySelector('.clients-dust');
-  const canvas = band?.querySelector('canvas');
-  if (!band || !canvas) return;
-  const start = () => ClientsDust.start(band, canvas).catch((err) => console.warn('[clients-dust]', err));
-  if (!('IntersectionObserver' in window)) { start(); return; }
-  const near = new IntersectionObserver((entries) => {
-    if (!entries.some((e) => e.isIntersecting)) return;
-    near.disconnect();
-    start();
-  });
-  near.observe(band);
 }
