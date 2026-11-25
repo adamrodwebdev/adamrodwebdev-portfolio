@@ -46,7 +46,7 @@ templates/ressac/       Licence des polices Ressac : gabarit et copies exactes d
 css/style.css           Styles, jetons de couleur, thèmes, animations (copiés dans les pages générées)
 css/fonts.css           Polices du site (@font-face), fichiers WOFF2 dans fonts/
 js/main.js              Lance les effets, puis importe les îlots Vue
-js/islands.js           Monte les composants Vue, chacun dans sa propre tâche
+js/islands.js           Monte les composants Vue, chacun dans sa propre tâche, les carrousels à l'approche de leur section
 js/config.js            Mode d'envoi du formulaire, e-mail de contact, liens d'agenda et de profil Malt
 js/i18n/languages.js    Les cinq langues : code, nom, adresses, langue de l'heure
 js/i18n/locales/        Textes de l'accueil, un fichier par langue (fr, en, ru, it, es)
@@ -57,16 +57,17 @@ js/data/offers.js       Les offres : prix des formules, de la maintenance et du 
 js/data/testimonials.js Les témoignages de clients (vide tant qu'il n'y a pas de vrai avis)
 js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
-js/fx/                  Effets (révélations, curseur, éclats, particules)
+js/fx/                  Effets (révélations, curseur, éclats, particules) ; le logo en grains de la bande-son (particle-silhouette.js, soundtrack-grains.js, grain-file.js)
 js/audio/score.js       « Sfumato » : la partition (grille, mélodie, parties), sans son
 js/audio/sfumato.js     Le moteur : mixage, effets, lecture ; chargé à la première écoute
 js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, chœur, voix, synthés)
 js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
-assets/                 Favicons, icônes PWA, image Open Graph
+assets/                 Favicons, icônes PWA, image Open Graph ; grains/ : les grains précalculés du logo (npm run bake:grains)
 fonts/                  Clivage (la police signature, exclusive : latin et cyrillique), Barlow, Unbounded (titre de Lumirift) : WOFF2
-lumirift/               Médias de la page du jeu Lumirift
+lumirift/               Médias de la page du jeu Lumirift ; privacy/ : la politique de confidentialité de son application Android (page écrite à la main, adresse donnée à Google Play : ne pas la déplacer)
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
+googled16b9e042ea88c46.html  Validation Google Search Console (1.18.4), servie telle quelle : ne pas supprimer
 robots.txt, sitemap.xml, manifest.webmanifest
 
 scripts/build.mjs       La génération : enchaîne les étapes ci-dessous et écrit dist/
@@ -75,7 +76,8 @@ scripts/vendor.mjs      Vue et vue-i18n copiés de node_modules, version dans le
 scripts/vue-templates.mjs  Gabarits des composants précompilés (aucun unsafe-eval)
 scripts/build-pages.mjs Pages traduites et page de Lumirift (textes, feuille copiée, chargement différé)
 scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
-scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé
+scripts/bake-grains.mjs Précalcule les grains du logo de la bande-son (Chromium sans écran), à relancer quand le logo change
+scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé ; sur l'accueil, polices données bloc par bloc
 scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
 scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
 scripts/serve.mjs       Serveur local de dist/ qui applique dist/_headers
@@ -243,7 +245,9 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 - **Rien ne retient le premier affichage** : chaque page générée porte sa feuille de style (`scripts/css.mjs`).
 - **Le reste vient après** : polices, Vue, vue-i18n et îlots ne sont demandés qu'une fois le premier affichage signalé (`scripts/after-first-paint.mjs`). Lighthouse simule un téléphone lent à partir de ce qui est arrivé avant ce premier affichage : une requête partie plus tôt, même sans rien bloquer, allonge la durée simulée.
 - **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard. Le titre du hero entre en se dévoilant (`slice-in`, un `clip-path`) : Chrome ne le compte qu'à la fin de cette entrée, vers 0,9 s. Il doit donc rester plus petit que le paragraphe dans chaque langue, sinon il devient le plus grand élément en retard. Depuis « WebTech », il est réglé 4 % plus petit (`--step-4`, 1.18.0) ; vérifiez la langue au paragraphe le plus court (l'espagnol) après tout changement du titre ou de l'accroche.
-- **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
+- **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les deux carrousels à l'approche de leur section (1.18.1), les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
+- **Les polices de l'accueil, bloc par bloc** (1.18.1). À la première mise en page d'une police web, Chrome mesure chaque lettre à chaque taille : de 0,3 à 0,6 ms par lettre et par taille sur un téléphone simulé, quand une police du système, déjà prête, ne coûte presque rien. Avant ses îlots, l'accueil emploie Clivage à 19 tailles et Barlow à 14 ; données à toute la page d'un coup, les polices faisaient la plus longue tâche du chargement sur mobile (300 à 400 ms au ralenti 4 ×). Le chargeur (`scripts/after-first-paint.mjs`) pose `fonts-staged` avant le premier affichage, charge les polices, puis les donne aux morceaux de la page un par un (`fonts-on`), ceux de l'écran d'abord, chacun dans sa tâche ; `fonts-ready` marque la fin, et le titre du hero attend la sienne pour se briser. Les règles sont dans `css/style.css` (« Polices bloc par bloc »), la liste des polices de chaque langue dans `HOME_FONTS` (`scripts/build-pages.mjs`) : **une nouvelle graisse employée sur l'accueil s'y ajoute**, sinon son texte resterait en police locale (un test le vérifie dans les cinq langues). Sans JavaScript, la page prend ses polices comme avant.
+- **Une taille par rôle** (1.18.1) : chaque taille différente d'une police du site se paie à la première mise en page, même à quelques dixièmes de pixel d'une autre. En dehors de l'échelle fluide (`--step-*` : titres, texte courant, hero), l'interface prend ses tailles fixes dans six jetons de `css/style.css` : `--size-tag` (étiquettes), `--size-label` (libellés en capitales), `--size-note` (petit texte), `--size-text` (paragraphes des cartes), `--size-ui` (boutons, menus, numéros) et `--size-name` (titres de carte). Un nouvel élément prend la taille de son rôle plutôt qu'une valeur à lui.
 - Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
 
 - **Tout vient du site** (1.9.0) : plus de connexion à ouvrir vers Google Fonts ou jsDelivr, et la version d'exécution seule de Vue (113 Ko au lieu de 175, avant compression).
@@ -254,6 +258,7 @@ En local, sur `npm run serve` (mêmes en-têtes et même compression que Netlify
 
 « Sfumato » est le thème original du site : 3 min 23, mi mineur, 116 BPM joués en demi-temps, en cinq parties (Éveil, Signal, Montée, Apogée, Retour). Aucun fichier audio : chaque note est synthétisée en direct par le navigateur (Web Audio API). L'ossature : pulsation staccato à délai pointé, nappes, basse en sidechain, cloche FM, percussions de film. L'orchestre (1.12.1) : violons et altos, violoncelles et contrebasses, spiccato, cors et trombones, timbales et roulements ; un chœur à quatre voix et une voix soliste par filtres de formants (voyelles qui glissent, port de voix entre les notes liées, seconde voix à l'apogée).
 
+- **Le logo en grains** (1.21.0) : en tête du lecteur, l'hexagone et son A dessinés par des milliers de grains d'or (ambiance « poussière »), qui respirent au repos et s'animent avec la musique (le niveau des graves et des médiums de l'analyseur) ; chaque nouvelle partie les souffle, puis le logo se reforme. L'effet vient du labo de Catapulte Mania (le nôtre, `js/fx/particle-silhouette.js`, WebGL2 avec un repli Canvas 2D) : un seul appel de dessin, rien d'alloué par image, pause hors de l'écran, mouvement réduit tenu (le logo reste immobile). Il ne se charge qu'à l'approche de la section, et ses grains sont précalculés (`assets/grains/emblem.bin`, 70 Ko, 14 000 grains ; un téléphone en dessine 6 000) : l'échantillonnage coûtait de 150 à 590 ms au ralenti 4 ×. Décoratif : `aria-hidden`, le nom du morceau reste dans le texte.
 - **Écouter** : l'interrupteur de l'en-tête (`aria-pressed`) coupe et relance le son ; la section « Bande-son » (`#bande-son`, cinquième lien du menu) a le lecteur complet : lecture, position, volume, et les cinq parties, chacune jouable depuis son début. Les deux pilotent le même état (`js/audio/soundtrack.js`, créé dans `js/islands.js` et fourni aux deux îlots). Les touches multimédia et l'écran verrouillé l'affichent aussi (Media Session).
 - **Rien au chargement** : le moteur (`sfumato.js`) n'est téléchargé qu'au premier clic. Le son ne démarre jamais seul (règle des navigateurs, et de l'accessibilité).
 - **Trois couches** : la partition (`score.js`) dit quoi jouer, l'arrangement (`arrangement.js`) qui le joue et quand, les pupitres (`instruments.js`) comment chacun sonne ; le moteur (`sfumato.js`) mixe et lit. Un appareil de 4 cœurs ou moins joue les ensembles à deux voix par note au lieu de trois (`islands.js`).

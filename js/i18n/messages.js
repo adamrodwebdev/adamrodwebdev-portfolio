@@ -212,6 +212,8 @@ export const lumiriftPage = {
     languages: 'English, French, Indonesian, Russian',
   },
   play: { label: 'Play free', where: 'on Playgama' },
+  // Le lien du pied de page vers la politique de confidentialité de l'application Android (1.18.2)
+  privacy: 'App privacy policy',
   clip: {
     alt: 'Fire lands on a pool of oil and the whole pool blazes in the sand well',
     play: 'Play the clip',

@@ -99,6 +99,52 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.21.0 : le logo en grains de la bande-son
+
+Statut : demandé le 25 novembre 2026 (le labo de Catapulte Mania a transmis l'effet ; l'utilisateur a choisi la section « Bande-son » parmi quatre places, validé le prototype, puis demandé de ne garder que l'ambiance « poussière »). Réalisé sur la branche `feat/1.21-soundtrack-grains` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (25 novembre 2026)
+- **La place** : la section « Bande-son », pas le hero (qui a déjà son titre qui se brise et l'emblème en éclats de la 1.20.0), ni la page 404.
+- **Le sujet** : le logo du site, plein (l'hexagone dense, le A évidé) ; jamais rien du site qui a inspiré l'effet.
+- **L'ambiance** : poussière seulement ; la fumée et les étincelles sont retirées du module.
+- **Les grains précalculés** et le chargement à l'approche : rien ne pèse sur le démarrage de l'accueil.
+
+### Vérifications (« fini » quand)
+- `npm test` passe, dont les nouveaux tests (fichier des grains, chargement à l'approche, mouvement réduit).
+- Lighthouse de l'accueil en passages alternés avec `dev` : pas de recul.
+- Captures sur téléphone et ordinateur, sombre et clair, au repos et musique lancée.
+
+## 1.18.2 : la politique de confidentialité de l'application Lumirift
+
+Statut : demandée le 24 novembre 2026 par la session du jeu, à la demande de l'utilisateur : Google Play exige une adresse publique avant le test fermé de l'application Android (Capacitor, `com.adamrodwebdev.lumirift`). Réalisée sur la branche `feat/1.18.2-lumirift-privacy` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur, avant le test fermé.
+
+### Ce qui a été décidé (24 novembre 2026)
+- **L'adresse** : `/lumirift/privacy/`, à côté de la page du jeu. Elle va dans la fiche Google Play et dans l'application : elle ne bouge plus.
+- **Le texte** : celui de la session du jeu (anglais, français, indonésien, russe), mis aux règles du site : sa feuille, la marque AdamRodWebTech (le texte disait AdamRodWebDev), l'éditeur identifié comme dans les mentions légales, l'adresse de contact publique du site (`contact@adamrodwebdev.com`), la typographie française. Toute modification se fait d'abord dans le dépôt du jeu, puis ici, avec sa date.
+- **Un lien** depuis le pied de la page du jeu.
+
+- **La sauvegarde Android** (1.18.3, même jour) : la section sur le stockage dit où va la copie et comment la couper, d'après le dépôt du jeu (commit 7e9c50c).
+
+- **La validation Google Search Console** (1.18.4, même jour) : le fichier de Google à la racine, servi tel quel, demandé par l'utilisateur.
+
+### Ensuite
+- `app-ads.txt` à la racine du site, quand l'utilisateur aura son identifiant d'éditeur AdMob.
+
+## 1.18.1 : l'accueil sans temps de blocage sur mobile
+
+Statut : demandée le 23 novembre 2026 (« Yes, fix it »), une fois mesuré que la note mobile de l'accueil (96 à 99) ne venait d'aucune branche en cours ; réalisée sur la branche `perf/home-blocking-time` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (23 novembre 2026)
+- **Mesurer avant de corriger** : une trace de Chrome au ralenti 4 × par variante de la page (sans polices, sans Clivage, sans Barlow, sans îlots, sans `text-wrap`, sans requêtes de conteneur, Clivage figée, Barlow sous le nom de Clivage, polices appliquées ensemble ou bloc par bloc), puis Lighthouse en passages alternés.
+- **Les polices bloc par bloc** plutôt qu'en une fois : le coût vient du nombre de lettres et de tailles qu'une police web doit mesurer, pas de Clivage elle-même. Le design ne change pas.
+- **Les deux carrousels à l'approche de leur section** ; le formulaire et le lecteur restent montés au démarrage (les boutons des offres choisissent le type de projet dans le formulaire, l'interrupteur de l'en-tête pilote le lecteur).
+- **Une taille par rôle** (« Yes, add them », sur une page de captures avant / après de chaque section, téléphone sombre et clair, ordinateur) : six jetons pour les tailles fixes de l'interface, dans la même version. Laissés tels quels exprès : le logo, le titre du hero, les prix, les titres de section, la paire 16 / 16,18 px (texte des cartes contre texte courant : la fondre grossirait le texte des cartes de 12 % sur ordinateur) et les graisses.
+
+### Vérifications (« fini » quand)
+- `npm test` passe, dont trois nouveaux tests : chaque texte de l'accueil finit dans une police du site chargée, dans les cinq langues, menu mobile compris ; les blocs de l'écran d'abord, un par tâche ; sans JavaScript, la page prend ses polices comme avant.
+- Lighthouse mobile en passages alternés avec la 1.18.0, machine au repos : temps de blocage simulé plus bas, note de 99 à 100.
+- Entrée 1.18.1 dans le CHANGELOG, README à jour.
+
 ## 1.18.0 : la licence des polices Ressac
 
 Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la »), réalisée sur la branche `feat/1.18-licence-ressac` (PR vers `dev`). La convention avec le médiateur CM2C, que nomme l'article 17, est signée le 18 novembre 2026 (valable jusqu'au 18 novembre 2029) : la licence finale, en vigueur depuis le 18 novembre 2026, est en place. Mise en ligne sur le feu vert de l'utilisateur.

@@ -2,6 +2,45 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.21.0] - 2026-11-25
+
+### Ajouté
+- **Le logo en grains de la bande-son** : en tête du lecteur de la section « Bande-son », l'hexagone et son A dessinés par des milliers de grains d'or, en ambiance « poussière ». Au repos, ils respirent ; quand la musique joue, le niveau des graves et des médiums de l'analyseur les gonfle et les fait scintiller ; chaque nouvelle partie du morceau les souffle, puis le logo se reforme. Or du thème sombre, or foncé imprimé sur le papier du thème clair. Il remplace le petit spectre à côté du titre.
+- L'effet vient du labo de Catapulte Mania (le nôtre, sans dépendance, WebGL2 avec un repli Canvas 2D) : copié dans `js/fx/particle-silhouette.js`, réduit à ce que le site emploie, avec `setEnergy()` pour la musique et des grains précalculés.
+- **Aucun coût au chargement** : le module ne se charge qu'à l'approche de la section, et les grains du logo sont précalculés par `npm run bake:grains` (`assets/grains/emblem.bin`, 70 Ko, 14 000 grains ; un téléphone en dessine 6 000). Le fichier est vérifié à la lecture : taille avant tout, en-tête, nombre de grains, valeurs.
+- Mouvement réduit : le logo reste immobile, doucement éclairé. Décoratif : masqué aux lecteurs d'écran, le nom du morceau reste dans le texte.
+- Tests : le format du fichier (aller-retour, refus d'un fichier tronqué, trop grand ou menteur) ; rien n'est demandé au chargement, puis la scène s'allume à l'approche, sans erreur, avec et sans mouvement réduit.
+
+## [1.18.4] - 2026-11-24
+
+### Ajouté
+- **Le fichier de validation de Google Search Console**, `/googled16b9e042ea88c46.html`, à la racine du site, servi octet pour octet (une ligne, sans gabarit ni redirection) : il prouve que adamrodwebdev.com appartient à l'utilisateur, pour la fiche Google Play de Lumirift et, plus tard, AdMob. Ce n'est qu'un jeton public, sans secret. Il reste en place tant que la propriété est validée par ce fichier ; un test vérifie qu'il est servi tel quel.
+
+## [1.18.3] - 2026-11-24
+
+### Modifié
+- **La politique de confidentialité de l'application Lumirift dit où va la sauvegarde** (« Where your progress is kept », dans les quatre langues) : l'utilisateur a activé la sauvegarde Android des parties le 24 novembre 2026. Si la sauvegarde du téléphone est activée, Android copie la sauvegarde du jeu, et elle seule, dans le compte Google du joueur (chiffrée avec le verrouillage de l'écran depuis Android 9) ; nous ne la voyons jamais, et la page dit comment la couper. Texte repris mot pour mot du dépôt du jeu (adamrodwebdev/lumirift#75, `docs/privacy/index.html`, commit 7e9c50c), qui reste la source. La date de la page ne change pas (même jour).
+
+## [1.18.2] - 2026-11-24
+
+### Ajouté
+- **La politique de confidentialité de l'application Android de Lumirift**, `/lumirift/privacy/`, en anglais, français, indonésien et russe : ce qui reste sur le téléphone, ce que traitent Google AdMob (publicités, formulaire de consentement) et Google Play (l'achat « sans pub »), les autorisations, le contact (`contact@adamrodwebdev.com`). Google Play exige cette adresse avant le test fermé ; elle ne bouge plus. La page du jeu y mène depuis son pied de page.
+
+## [1.18.1] - 2026-11-23
+
+### Corrigé
+- **L'accueil ne bloque plus le téléphone pendant son chargement.** Sur mobile, Lighthouse le notait de 96 à 99 par le seul temps de blocage. Trois causes, mesurées par des traces de Chrome au ralenti 4 ×, variante par variante :
+  - **L'arrivée des polices remettait toute la page en page d'un coup** (300 à 400 ms au ralenti). Chrome mesure chaque lettre de chaque taille d'une police web à sa première mise en page (0,3 ms par lettre et par taille pour Barlow, 0,6 pour Clivage, sur un téléphone simulé), et l'accueil emploie Clivage à 19 tailles et Barlow à 14 avant ses îlots. Ce n'est ni l'axe variable ni le dessin de Clivage : une copie fixe de la police, ou Barlow sous son nom, coûtent autant. Les polices sont maintenant chargées, puis données aux morceaux de la page un par un, ceux de l'écran d'abord, chacun dans sa tâche (`scripts/after-first-paint.mjs`, règle « Polices bloc par bloc » de `css/style.css`). Le titre du hero attend la sienne pour se briser. Sans JavaScript, rien ne change.
+  - **Le carrousel des réalisations se montait au démarrage**, quatre à sept écrans sous l'arrivée, et mettait ses diapositives en page dans la même tâche (180 ms au ralenti) : il se monte maintenant à l'approche de sa section, comme celui des créations.
+  - **Le lecteur de la bande-son lisait la taille de son canevas pendant son montage**, ce qui forçait la mise en page : son premier tracé attend l'image suivante.
+
+### Modifié
+- **Une taille par rôle** (validé le 23 novembre 2026 sur captures avant / après) : 35 tailles fixes voisines de quelques dixièmes de pixel (0,85, 0,92, 0,95 rem…) passent par six jetons nommés (`--size-tag`, `--size-label`, `--size-note`, `--size-text`, `--size-ui`, `--size-name`). Le téléphone mesure 26 combinaisons de police et de taille à l'arrivée des polices au lieu de 34 (30 au lieu de 38 sur ordinateur). Les écarts restent d'un pas de 0,05 à 0,1 rem : boutons et menus à 1 rem au lieu de 1,05, libellés en capitales à 0,9 rem ; le titre « Maintenance et hébergement » prend la taille des noms de formule voisins (1,25 rem au lieu de 1,15). L'échelle fluide (titres, texte courant, hero), les prix et le logo ne changent pas.
+- Mesures, sur le serveur local qui applique les en-têtes de Netlify, en passages alternés avec la 1.18.0, cinq passages Lighthouse mobile de chaque côté :
+  - machine au repos, avant la taille par rôle : temps de blocage médian au ralenti 4 × de 631 à 649 ms → 49 ms ; Lighthouse de 96 à 99 (blocage simulé médian 164 ms) → 99 à 100 (74 ms) ;
+  - avec la taille par rôle, machine au repos (24 novembre) : pire de trois passages mobiles à 100 dans les quatre catégories sur `/`, `/it/` et `/ru/`, et 99 en performance sur `/en/` et `/es/` (100 ailleurs) ; ordinateur à 100 partout, aucune erreur dans la console. Sur `/en/`, en passages alternés avec la 1.18.0 : 100 à chacun des cinq passages (blocage simulé médian 54 ms), contre 96 à 100 (91 ms).
+  - Ce qui reste vient de la première mise en page de la page, avant le premier affichage, que la simulation de Lighthouse place parfois juste après ; la taille par rôle la raccourcit.
+
 ## [1.18.0] - 2026-11-18
 
 ### Ajouté
