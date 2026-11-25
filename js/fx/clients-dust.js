@@ -20,8 +20,12 @@ export const taglineFile = (lang) => `assets/grains/tagline-${lang}.bin`;
 
 /** Grains dessinés selon l'appareil : un téléphone en trace moins. */
 const BUDGET = Object.freeze({ phone: 7000, desktop: 16000 });
-/** Des grains plus gros que ceux du logo : étalés sur une bande large, à 1,25 px ils se perdent dans le fond. */
-const GRAIN_SIZE = 1.6;
+/**
+ * Plus gros et plus lumineux que les grains du logo : étalés sur une bande large, ils se perdaient dans le fond
+ * et la devise se lisait mal (réglage choisi sur captures, thèmes clair et sombre, 390 et 1280 px).
+ */
+const GRAIN_SIZE = 1.8;
+const GAIN = 2.4;
 
 const pageLang = (root) => {
   const lang = (root.getAttribute('lang') ?? '').slice(0, 2).toLowerCase();
@@ -58,6 +62,7 @@ export class ClientsDust {
       palette: isDark(root) ? 'gold' : 'goldInk',
       fill: 0.92,
       grainSize: GRAIN_SIZE,
+      gain: GAIN,
     });
     const dust = new ClientsDust(fx, band, root);
     // Les grains se rassemblent ; on n'attend pas la fin du mouvement, qui ne court que la bande à l'écran

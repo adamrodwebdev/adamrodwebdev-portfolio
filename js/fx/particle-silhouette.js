@@ -685,6 +685,7 @@ export class ParticleSilhouette {
    * @param {keyof MOODS} [o.mood]  @param {keyof PALETTES} [o.palette]
    * @param {number} [o.density]  0..1 share of the budget drawn
    * @param {number} [o.fill]     share of the free area the shape may take (0..1)
+   * @param {number} [o.gain]     brightness as a multiple of the automatic exposure (0.5..3, 1.23.0)
    * @param {number} [o.grainSize] grain size as a multiple of the mood's (0.5..3, 1.23.0)
    * @param {{top?:number,right?:number,bottom?:number,left?:number}} [o.inset]  CSS px kept free (HUD)
    * @param {boolean|'auto'} [o.reducedMotion]
@@ -713,6 +714,7 @@ export class ParticleSilhouette {
     this.budget = this.resolveBudget(o.budget);
     this.density = clamp01(o.density ?? 1);
     this.fill = clamp01(o.fill ?? 0.82);
+    this.gain = Math.min(3, Math.max(0.5, Number.isFinite(o.gain) ? o.gain : 1));   // 1.23.0
     this.grainSize = Math.min(3, Math.max(0.5, Number.isFinite(o.grainSize) ? o.grainSize : 1));   // 1.23.0
     this.inset = { top: 0, right: 0, bottom: 0, left: 0, ...(o.inset ?? {}) };
     this.adaptive = o.adaptive ?? true;
@@ -1177,6 +1179,7 @@ export class ParticleSilhouette {
       const coverage = (count * grainPx) / Math.max(1, areaPx);
       s.exposure = Math.min(1, Math.max(0.12, 1.1 / Math.pow(Math.max(coverage, 0.01), 0.55)));
       if (!s.additive) s.exposure = Math.min(1, s.exposure * 1.2);
+      s.exposure *= this.gain;
     }
   }
 
