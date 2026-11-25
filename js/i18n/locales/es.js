@@ -78,6 +78,7 @@ export default {
   },
   offers: {
     tag: 'Precios',
+    motto: 'El cliente, de corazón',
     title: 'Precios claros, antes incluso de hablar',
     intro: 'Tres fórmulas para empezar y un mantenimiento mensual para durar. Los precios son «desde»: cada proyecto queda abierto a conversación.',
     from: 'desde',

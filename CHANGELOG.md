@@ -2,6 +2,16 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.23.0] - 2026-11-25
+
+### Ajouté
+- **La devise en poussière d'or** : en tête des offres, « Le client à cœur » dessiné en grandes capitales Clivage par des milliers de grains d'or. Le curseur les écarte sur son passage, les entraîne un peu et les fait tourner de chaque côté ; derrière lui, un sillage s'efface en une demi-seconde et les grains reviennent à leur place. Sur téléphone, le doigt fait de même pendant que la page défile (`touch-action: pan-y`, écouteurs passifs). Rien ne s'y clique : le curseur reste la flèche.
+- Une devise par langue, choisie avec l'utilisateur : « Le client à cœur », « Clients at heart », « El cliente, de corazón », « Il cliente nel cuore », « С заботой о клиенте ». Chaque page ne charge que la sienne. La phrase reste dans le texte (lue par les lecteurs d'écran) ; la toile est masquée à l'accessibilité.
+- **Aucun coût au démarrage** : le module ne vient qu'après le chargement, sur un temps libre, quand la bande arrive à l'écran. Les grains sont précalculés (`npm run bake:grains`, `assets/grains/tagline-*.bin`, 80 Ko et 16 000 grains par langue ; un téléphone en dessine 7 000).
+- Le champ du curseur vient du labo de Catapulte Mania (`pointerMove`, `pointerLeave`, `setPointer`) : appliqué dans le shader après la forme, toujours un seul envoi d'uniformes par image et rien d'alloué par image ; le repli Canvas 2D fait le même calcul. Mouvement réduit : les grains restent en place.
+- Le format des grains passe à GRN2, qui garde les côtés d'une forme large (une échelle dans l'en-tête) ; le logo de la bande-son reste en GRN1, toujours lu. `grainSize` et `gain` grossissent et éclairent les grains d'une forme étalée : la devise en prend de plus gros (1,8 ×) et plus lumineux (2,4 ×), pour se lire d'un coup d'œil dans les deux thèmes.
+- Tests : le format GRN2 et ses refus ; chaque langue a sa devise, en deux lignes, la même que le texte lu ; rien n'est demandé avant la bande, puis seule la langue de la page ; le curseur et le doigt remuent les grains ; mouvement réduit sans erreur.
+
 ## [1.22.0] - 2026-11-25
 
 ### Ajouté

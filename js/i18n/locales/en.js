@@ -77,6 +77,7 @@ export default {
   },
   offers: {
     tag: 'Pricing',
+    motto: 'Clients at heart',
     title: 'Clear prices, before we even talk',
     intro: 'Three packages to get started, a monthly care plan to keep going. Prices are starting points: every project stays open to discussion.',
     from: 'from',
