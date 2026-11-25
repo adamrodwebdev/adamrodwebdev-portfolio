@@ -5,10 +5,17 @@
 // Kept here: the dust mood only (the user's choice), the two gold palettes of the site, SVG shapes
 // (for scripts/bake-grains.mjs) and baked grains (for the page, which samples nothing), plus
 // setEnergy() for the music. Removed: text shapes and font loading, the smoke and sparks moods.
+// Added in 1.22.0 (the brand scene meets the soundtrack): the grains can break along the cuts of the
+// brand scene's 3D fracture (setShards, breakShards: cracks of light, a beat of stillness, the burst,
+// home again), and settle like sand on a vibrating plate into the Chladni figure the music plays
+// (sandFigure for the figure, setSand every frame for how far and how hard). Both live in the vertex
+// shader, like the rest: still one draw call and no upload per frame (only when a figure changes).
 //
 //   const fx = await ParticleSilhouette.create(canvas, { budget: 14000, mood: 'dust', palette: 'gold' });
 //   await fx.setShape(Shapes.baked(buffer, { label }));  fx.setEnergy(level);
 //   await fx.disperse();  await fx.gather();
+//   fx.setShards(decodeShards(cutsBuffer, count));  await fx.breakShards();
+//   await fx.sandFigure(nodalTargets(positions, count, [2, 5]));  fx.setSand(strength, hop);
 //
 // Every grain is animated in the vertex shader from static attributes and a few
 // uniforms: one draw call, no buffer upload and no allocation per frame. The CPU
@@ -19,7 +26,9 @@ export const QUALITY_TIERS = Object.freeze({ low: 8000, mid: 25000, high: 60000 
 
 const FALLBACK_BUDGET = 6000;          // Canvas 2D computes every grain on the CPU
 const RASTER_PX = 768;                 // long side of the mask the shape is sampled from
-const FLOATS = 10;                     // ax ay bx by edgeA edgeB seed0..3
+// ax ay bx by edgeA edgeB seed0..3 | sand targets: mode slot P (x, y), slot Q (x, y)
+// | brand cuts: shard flight x, y, shard spin, crack closeness   (1.22.0: 10 -> 18)
+const FLOATS = 18;
 const STRIDE = FLOATS * 4;
 
 export const MOODS = Object.freeze({
@@ -237,9 +246,13 @@ layout(location=0) in vec2 aA;
 layout(location=1) in vec2 aB;
 layout(location=2) in vec2 aE;
 layout(location=3) in vec4 aS;
+layout(location=4) in vec4 aC;   // sand: nodal target of mode slot P (xy) and slot Q (zw), shape units
+layout(location=5) in vec4 aK;   // brand cuts: shard flight (xy, -1..1), shard spin (-1..1), crack closeness
 // All uniforms travel in one vec4 array, uploaded from one preallocated
 // Float32Array: a single call per frame and no number boxed on the JS side.
-uniform vec4 uU[9];
+uniform vec4 uU[11];
+#define uSand  uU[9]   // sand strength, mix P -> Q, hop, shard break
+#define uCut   uU[10]  // crack glow
 #define uView  uU[0].xy  // drawing buffer, px
 #define uWind  uU[0].zw  // disperse direction
 #define uFit   uU[1]     // xy: px per unit of shape A and B; zw: centre offset, px
@@ -287,6 +300,31 @@ void main() {
   float band = smoothstep(0.72, 1.0, sin(home.x / unit * 1.4 - t * 0.45 + aS.x * 0.6));
   p += motion * (vec2(0.0, -uMoodA.z - 0.2) + 0.6 * flow(home / unit * 2.0, t)) * unit * 0.09 * band * edge * edge;
 
+  // sand on a plate (the music): grains slide to the nodal lines of the mode the music plays,
+  // each in its own time, and hop on the beat; when the music calms they flow back into the logo
+  float sandK = clamp(uSand.x * 1.5 - aS.y * 0.5, 0.0, 1.0);
+  sandK = sandK * sandK * (3.0 - 2.0 * sandK) * motion;
+  vec2 node = R * mix(aC.xy, aC.zw, uSand.y) * unit;
+  // sand lines have body: each grain keeps a small scatter of its own around the line
+  p = mix(p, node + (aS.zw - 0.5) * unit * 0.022 + (p - home) * 0.25, sandK);
+  float hop = uSand.z * motion * (0.35 + 0.65 * aS.z);
+  p += vec2(sin(t * 37.0 + aS.x * 91.0), cos(t * 43.0 + aS.w * 77.0)) * hop * unit * 0.016;
+
+  // the brand cuts (a new part of the music): each shard of the 3D fracture flies along its own
+  // flight and turns about the logo's centre a little; its dust spreads as it goes, then all comes home
+  float brk = uSand.w * motion;
+  float be = 1.0 - (1.0 - brk) * (1.0 - brk);
+  vec2 fly = R * aK.xy;
+  p = rot(aK.z * 0.5 * be) * p + fly * unit * 0.3 * be;
+  p += flow(home / unit * 3.0 + aS.xy * 4.0, t) * unit * 0.07 * brk * brk * (0.3 + edge);
+  // the cracks spread from the impact (between the A's legs, as in the video), lighting the grains
+  // that sit on a cut; the rest of the dust dims so the lines read
+  float fromImpact = length(home / unit - vec2(0.0, -0.057));
+  float reached = smoothstep(fromImpact - 0.12, fromImpact, uCut.x * 0.75);
+  float onCut = aK.w * aK.w;
+  float crack = reached * onCut * 3.0;
+  float dimmed = 1.0 - 0.6 * uCut.x * (1.0 - onCut);
+
   // gather: grains fly in from all around, spiralling, and settle with an ease-out
   float g = clamp(uAnim.z * 1.6 - aS.y * 0.6, 0.0, 1.0);
   float ge = 1.0 - pow(1.0 - g, 3.0);
@@ -314,10 +352,11 @@ void main() {
   float a = uMoodB.y * mix(1.0, 0.5, edge) * shimmer;
   a *= smoothstep(0.0, 0.04, uAnim.z) * mix(0.25, 1.0, ge);
   a *= 1.0 - smoothstep(0.3, 1.0, dd);
-  a *= uMisc.z * (1.0 + heat * 1.5);
+  a *= uMisc.z * (1.0 + heat * 1.5 + crack * 2.5) * dimmed;
+  size *= 1.0 + crack * 0.6;
   if (size < 1.0) { a *= size * size; size = 1.0; }
   gl_PointSize = size;
-  vCol = mix(mix(uColA, uColB, aS.z * 0.7), uHot, heat) * light;
+  vCol = mix(mix(mix(uColA, uColB, aS.z * 0.7), uHot, heat) * light, uHot * 1.4, clamp(crack, 0.0, 1.0));
   vAlpha = a;
   vSoft = uU[6].w;
 }`;
@@ -363,7 +402,7 @@ class GLRenderer {
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
     this.prog = prog;
     this.uBlock = gl.getUniformLocation(prog, 'uU');
-    this.block = new Float32Array(36);
+    this.block = new Float32Array(44);
     this.vao = gl.createVertexArray();
     this.vbo = gl.createBuffer();
     gl.bindVertexArray(this.vao);
@@ -372,7 +411,7 @@ class GLRenderer {
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, size, gl.FLOAT, false, STRIDE, offset * 4);
     };
-    attr(0, 2, 0); attr(1, 2, 2); attr(2, 2, 4); attr(3, 4, 6);
+    attr(0, 2, 0); attr(1, 2, 2); attr(2, 2, 4); attr(3, 4, 6); attr(4, 4, 10); attr(5, 4, 14);
     gl.bindVertexArray(null);
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
@@ -409,6 +448,8 @@ class GLRenderer {
     b[24] = s.colA[0]; b[25] = s.colA[1]; b[26] = s.colA[2]; b[27] = s.soft;
     b[28] = s.colB[0]; b[29] = s.colB[1]; b[30] = s.colB[2];
     b[32] = s.hot[0]; b[33] = s.hot[1]; b[34] = s.hot[2];
+    b[36] = s.sand; b[37] = s.sandMix; b[38] = s.hop; b[39] = s.brk;
+    b[40] = s.crack;
     gl.uniform4fv(this.uBlock, b);
     gl.bindVertexArray(this.vao);
     gl.drawArrays(gl.POINTS, 0, count);
@@ -606,6 +647,7 @@ export class ParticleSilhouette {
     this.seedSlots(this.budget);
 
     this.morphT = new Tween(); this.gatherT = new Tween(); this.disperseT = new Tween(); this.opacityT = new Tween();
+    this.sandMixT = new Tween(); this.brkT = new Tween(); this.crackT = new Tween();
     this.progressTarget = -1;
     this.spinRate = 0;
     this.s = {
@@ -614,6 +656,7 @@ export class ParticleSilhouette {
       drift: 0, swirl: 0, rise: 0, flicker: 0, size: 1, alpha: 1, edgeGrow: 0, soft: 0.5, heat: 0,
       windX: 1, windY: 0, motion: 1, exposure: 1, opacity: 1, additive: true,
       colA: [1, 1, 1], colB: [1, 1, 1], hot: [1, 1, 1],
+      sand: 0, sandMix: 0, hop: 0, brk: 0, crack: 0,
     };
     this.stats = { renderer: this.renderer.kind, tier: this.tier, budget: this.budget, count: 0, fps: 0, cpuMs: 0, lastCpuMs: 0, frameMs: 0, dpr: 1 };
     this.setMood(o.mood ?? 'dust');
@@ -837,6 +880,60 @@ export class ParticleSilhouette {
     s.alpha = Math.min(1, m.alpha * (1 + 0.4 * k));
   }
 
+  // --- the brand scene's cuts and the sand of the music (1.22.0) -------------------
+
+  /** The fracture's cuts, grain for grain (js/fx/shard-file.js). Grain i of the shape is slot i. */
+  setShards(cuts) {
+    if (!cuts || cuts.count < this.budget) throw new Error('shard data does not cover the grains');
+    const D = this.data;
+    for (let i = 0; i < this.budget; i++) {
+      const o = i * FLOATS, s = cuts.shardOf[i];
+      D[o + 14] = cuts.fly[s * 2]; D[o + 15] = cuts.fly[s * 2 + 1]; D[o + 16] = cuts.spin[s]; D[o + 17] = cuts.crack[i];
+    }
+    this.renderer.upload(this.data, this.budget);
+    this.hasShards = true;
+  }
+
+  /** Writes one mode's nodal targets (shape units, grain for grain) into slot 'p' or 'q'. */
+  writeSandSlot(slot, targets) {
+    const D = this.data, off = slot === 'p' ? 10 : 12;
+    for (let i = 0; i < this.budget; i++) {
+      D[i * FLOATS + off] = targets[i * 2];
+      D[i * FLOATS + off + 1] = targets[i * 2 + 1];
+    }
+  }
+
+  /** Moves the sand to a new figure: written into the slot not shown, then crossfaded. */
+  sandFigure(targets, duration = 1400) {
+    const toQ = this.s.sandMix < 0.5;
+    this.writeSandSlot(toQ ? 'q' : 'p', targets);
+    if (!this.sandReady) { this.writeSandSlot(toQ ? 'p' : 'q', targets); this.sandReady = true; }
+    this.renderer.upload(this.data, this.budget);
+    this.wake();
+    return this.sandMixT.run(this.s.sandMix, toQ ? 1 : 0, duration, performance.now());
+  }
+
+  /** Live, every frame: how far the grains have gone into the figure (0..1), and the beat's hop (0..1). */
+  setSand(strength, hop) {
+    this.s.sand = this.sandReady ? clamp01(strength) : 0;
+    this.s.hop = clamp01(hop);
+  }
+
+  /** A new part: cracks of light along the fracture, a beat of stillness, the burst, then home.
+   *  The cuts live in the WebGL shader: without shards, or on the Canvas 2D fallback, the old blow-away. */
+  async breakShards() {
+    if (!this.hasShards || this.renderer.kind !== 'webgl2') return this.disperse({ duration: 900 }).then(() => this.gather({ duration: 1500 }));
+    const now = () => performance.now();
+    this.wake();
+    await this.crackT.run(this.s.crack, 1, 420, now());
+    await new Promise((r) => setTimeout(r, 100));
+    if (this.reduced) return this.crackT.run(1, 0, 500, now());
+    this.crackT.run(1, 0, 260, now());
+    await this.brkT.run(0, 1, 650, now());
+    await new Promise((r) => setTimeout(r, 220));
+    await this.brkT.run(1, 0, 1300, now());
+  }
+
   setDensity(d) { this.density = clamp01(d); this.layout(); this.wake(); }
   setSpin(radPerSecond) { this.spinRate = Number.isFinite(radPerSecond) ? radPerSecond : 0; this.wake(); }
   setInset(inset) { Object.assign(this.inset, inset); this.layout(); this.wake(); }
@@ -924,6 +1021,7 @@ export class ParticleSilhouette {
 
   animating() {
     return this.morphT.active || this.gatherT.active || this.disperseT.active || this.opacityT.active
+      || this.sandMixT.active || this.brkT.active || this.crackT.active
       || (this.progressTarget >= 0 && Math.abs(this.s.gather - this.progressTarget) > 0.0005);
   }
 
@@ -942,6 +1040,9 @@ export class ParticleSilhouette {
     if (this.gatherT.active) s.gather = this.gatherT.value(now);
     if (this.disperseT.active) s.disperse = this.disperseT.value(now);
     if (this.opacityT.active) s.opacity = this.opacityT.value(now);
+    if (this.sandMixT.active) s.sandMix = this.sandMixT.value(now);
+    if (this.brkT.active) s.brk = this.brkT.value(now);
+    if (this.crackT.active) s.crack = this.crackT.value(now);
     if (this.progressTarget >= 0 && !this.reduced) {
       s.gather += (this.progressTarget - s.gather) * (1 - Math.exp(-dt * 3.2));
     }
@@ -978,7 +1079,7 @@ export class ParticleSilhouette {
   destroy() {
     this.destroyed = true;
     cancelAnimationFrame(this.raf);
-    for (const t of [this.morphT, this.gatherT, this.disperseT, this.opacityT]) t.finish();
+    for (const t of [this.morphT, this.gatherT, this.disperseT, this.opacityT, this.sandMixT, this.brkT, this.crackT]) t.finish();
     this.resizeObserver.disconnect();
     this.intersection.disconnect();
     this.reducedQuery.removeEventListener('change', this.onReducedChange);
