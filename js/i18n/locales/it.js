@@ -78,6 +78,7 @@ export default {
   },
   offers: {
     tag: 'Prezzi',
+    motto: 'Il cliente nel cuore',
     title: 'Prezzi chiari, prima ancora di parlarne',
     intro: 'Tre formule per partire e una manutenzione mensile per durare. I prezzi sono «a partire da»: ogni progetto resta aperto alla discussione.',
     from: 'da',
