@@ -2,6 +2,26 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.23.0] - 2026-11-25
+
+### Ajouté
+- **La devise en poussière d'or** : en tête des offres, « Le client à cœur » dessiné en grandes capitales Clivage par des milliers de grains d'or. Le curseur les écarte sur son passage, les entraîne un peu et les fait tourner de chaque côté ; derrière lui, un sillage s'efface en une demi-seconde et les grains reviennent à leur place. Sur téléphone, le doigt fait de même pendant que la page défile (`touch-action: pan-y`, écouteurs passifs). Rien ne s'y clique : le curseur reste la flèche.
+- Une devise par langue, choisie avec l'utilisateur : « Le client à cœur », « Clients at heart », « El cliente, de corazón », « Il cliente nel cuore », « С заботой о клиенте ». Chaque page ne charge que la sienne. La phrase reste dans le texte (lue par les lecteurs d'écran) ; la toile est masquée à l'accessibilité.
+- **Aucun coût au démarrage** : le module ne vient qu'après le chargement, sur un temps libre, quand la bande arrive à l'écran. Les grains sont précalculés (`npm run bake:grains`, `assets/grains/tagline-*.bin`, 80 Ko et 16 000 grains par langue ; un téléphone en dessine 7 000).
+- Le champ du curseur vient du labo de Catapulte Mania (`pointerMove`, `pointerLeave`, `setPointer`) : appliqué dans le shader après la forme, toujours un seul envoi d'uniformes par image et rien d'alloué par image ; le repli Canvas 2D fait le même calcul. Mouvement réduit : les grains restent en place.
+- Le format des grains passe à GRN2, qui garde les côtés d'une forme large (une échelle dans l'en-tête) ; le logo de la bande-son reste en GRN1, toujours lu. `grainSize` et `gain` grossissent et éclairent les grains d'une forme étalée : la devise en prend de plus gros (1,8 ×) et plus lumineux (2,4 ×), pour se lire d'un coup d'œil dans les deux thèmes.
+- Tests : le format GRN2 et ses refus ; chaque langue a sa devise, en deux lignes, la même que le texte lu ; rien n'est demandé avant la bande, puis seule la langue de la page ; le curseur et le doigt remuent les grains ; mouvement réduit sans erreur.
+
+## [1.22.0] - 2026-11-25
+
+### Ajouté
+- **Du sable sur un haut-parleur** : quand la bande-son joue, un son soutenu range les grains du logo en figure de Chladni (les lignes nodales d'une plaque qui vibre), tenue dans l'hexagone du logo ; la figure fond dans le logo quand la musique se calme. La basse fait sauter les grains ; une musique plus claire dessine une figure à plus de lignes, qui change sur un temps fort, au plus toutes les 2,8 s.
+- **Les cassures de la marque** : chaque nouvelle partie ne souffle plus le logo. Des fissures de lumière partent du point d'impact le long de la fracture 3D de la scène de marque, un temps d'arrêt, puis les éclats partent en poussière sur leurs trajectoires et le logo se reforme. Hors de l'écran, la cassure est sautée.
+- Mouvement réduit : le logo reste immobile, seule la lumière des fissures paraît. Sans WebGL2 (repli Canvas 2D), l'ancien souffle reste.
+- Préparé par la session de la scène de marque, sur un prototype validé par l'utilisateur le 25 novembre 2026, et intégré ici. Un second analyseur (2 048 points) est branché sur celui du moteur, qui ne change pas ; les figures se calculent à la première écoute, une par tâche. Toujours un seul appel de dessin, rien d'alloué par image.
+- `assets/grains/emblem-shards.bin` (28 Ko, 73 éclats) va grain pour grain avec `emblem.bin` : si les grains sont recalculés (`npm run bake:grains`), les éclats doivent l'être aussi (`brand-sting/site/bake_site_shards.py`, Blender) ; un test unitaire échoue tant qu'ils ne correspondent pas. Le fichier est lu avec vérification (taille, en-tête, nombre de grains, indices d'éclat).
+- Tests : la lecture des éclats et ses refus, chaque figure tenue dans l'hexagone ; une nouvelle partie déclenche la cassure, qui se termine.
+
 ## [1.21.0] - 2026-11-25
 
 ### Ajouté
