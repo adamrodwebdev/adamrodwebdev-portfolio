@@ -2,6 +2,15 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.21.0] - 2026-11-25
+
+### Ajouté
+- **Le logo en grains de la bande-son** : en tête du lecteur de la section « Bande-son », l'hexagone et son A dessinés par des milliers de grains d'or, en ambiance « poussière ». Au repos, ils respirent ; quand la musique joue, le niveau des graves et des médiums de l'analyseur les gonfle et les fait scintiller ; chaque nouvelle partie du morceau les souffle, puis le logo se reforme. Or du thème sombre, or foncé imprimé sur le papier du thème clair. Il remplace le petit spectre à côté du titre.
+- L'effet vient du labo de Catapulte Mania (le nôtre, sans dépendance, WebGL2 avec un repli Canvas 2D) : copié dans `js/fx/particle-silhouette.js`, réduit à ce que le site emploie, avec `setEnergy()` pour la musique et des grains précalculés.
+- **Aucun coût au chargement** : le module ne se charge qu'à l'approche de la section, et les grains du logo sont précalculés par `npm run bake:grains` (`assets/grains/emblem.bin`, 70 Ko, 14 000 grains ; un téléphone en dessine 6 000). Le fichier est vérifié à la lecture : taille avant tout, en-tête, nombre de grains, valeurs.
+- Mouvement réduit : le logo reste immobile, doucement éclairé. Décoratif : masqué aux lecteurs d'écran, le nom du morceau reste dans le texte.
+- Tests : le format du fichier (aller-retour, refus d'un fichier tronqué, trop grand ou menteur) ; rien n'est demandé au chargement, puis la scène s'allume à l'approche, sans erreur, avec et sans mouvement réduit.
+
 ## [1.18.4] - 2026-11-24
 
 ### Ajouté

@@ -520,6 +520,38 @@ test('bande-son : l’interrupteur de l’en-tête lance et coupe le thème, le 
   expect(await position.inputValue(), 'la position reste sur la pause').toBe(held);
 });
 
+// Le logo en grains (1.21.0) : rien n'est demandé au chargement ; à l'approche de la section, le module et le
+// fichier des grains arrivent, la scène s'allume, sans erreur, et le nom du morceau reste dans le texte
+test('bande-son : le logo en grains ne se charge qu’à l’approche de la section (1.21.0)', async ({ page }) => {
+  const asked = [];
+  const errors = [];
+  page.on('request', (request) => asked.push(new URL(request.url()).pathname));
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/');
+  await expect(page.locator('#soundtrack-app .sound-deck__stage')).toHaveCount(1);
+  await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+  expect(asked.filter((path) => /particle-silhouette|soundtrack-grains|\/grains\//.test(path))).toEqual([]);
+  await page.locator('#bande-son').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
+  const stage = page.locator('#soundtrack-app .sound-deck__stage');
+  await expect(stage).toHaveClass(/is-ready/, { timeout: 10_000 });
+  await expect(stage).toHaveAttribute('aria-hidden', 'true');
+  expect(asked).toContain('/assets/grains/emblem.bin');
+  const size = await stage.locator('canvas').evaluate((canvas) => [canvas.width, canvas.height]);
+  expect(size[0]).toBeGreaterThan(100);
+  expect(size[0]).toBe(size[1]);
+  await expect(page.locator('#soundtrack-app .sound-deck__title')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('bande-son : avec « réduire les animations », le logo en grains s’affiche immobile, sans erreur (1.21.0)', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#bande-son');
+  await expect(page.locator('#soundtrack-app .sound-deck__stage')).toHaveClass(/is-ready/, { timeout: 10_000 });
+  expect(errors).toEqual([]);
+});
+
 test('bande-son : chaque partie se joue depuis son début, et s’allume', async ({ page }) => {
   const { SECTIONS } = await import('../js/audio/score.js');
   await page.goto('/#bande-son');

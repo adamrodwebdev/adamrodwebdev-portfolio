@@ -57,13 +57,13 @@ js/data/offers.js       Les offres : prix des formules, de la maintenance et du 
 js/data/testimonials.js Les témoignages de clients (vide tant qu'il n'y a pas de vrai avis)
 js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
-js/fx/                  Effets (révélations, curseur, éclats, particules)
+js/fx/                  Effets (révélations, curseur, éclats, particules) ; le logo en grains de la bande-son (particle-silhouette.js, soundtrack-grains.js, grain-file.js)
 js/audio/score.js       « Sfumato » : la partition (grille, mélodie, parties), sans son
 js/audio/sfumato.js     Le moteur : mixage, effets, lecture ; chargé à la première écoute
 js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, chœur, voix, synthés)
 js/audio/arrangement.js Qui joue quoi, double croche par double croche
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
-assets/                 Favicons, icônes PWA, image Open Graph
+assets/                 Favicons, icônes PWA, image Open Graph ; grains/ : les grains précalculés du logo (npm run bake:grains)
 fonts/                  Clivage (la police signature, exclusive : latin et cyrillique), Barlow, Unbounded (titre de Lumirift) : WOFF2
 lumirift/               Médias de la page du jeu Lumirift ; privacy/ : la politique de confidentialité de son application Android (page écrite à la main, adresse donnée à Google Play : ne pas la déplacer)
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
@@ -76,6 +76,7 @@ scripts/vendor.mjs      Vue et vue-i18n copiés de node_modules, version dans le
 scripts/vue-templates.mjs  Gabarits des composants précompilés (aucun unsafe-eval)
 scripts/build-pages.mjs Pages traduites et page de Lumirift (textes, feuille copiée, chargement différé)
 scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
+scripts/bake-grains.mjs Précalcule les grains du logo de la bande-son (Chromium sans écran), à relancer quand le logo change
 scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé ; sur l'accueil, polices données bloc par bloc
 scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
 scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
@@ -257,6 +258,7 @@ En local, sur `npm run serve` (mêmes en-têtes et même compression que Netlify
 
 « Sfumato » est le thème original du site : 3 min 23, mi mineur, 116 BPM joués en demi-temps, en cinq parties (Éveil, Signal, Montée, Apogée, Retour). Aucun fichier audio : chaque note est synthétisée en direct par le navigateur (Web Audio API). L'ossature : pulsation staccato à délai pointé, nappes, basse en sidechain, cloche FM, percussions de film. L'orchestre (1.12.1) : violons et altos, violoncelles et contrebasses, spiccato, cors et trombones, timbales et roulements ; un chœur à quatre voix et une voix soliste par filtres de formants (voyelles qui glissent, port de voix entre les notes liées, seconde voix à l'apogée).
 
+- **Le logo en grains** (1.21.0) : en tête du lecteur, l'hexagone et son A dessinés par des milliers de grains d'or (ambiance « poussière »), qui respirent au repos et s'animent avec la musique (le niveau des graves et des médiums de l'analyseur) ; chaque nouvelle partie les souffle, puis le logo se reforme. L'effet vient du labo de Catapulte Mania (le nôtre, `js/fx/particle-silhouette.js`, WebGL2 avec un repli Canvas 2D) : un seul appel de dessin, rien d'alloué par image, pause hors de l'écran, mouvement réduit tenu (le logo reste immobile). Il ne se charge qu'à l'approche de la section, et ses grains sont précalculés (`assets/grains/emblem.bin`, 70 Ko, 14 000 grains ; un téléphone en dessine 6 000) : l'échantillonnage coûtait de 150 à 590 ms au ralenti 4 ×. Décoratif : `aria-hidden`, le nom du morceau reste dans le texte.
 - **Écouter** : l'interrupteur de l'en-tête (`aria-pressed`) coupe et relance le son ; la section « Bande-son » (`#bande-son`, cinquième lien du menu) a le lecteur complet : lecture, position, volume, et les cinq parties, chacune jouable depuis son début. Les deux pilotent le même état (`js/audio/soundtrack.js`, créé dans `js/islands.js` et fourni aux deux îlots). Les touches multimédia et l'écran verrouillé l'affichent aussi (Media Session).
 - **Rien au chargement** : le moteur (`sfumato.js`) n'est téléchargé qu'au premier clic. Le son ne démarre jamais seul (règle des navigateurs, et de l'accessibilité).
 - **Trois couches** : la partition (`score.js`) dit quoi jouer, l'arrangement (`arrangement.js`) qui le joue et quand, les pupitres (`instruments.js`) comment chacun sonne ; le moteur (`sfumato.js`) mixe et lit. Un appareil de 4 cœurs ou moins joue les ensembles à deux voix par note au lieu de trois (`islands.js`).
