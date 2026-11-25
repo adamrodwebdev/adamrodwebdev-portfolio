@@ -99,6 +99,19 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.22.0 : le sable et les cassures de la marque
+
+Statut : validé par l'utilisateur le 25 novembre 2026 sur un prototype privé (« Approve both »), préparé par la session de la scène de marque (un correctif contre `dev` 27d6f06), intégré sur la branche `feat/1.22-soundtrack-sand` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (25 novembre 2026)
+- **Le sable** : les figures de Chladni suivent la musique (son soutenu, basse, clarté), tenues dans l'hexagone.
+- **Les cassures** : la fracture de la scène de marque remplace le souffle à chaque nouvelle partie ; sautée hors de l'écran ; le repli Canvas 2D garde le souffle.
+- **Les éclats précalculés** hors du site, à partir de la scène Blender (le nôtre, fait par script) ; seule la géométrie est publiée, jamais le film ni le son de la marque.
+
+### Vérifications (« fini » quand)
+- `npm test` passe, dont les tests du sable et la cassure dans le navigateur.
+- Lighthouse de l'accueil en passages alternés avec `dev` : pas de recul.
+
 ## 1.21.0 : le logo en grains de la bande-son
 
 Statut : demandé le 25 novembre 2026 (le labo de Catapulte Mania a transmis l'effet ; l'utilisateur a choisi la section « Bande-son » parmi quatre places, validé le prototype, puis demandé de ne garder que l'ambiance « poussière »). Réalisé sur la branche `feat/1.21-soundtrack-grains` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.

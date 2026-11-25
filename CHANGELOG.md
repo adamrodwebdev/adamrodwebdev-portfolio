@@ -2,6 +2,16 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.22.0] - 2026-11-25
+
+### Ajouté
+- **Du sable sur un haut-parleur** : quand la bande-son joue, un son soutenu range les grains du logo en figure de Chladni (les lignes nodales d'une plaque qui vibre), tenue dans l'hexagone du logo ; la figure fond dans le logo quand la musique se calme. La basse fait sauter les grains ; une musique plus claire dessine une figure à plus de lignes, qui change sur un temps fort, au plus toutes les 2,8 s.
+- **Les cassures de la marque** : chaque nouvelle partie ne souffle plus le logo. Des fissures de lumière partent du point d'impact le long de la fracture 3D de la scène de marque, un temps d'arrêt, puis les éclats partent en poussière sur leurs trajectoires et le logo se reforme. Hors de l'écran, la cassure est sautée.
+- Mouvement réduit : le logo reste immobile, seule la lumière des fissures paraît. Sans WebGL2 (repli Canvas 2D), l'ancien souffle reste.
+- Préparé par la session de la scène de marque, sur un prototype validé par l'utilisateur le 25 novembre 2026, et intégré ici. Un second analyseur (2 048 points) est branché sur celui du moteur, qui ne change pas ; les figures se calculent à la première écoute, une par tâche. Toujours un seul appel de dessin, rien d'alloué par image.
+- `assets/grains/emblem-shards.bin` (28 Ko, 73 éclats) va grain pour grain avec `emblem.bin` : si les grains sont recalculés (`npm run bake:grains`), les éclats doivent l'être aussi (`brand-sting/site/bake_site_shards.py`, Blender) ; un test unitaire échoue tant qu'ils ne correspondent pas. Le fichier est lu avec vérification (taille, en-tête, nombre de grains, indices d'éclat).
+- Tests : la lecture des éclats et ses refus, chaque figure tenue dans l'hexagone ; une nouvelle partie déclenche la cassure, qui se termine.
+
 ## [1.21.0] - 2026-11-25
 
 ### Ajouté
