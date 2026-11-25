@@ -99,6 +99,21 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.21.0 : le logo en grains de la bande-son
+
+Statut : demandé le 25 novembre 2026 (le labo de Catapulte Mania a transmis l'effet ; l'utilisateur a choisi la section « Bande-son » parmi quatre places, validé le prototype, puis demandé de ne garder que l'ambiance « poussière »). Réalisé sur la branche `feat/1.21-soundtrack-grains` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (25 novembre 2026)
+- **La place** : la section « Bande-son », pas le hero (qui a déjà son titre qui se brise et l'emblème en éclats de la 1.20.0), ni la page 404.
+- **Le sujet** : le logo du site, plein (l'hexagone dense, le A évidé) ; jamais rien du site qui a inspiré l'effet.
+- **L'ambiance** : poussière seulement ; la fumée et les étincelles sont retirées du module.
+- **Les grains précalculés** et le chargement à l'approche : rien ne pèse sur le démarrage de l'accueil.
+
+### Vérifications (« fini » quand)
+- `npm test` passe, dont les nouveaux tests (fichier des grains, chargement à l'approche, mouvement réduit).
+- Lighthouse de l'accueil en passages alternés avec `dev` : pas de recul.
+- Captures sur téléphone et ordinateur, sombre et clair, au repos et musique lancée.
+
 ## 1.18.2 : la politique de confidentialité de l'application Lumirift
 
 Statut : demandée le 24 novembre 2026 par la session du jeu, à la demande de l'utilisateur : Google Play exige une adresse publique avant le test fermé de l'application Android (Capacitor, `com.adamrodwebdev.lumirift`). Réalisée sur la branche `feat/1.18.2-lumirift-privacy` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur, avant le test fermé.
