@@ -937,6 +937,10 @@ span.sound-deck__viz {
 }
 .sound-deck__stage.is-ready::before { opacity: 0; }
 .sound-deck__grains { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* La devise en poussière d’or en tête des offres (1.23.0) : une bande de taille fixe (rien ne bouge quand les
+   grains arrivent), que le curseur et le doigt traversent ; la page défile toujours sous le doigt */
+.clients-dust { position: relative; width: min(100%, 48rem); aspect-ratio: 5 / 2; margin: 0 auto clamp(1.5rem, 1rem + 2vw, 3rem); touch-action: pan-y; }
+.clients-dust__grains { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sound-deck__id { min-width: 0; }
 .sound-deck__title {
   font-family: var(--font-display); font-weight: 700; font-size: var(--step-3); line-height: 1; text-transform: uppercase; letter-spacing: 0.04em;

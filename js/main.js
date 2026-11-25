@@ -22,3 +22,19 @@ afterLoad(() => idle(() => {
   // L'emblème du hero arrive en éclats (1.20.0) : son module n'est demandé qu'ici, jamais au premier chargement.
   import('./fx/emblem3d.js').then(({ playEmblem }) => playEmblem(document));
 }));
+// La devise en poussière d’or en tête des offres (1.23.0) : son module ne vient qu’à l’arrivée de la bande à l’écran
+const dustBand = document.querySelector('.clients-dust');
+const startDust = () => import('./fx/clients-dust.js')
+  .then(({ ClientsDust }) => ClientsDust.start(dustBand, dustBand.querySelector('canvas')))
+  .catch((err) => console.warn('[clients-dust]', err));
+if (dustBand) {
+  afterLoad(() => idle(() => {
+    if (!('IntersectionObserver' in window)) { startDust(); return; }
+    const near = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      near.disconnect();
+      startDust();
+    });
+    near.observe(dustBand);
+  }));
+}

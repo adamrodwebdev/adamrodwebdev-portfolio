@@ -81,6 +81,7 @@ export default {
   },
   offers: {
     tag: 'Offres',
+    motto: 'Le client à cœur',
     title: 'Des prix clairs, avant même d’en parler',
     intro: 'Trois formules pour démarrer, une maintenance au mois pour durer. Les prix sont donnés « à partir de » : chaque projet reste ouvert à la discussion.',
     from: 'dès',
