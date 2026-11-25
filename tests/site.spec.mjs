@@ -552,6 +552,63 @@ test('bande-son : avec « réduire les animations », le logo en grains s’affi
   expect(errors).toEqual([]);
 });
 
+// La devise en poussière d'or en tête des offres (1.23.0) : rien n'est demandé avant l'arrivée de la bande à
+// l'écran ; ensuite seule la langue de la page arrive, la phrase reste dans le texte, et le curseur remue les grains
+for (const [path, lang] of [['/', 'fr'], ['/en/', 'en'], ['/ru/', 'ru']]) {
+  test(`offres : la devise en poussière d’or ne se charge qu’à l’arrivée de la bande, dans sa langue (${lang}, 1.23.0)`, async ({ page }) => {
+    const asked = [];
+    const errors = [];
+    page.on('request', (request) => asked.push(new URL(request.url()).pathname));
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto(path);
+    const band = page.locator('#offres .clients-dust');
+    await expect(band).toHaveCount(1);
+    await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+    expect(asked.filter((p) => /clients-dust|\/grains\/tagline/.test(p)), 'rien avant la bande').toEqual([]);
+    const { default: texts } = await import(`../js/i18n/locales/${lang}.js`);
+    await expect(band.locator('.visually-hidden')).toHaveText(texts.offers.motto);
+    await expect(band.locator('canvas')).toHaveAttribute('aria-hidden', 'true');
+    await band.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await expect(band).toHaveClass(/is-ready/, { timeout: 10_000 });
+    expect(asked.filter((p) => p.startsWith('/assets/grains/tagline-'))).toEqual([`/assets/grains/tagline-${lang}.bin`]);
+    const size = await band.locator('canvas').evaluate((canvas) => [canvas.width, canvas.height]);
+    expect(size[0]).toBeGreaterThan(200);
+    expect(size[0] / size[1]).toBeCloseTo(2.5, 1);
+    expect(errors).toEqual([]);
+  });
+}
+
+test('offres : le curseur ou le doigt remue la devise, et la page défile toujours sous le doigt (1.23.0)', async ({ page, isMobile }) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/');
+  const band = page.locator('#offres .clients-dust');
+  await band.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await expect(band).toHaveClass(/is-ready/, { timeout: 10_000 });
+  expect(await band.evaluate((el) => getComputedStyle(el).touchAction)).toBe('pan-y');
+  expect(await band.evaluate((el) => getComputedStyle(el).cursor), 'la flèche : rien ne s’y clique').toBe('default');
+  const box = await band.boundingBox();
+  if (isMobile) {
+    await band.dispatchEvent('touchstart', { touches: [{ identifier: 1, clientX: box.x + box.width * 0.3, clientY: box.y + box.height / 2 }] });
+    await band.dispatchEvent('touchmove', { touches: [{ identifier: 1, clientX: box.x + box.width * 0.6, clientY: box.y + box.height / 2 }] });
+    await band.dispatchEvent('touchend', { touches: [] });
+  } else {
+    await page.mouse.move(box.x + box.width * 0.2, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width * 0.8, box.y + box.height / 2, { steps: 12 });
+  }
+  await expect(band).toHaveAttribute('data-stirred', '');
+  expect(errors).toEqual([]);
+});
+
+test('offres : avec « réduire les animations », la devise s’affiche sans erreur (1.23.0)', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#offres');
+  await expect(page.locator('#offres .clients-dust')).toHaveClass(/is-ready/, { timeout: 10_000 });
+  expect(errors).toEqual([]);
+});
+
 // Les éclats de la scène de marque (1.22.0) : une nouvelle partie brise le logo, puis il se reforme
 test('bande-son : une nouvelle partie brise le logo le long des éclats, puis il se reforme (1.22.0)', async ({ page }) => {
   const errors = [];

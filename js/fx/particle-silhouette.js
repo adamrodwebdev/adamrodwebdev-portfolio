@@ -17,6 +17,10 @@
 //   fx.setShards(decodeShards(cutsBuffer, count));  await fx.breakShards();
 //   await fx.sandFigure(nodalTargets(positions, count, [2, 5]));  fx.setSand(strength, hop);
 //
+// Added in 1.23.0 (from the lab): the cursor and the finger stir the grains (pointerMove,
+// pointerLeave, setPointer): a soft head and a fading wake, applied in the shader after the
+// shape is placed, still one uniform upload per frame and nothing allocated per frame.
+//
 // Every grain is animated in the vertex shader from static attributes and a few
 // uniforms: one draw call, no buffer upload and no allocation per frame. The CPU
 // only touches the particle buffer when the shape changes.
@@ -30,6 +34,12 @@ const RASTER_PX = 768;                 // long side of the mask the shape is sam
 // | brand cuts: shard flight x, y, shard spin, crack closeness   (1.22.0: 10 -> 18)
 const FLOATS = 18;
 const STRIDE = FLOATS * 4;
+// The cursor and the finger (1.23.0, from the Catapulte Mania lab): the live head + 9 fading wake marks
+const FIELD = 10;
+const STAMP_MS = 60;                   // one wake mark per 60 ms of stroke...
+const STAMP_LIFE = 0.5;                // ...each gone in 0.5 s, so a mark is never cut short
+// slots of the pointer state: target, smoothed head, velocity, strength, times, scratch
+const PS = Object.freeze({ TX: 0, TY: 1, X: 2, Y: 3, VX: 4, VY: 5, STRENGTH: 6, MOVED: 7, STAMPED: 8, R: 9, PX: 10, PY: 11, K: 12, SPEED: 13, TARGET: 14, SIZE: 15 });
 
 export const MOODS = Object.freeze({
   // drift: idle wander, swirl: turbulence, rise: upward pull, flicker: shimmer,
@@ -250,9 +260,11 @@ layout(location=4) in vec4 aC;   // sand: nodal target of mode slot P (xy) and s
 layout(location=5) in vec4 aK;   // brand cuts: shard flight (xy, -1..1), shard spin (-1..1), crack closeness
 // All uniforms travel in one vec4 array, uploaded from one preallocated
 // Float32Array: a single call per frame and no number boxed on the JS side.
-uniform vec4 uU[11];
+uniform vec4 uU[26];
 #define uSand  uU[9]   // sand strength, mix P -> Q, hop, shard break
 #define uCut   uU[10]  // crack glow
+// uU[11..20]: pointer field (1.23.0), one stamp each (x, y px from the canvas centre, radius px, strength)
+// uU[21..25]: their velocities, px/s, two per vec4
 #define uView  uU[0].xy  // drawing buffer, px
 #define uWind  uU[0].zw  // disperse direction
 #define uFit   uU[1]     // xy: px per unit of shape A and B; zw: centre offset, px
@@ -340,9 +352,41 @@ void main() {
      + flow(nrm * 4.0 + aS.zw * 5.0, t) * dd * L * 0.12 * uMoodA.y;
 
   p += uFit.zw;
+
+  // pointer (1.23.0): the cursor or finger and its fading wake push grains aside, drag them along the
+  // stroke and curl them round on each side; grains settle back home as the stamps fade
+  vec2 stir = vec2(0.0);
+  float lit = 0.0, reach = 1.0;
+  for (int i = 0; i < 10; i++) {
+    vec4 f = uU[11 + i];
+    if (f.w < 0.002) continue;
+    vec4 vv = uU[21 + i / 2];
+    vec2 v = (i % 2 == 0) ? vv.xy : vv.zw;
+    // each stamp is a capsule over the last 60 ms of its stroke, so a fast wake has no gaps
+    vec2 seg = v * 0.06;
+    vec2 q0 = p - f.xy;
+    float h = clamp(-dot(q0, seg) / max(dot(seg, seg), 1.0), 0.0, 1.0);
+    vec2 q = q0 + seg * h;
+    float q2 = dot(q, q) / (f.z * f.z);
+    if (q2 > 6.0) continue;
+    float fall = exp(-q2) * f.w;
+    vec2 n = q / (sqrt(dot(q, q)) + 0.001);
+    float side = sign(q0.x * v.y - q0.y * v.x);
+    float jit = 0.45 + aS.y;
+    vec2 drag = v * 0.045;
+    drag *= min(1.0, f.z * 0.9 / max(length(drag), 0.001));
+    stir += (n * f.z * 0.7 + vec2(-n.y, n.x) * side * f.z * 0.4 * (aS.z - 0.25) + drag) * fall * jit;
+    lit = max(lit, fall);
+    reach = max(reach, f.z);
+  }
+  // overlapping marks do not add up past one radius: a furrow, never a crater
+  float sl = length(stir);
+  stir *= sl > 0.001 ? reach * tanh(sl / reach) / sl : 0.0;
+  p += stir * motion;
+  lit *= motion;
   gl_Position = vec4(p.x / (uView.x * 0.5), -p.y / (uView.y * 0.5), 0.0, 1.0);
 
-  float size = uMoodB.x * (0.55 + 0.9 * aS.y * aS.y) * (1.0 + uMoodB.z * (edge * 0.6 + dd * 1.5));
+  float size = uMoodB.x * (0.55 + 0.9 * aS.y * aS.y) * (1.0 + uMoodB.z * (edge * 0.6 + dd * 1.5)) * (1.0 + 0.3 * lit);
   float shimmer = 1.0 - uMoodA.w * motion * 0.5 * (1.0 + sin(t * (1.3 + 3.5 * aS.y) + aS.x * 40.0));
   float spark = motion > 0.5
     ? pow(0.5 + 0.5 * sin(t * (2.0 + 5.0 * aS.z) + aS.w * 50.0), 14.0)
@@ -352,11 +396,11 @@ void main() {
   float a = uMoodB.y * mix(1.0, 0.5, edge) * shimmer;
   a *= smoothstep(0.0, 0.04, uAnim.z) * mix(0.25, 1.0, ge);
   a *= 1.0 - smoothstep(0.3, 1.0, dd);
-  a *= uMisc.z * (1.0 + heat * 1.5 + crack * 2.5) * dimmed;
+  a *= uMisc.z * (1.0 + heat * 1.5 + crack * 2.5) * dimmed * (1.0 + 0.6 * lit);
   size *= 1.0 + crack * 0.6;
   if (size < 1.0) { a *= size * size; size = 1.0; }
   gl_PointSize = size;
-  vCol = mix(mix(mix(uColA, uColB, aS.z * 0.7), uHot, heat) * light, uHot * 1.4, clamp(crack, 0.0, 1.0));
+  vCol = mix(mix(mix(uColA, uColB, aS.z * 0.7), uHot, max(heat, lit * 0.45)) * light, uHot * 1.4, clamp(crack, 0.0, 1.0));
   vAlpha = a;
   vSoft = uU[6].w;
 }`;
@@ -402,7 +446,7 @@ class GLRenderer {
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
     this.prog = prog;
     this.uBlock = gl.getUniformLocation(prog, 'uU');
-    this.block = new Float32Array(44);
+    this.block = new Float32Array(104);
     this.vao = gl.createVertexArray();
     this.vbo = gl.createBuffer();
     gl.bindVertexArray(this.vao);
@@ -450,6 +494,12 @@ class GLRenderer {
     b[32] = s.hot[0]; b[33] = s.hot[1]; b[34] = s.hot[2];
     b[36] = s.sand; b[37] = s.sandMix; b[38] = s.hop; b[39] = s.brk;
     b[40] = s.crack;
+    const F = s.field;
+    for (let i = 0; i < FIELD; i++) {
+      const o = i * 6, j = 44 + i * 4, k = 84 + i * 2;
+      b[j] = F[o]; b[j + 1] = F[o + 1]; b[j + 2] = F[o + 2]; b[j + 3] = F[o + 3];
+      b[k] = F[o + 4]; b[k + 1] = F[o + 5];
+    }
     gl.uniform4fv(this.uBlock, b);
     gl.bindVertexArray(this.vao);
     gl.drawArrays(gl.POINTS, 0, count);
@@ -527,12 +577,37 @@ class Canvas2DRenderer {
         x += s.windX * dd * dd * L * (0.5 + s1) + Math.sin(s2 * 40 + t) * dd * L * 0.12 * s.swirl;
         y += s.windY * dd * dd * L * (0.5 + s1) - dd * L * 0.3 * s.rise;
       }
+      let lit = 0;
+      if (s.fieldOn && motion > 0) {
+        const F = s.field, px0 = x + s.centerX, py0 = y + s.centerY;
+        let ox = 0, oy = 0, reach = 1;
+        for (let f = 0; f < FIELD; f++) {
+          const o = f * 6, st = F[o + 3];
+          if (st < 0.002) continue;
+          const vx = F[o + 4], vy = F[o + 5], r = F[o + 2];
+          const q0x = px0 - F[o], q0y = py0 - F[o + 1], gx = vx * 0.06, gy = vy * 0.06;
+          const hh = Math.min(1, Math.max(0, -(q0x * gx + q0y * gy) / Math.max(gx * gx + gy * gy, 1)));
+          const qx = q0x + gx * hh, qy = q0y + gy * hh;
+          const q2 = (qx * qx + qy * qy) / (r * r);
+          if (q2 > 6) continue;
+          const fall = Math.exp(-q2) * st, dist = Math.hypot(qx, qy) + 0.001;
+          const nx = qx / dist, ny = qy / dist;
+          const side = Math.sign(q0x * vy - q0y * vx), jit = 0.45 + s1, tw = side * r * 0.4 * (s2 - 0.25);
+          const dl = Math.hypot(vx, vy) * 0.045, dk = 0.045 * Math.min(1, (r * 0.9) / Math.max(dl, 0.001));
+          ox += (nx * r * 0.7 - ny * tw + vx * dk) * fall * jit;
+          oy += (ny * r * 0.7 + nx * tw + vy * dk) * fall * jit;
+          if (fall > lit) lit = fall;
+          if (r > reach) reach = r;
+        }
+        const sl = Math.hypot(ox, oy), k = sl > 0.001 ? (reach * Math.tanh(sl / reach)) / sl : 0;
+        x += ox * k; y += oy * k;
+      }
       const sx = Math.round(x + s.centerX + w / 2), sy = Math.round(y + s.centerY + h / 2);
       if (sx < 0 || sy < 0 || sx >= w || sy >= h) continue;
       const shimmer = 1 - s.flicker * motion * 0.5 * (1 + Math.sin(t * (1.3 + 3.5 * s1) + s0 * 40));
-      let a = s.alpha * (1 - 0.5 * edge) * shimmer * (g > 0 ? 0.25 + 0.75 * ge : 0) * s.exposure * s.opacity;
+      let a = s.alpha * (1 - 0.5 * edge) * shimmer * (g > 0 ? 0.25 + 0.75 * ge : 0) * s.exposure * s.opacity * (1 + 0.6 * lit);
       if (dd > 0.3) a *= 1 - smooth01((dd - 0.3) / 0.7);
-      const heat = s.heat * (motion > 0.5 ? Math.pow(0.5 + 0.5 * Math.sin(t * (2 + 5 * s2) + s3 * 50), 14) : Math.pow(s2, 24));
+      const heat = Math.max(lit * 0.45, s.heat * (motion > 0.5 ? Math.pow(0.5 + 0.5 * Math.sin(t * (2 + 5 * s2) + s3 * 50), 14) : Math.pow(s2, 24)));
       const light = 0.8 + 0.2 * Math.max(-1, Math.min(1, -(hx + hy) / (unit * 1.2)));
       const mix = s2 * 0.7;
       a = Math.min(1, a * (1 + heat * 1.5));
@@ -610,6 +685,7 @@ export class ParticleSilhouette {
    * @param {keyof MOODS} [o.mood]  @param {keyof PALETTES} [o.palette]
    * @param {number} [o.density]  0..1 share of the budget drawn
    * @param {number} [o.fill]     share of the free area the shape may take (0..1)
+   * @param {number} [o.grainSize] grain size as a multiple of the mood's (0.5..3, 1.23.0)
    * @param {{top?:number,right?:number,bottom?:number,left?:number}} [o.inset]  CSS px kept free (HUD)
    * @param {boolean|'auto'} [o.reducedMotion]
    * @param {boolean} [o.adaptive]  lower the grain count when frames run long
@@ -637,6 +713,7 @@ export class ParticleSilhouette {
     this.budget = this.resolveBudget(o.budget);
     this.density = clamp01(o.density ?? 1);
     this.fill = clamp01(o.fill ?? 0.82);
+    this.grainSize = Math.min(3, Math.max(0.5, Number.isFinite(o.grainSize) ? o.grainSize : 1));   // 1.23.0
     this.inset = { top: 0, right: 0, bottom: 0, left: 0, ...(o.inset ?? {}) };
     this.adaptive = o.adaptive ?? true;
     this.governorCap = 1;
@@ -657,7 +734,14 @@ export class ParticleSilhouette {
       windX: 1, windY: 0, motion: 1, exposure: 1, opacity: 1, additive: true,
       colA: [1, 1, 1], colB: [1, 1, 1], hot: [1, 1, 1],
       sand: 0, sandMix: 0, hop: 0, brk: 0, crack: 0,
+      field: new Float32Array(FIELD * 6), fieldOn: false,   // per stamp: x, y, radius, strength, vx, vy
     };
+    // the pointer (1.23.0): target and smoothed head in device px from the canvas centre
+    this.ptr = { on: false, fresh: true, touch: false };
+    this.ptrState = new Float64Array(PS.SIZE);
+    this.stampAge = new Float32Array(FIELD).fill(STAMP_LIFE);   // seconds since each wake mark was dropped
+    this.stampPower = new Float32Array(FIELD);                    // its strength when dropped
+    this.pointerOptions = { radius: 1, strength: 1 };
     this.stats = { renderer: this.renderer.kind, tier: this.tier, budget: this.budget, count: 0, fps: 0, cpuMs: 0, lastCpuMs: 0, frameMs: 0, dpr: 1 };
     this.setMood(o.mood ?? 'dust');
     this.setPalette(o.palette ?? 'gold');
@@ -938,6 +1022,100 @@ export class ParticleSilhouette {
   setSpin(radPerSecond) { this.spinRate = Number.isFinite(radPerSecond) ? radPerSecond : 0; this.wake(); }
   setInset(inset) { Object.assign(this.inset, inset); this.layout(); this.wake(); }
 
+  /**
+   * The cursor or a finger, in CSS px from the canvas's top-left corner. Call it on every
+   * pointermove of a mouse, and while a finger is down on touch (touch = true widens the field).
+   * Grains move out of the way, follow the stroke, curl round on each side and settle back
+   * home once it has passed. Nothing moves in reduced motion. Allocates nothing.
+   */
+  pointerMove(x, y, touch = false) {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    const P = this.ptrState, dpr = this.stats.dpr || 1;
+    const tx = x * dpr - this.s.viewW / 2, ty = y * dpr - this.s.viewH / 2;
+    if (this.ptr.fresh) {
+      // a new stroke: the old head keeps fading where it was, the new one starts from nothing
+      if (P[PS.STRENGTH] > 0.02) this.dropStamp(1);
+      P[PS.X] = P[PS.TX] = tx; P[PS.Y] = P[PS.TY] = ty;
+      P[PS.VX] = 0; P[PS.VY] = 0; P[PS.STRENGTH] = 0;
+      P[PS.MOVED] = performance.now();
+      this.ptr.fresh = false;
+    }
+    if (Math.abs(tx - P[PS.TX]) + Math.abs(ty - P[PS.TY]) > 0.5) P[PS.MOVED] = performance.now();
+    P[PS.TX] = tx; P[PS.TY] = ty;
+    this.ptr.on = true; this.ptr.touch = touch === true;
+    this.wake();
+  }
+
+  /** The cursor left the canvas or the finger lifted: the grains settle back. */
+  pointerLeave() { this.ptr.on = false; this.ptr.fresh = true; }
+
+  /** Field size and push, as multipliers of the defaults (0..3). */
+  setPointer({ radius, strength } = {}) {
+    if (Number.isFinite(radius)) this.pointerOptions.radius = Math.min(3, Math.max(0, radius));
+    if (Number.isFinite(strength)) this.pointerOptions.strength = Math.min(3, Math.max(0, strength));
+  }
+
+  // The pointer state lives in a Float64Array, so the optimised code keeps no boxed number:
+  // after warm-up, stirring adds no garbage per frame.
+  updatePointer(dt, now) {
+    const P = this.ptrState, s = this.s, F = s.field, opt = this.pointerOptions, on = this.ptr.on;
+    if (this.reduced) {
+      if (s.fieldOn) { F.fill(0); this.stampAge.fill(STAMP_LIFE); s.fieldOn = false; P[PS.STRENGTH] = 0; }
+      return;
+    }
+    const dpr = this.stats.dpr || 1;
+    // sized to the lettering, not the screen: a small title gets a small field
+    P[PS.R] = Math.min(96, Math.max(22, (s.fitB / dpr) * 0.14)) * (this.ptr.touch ? 1.25 : 1) * opt.radius * dpr;
+    // the head lags the pointer a little, like a hand drawn through sand
+    P[PS.PX] = P[PS.X]; P[PS.PY] = P[PS.Y];
+    P[PS.K] = 1 - Math.exp(-dt * 16);
+    P[PS.X] += (P[PS.TX] - P[PS.X]) * P[PS.K];
+    P[PS.Y] += (P[PS.TY] - P[PS.Y]) * P[PS.K];
+    if (dt > 0) {
+      P[PS.K] = 1 - Math.exp(-dt * 12);
+      P[PS.VX] += ((P[PS.X] - P[PS.PX]) / dt - P[PS.VX]) * P[PS.K];
+      P[PS.VY] += ((P[PS.Y] - P[PS.PY]) / dt - P[PS.VY]) * P[PS.K];
+    }
+    P[PS.SPEED] = Math.hypot(P[PS.VX], P[PS.VY]);
+    if (P[PS.SPEED] > P[PS.R] * 22) {
+      P[PS.K] = (P[PS.R] * 22) / P[PS.SPEED];
+      P[PS.VX] *= P[PS.K]; P[PS.VY] *= P[PS.K];
+    }
+    // a pointer left still for a while lets most of the grains creep back under it
+    P[PS.TARGET] = on ? (now - P[PS.MOVED] < 900 ? opt.strength : 0.4 * opt.strength) : 0;
+    P[PS.K] = 1 - Math.exp(-dt * (P[PS.TARGET] > P[PS.STRENGTH] ? 9 : 3));
+    P[PS.STRENGTH] += (P[PS.TARGET] - P[PS.STRENGTH]) * P[PS.K];
+    if (P[PS.STRENGTH] < 0.002 && !on) P[PS.STRENGTH] = 0;
+    F[0] = P[PS.X]; F[1] = P[PS.Y]; F[2] = P[PS.R]; F[3] = P[PS.STRENGTH]; F[4] = P[PS.VX]; F[5] = P[PS.VY];
+    // the wake: marks dropped along the stroke fade out over their life and spread a little
+    const age = this.stampAge, power = this.stampPower;
+    let any = P[PS.STRENGTH] > 0;
+    for (let i = 1; i < FIELD; i++) {
+      const j = i * 6;
+      if (age[i] >= STAMP_LIFE) { F[j + 3] = 0; continue; }
+      age[i] = Math.min(STAMP_LIFE, age[i] + dt);
+      F[j + 3] = power[i] * (1 - age[i] / STAMP_LIFE) * (1 - age[i] / STAMP_LIFE);
+      F[j + 2] *= 1 + dt * 0.7;
+      any = true;
+    }
+    if (P[PS.STRENGTH] > 0.05 && P[PS.SPEED] > P[PS.R] * 1.5 && now - P[PS.STAMPED] >= STAMP_MS) {
+      this.dropStamp(0.85);
+      P[PS.STAMPED] = now;
+      any = true;
+    }
+    s.fieldOn = any;
+  }
+
+  /** Copies the live head into the oldest wake slot. */
+  dropStamp(scale) {
+    const F = this.s.field, age = this.stampAge;
+    let slot = 1;
+    for (let i = 2; i < FIELD; i++) if (age[i] > age[slot]) slot = i;
+    F.copyWithin(slot * 6, 0, 6);
+    age[slot] = 0;
+    this.stampPower[slot] = F[3] * scale;
+  }
+
   /** Changes the grain budget tier; resamples the current shape. */
   async setQuality(tier) {
     if (!(tier in QUALITY_TIERS)) throw new Error(`Unknown quality ${tier}`);
@@ -990,7 +1168,7 @@ export class ParticleSilhouette {
     this.count = count;
     this.stats.count = count;
     const m = MOODS[this.mood];
-    s.size = m.size * dpr;
+    s.size = m.size * this.grainSize * dpr;
     // exposure: keep the body bright but not burnt, whatever the grain count and canvas size
     const g = this.current;
     if (g) {
@@ -1046,6 +1224,7 @@ export class ParticleSilhouette {
     if (this.progressTarget >= 0 && !this.reduced) {
       s.gather += (this.progressTarget - s.gather) * (1 - Math.exp(-dt * 3.2));
     }
+    this.updatePointer(dt, now);
     this.renderer.draw(s, this.current ? this.count : 0);
     this.dirty = false;
     const cpu = performance.now() - t0;
