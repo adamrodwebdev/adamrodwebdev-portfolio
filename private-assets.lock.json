@@ -1,6 +1,7 @@
 {
-  "repository": "adamrodwebdev/adamrodwebdev-portfolio-assets",
-  "commit": "f21090965dbd226effab8dedf2ab8540c69b1cce",
+  "repository": "adamrodwebdev/private-assets",
+  "folder": "portfolio",
+  "commit": "b1bfd94e4ee6b8da4bcbbca5e384bc5fadcdfa69",
   "files": [
     {
       "path": "assets/grains/emblem-shards.bin",
@@ -86,6 +87,101 @@
       "path": "js/fx/shard-file.js",
       "size": 1249,
       "sha256": "d053cda1e762d5bcefdb22b286d8575c13e333cb7985eb81dd1ef81a550a6faf"
+    },
+    {
+      "path": "lumirift/avatar-176.avif",
+      "size": 4070,
+      "sha256": "c3712867a913efc82fe4e2831a4195aeba356d6dac771eb4916966eac699bc04"
+    },
+    {
+      "path": "lumirift/avatar-176.webp",
+      "size": 5208,
+      "sha256": "d8dc5124e780600338be1a4d05f3300c1da712e8879d2941d879146c0268a6ab"
+    },
+    {
+      "path": "lumirift/card-guardians-480.avif",
+      "size": 7062,
+      "sha256": "b24825098c1355dbc43c59468d653873197452937a292ffeab178b218840dcd0"
+    },
+    {
+      "path": "lumirift/card-guardians-480.webp",
+      "size": 9580,
+      "sha256": "9fc2d33a6d4b313c68b6d4dd3197dc529ce7401bace46d66890ca66977ac1884"
+    },
+    {
+      "path": "lumirift/card-guardians-800.avif",
+      "size": 11522,
+      "sha256": "f22bf13bbe07607822af7f05bb53d29cf27b70bab9cb5709e1d3a3f2b23f86f2"
+    },
+    {
+      "path": "lumirift/card-guardians-800.webp",
+      "size": 15630,
+      "sha256": "5da14058d512527a72c5f6325cd9bea304f4b0c8656761f297e0be33f1a7b9ec"
+    },
+    {
+      "path": "lumirift/card-modes-480.avif",
+      "size": 17979,
+      "sha256": "ff4846c3c931213c3c33fabf258698f146c949dea023466bbd854ddb515dd453"
+    },
+    {
+      "path": "lumirift/card-modes-480.webp",
+      "size": 19764,
+      "sha256": "33d8b7eaef1f3a70cc4c3c48c9c76c7124d4da14ca02bb5909ca04ed68d70524"
+    },
+    {
+      "path": "lumirift/card-modes-800.avif",
+      "size": 31909,
+      "sha256": "1743c456608cabcd92c3438efd0b3f5ed1cfca8214a03382f48549a382463d56"
+    },
+    {
+      "path": "lumirift/card-modes-800.webp",
+      "size": 38000,
+      "sha256": "eab6e0b9d979f6fe1596fbb63e14f1be9d3756014c9ba6e9d1f3c780a96a7716"
+    },
+    {
+      "path": "lumirift/card-sand-480.avif",
+      "size": 11138,
+      "sha256": "f0241cde7d34eab434c71cdf8f44b4b8f1ee4cc2e09fa1310533e4047fd20557"
+    },
+    {
+      "path": "lumirift/card-sand-480.webp",
+      "size": 14366,
+      "sha256": "b7fe5cb486b82a933301e016f9189601e2e8d89392a214b9cd5ef36e04720b10"
+    },
+    {
+      "path": "lumirift/card-sand-800.avif",
+      "size": 16916,
+      "sha256": "f7765b3a3af1f21e16508de92227a4f8099fbdd98118fc846f6548c179ffbda8"
+    },
+    {
+      "path": "lumirift/card-sand-800.webp",
+      "size": 22020,
+      "sha256": "75970929a186e1d5dd2009caa7661db67ae59dfbdd3850e4e1f7d8a32b7356f9"
+    },
+    {
+      "path": "lumirift/clip-poster-360.webp",
+      "size": 23990,
+      "sha256": "6f857157ecd3be39e8f19ffaef227bcbf7f0d5400ca504629bc6ff925303cd54"
+    },
+    {
+      "path": "lumirift/clip-poster-720.webp",
+      "size": 48340,
+      "sha256": "00a5c0d13340f95bde5b45a018763205072cc0454d142ddb045cfd626dd8416c"
+    },
+    {
+      "path": "lumirift/clip-poster.jpg",
+      "size": 124689,
+      "sha256": "f4e5bb284b9ae167c9b7720a226e4b4d76e73ef4c4139ac3121c58c1c411fe4b"
+    },
+    {
+      "path": "lumirift/clip.mp4",
+      "size": 1051758,
+      "sha256": "22f446a2b49b6e9482d21e94c418c15e9eb26b6eb919842cc050fe2caf8203b2"
+    },
+    {
+      "path": "lumirift/og-lumirift-1200x630.png",
+      "size": 140633,
+      "sha256": "ede42345a958c5bec3c085a1a7254916a91a0908910b527cc95cb08bbe349720"
     },
     {
       "path": "scripts/taglines.json",
