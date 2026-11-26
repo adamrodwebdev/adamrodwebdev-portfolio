@@ -2,6 +2,13 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.24.1] - 2026-11-26
+
+### Modifié
+- **Un seul dépôt privé pour tous les projets** (décision de l'utilisateur du 26 novembre 2026) : les fichiers de nos composants viennent maintenant du dossier `portfolio/` de `adamrodwebdev/private-assets`, lu par le jeton commun `PRIVATE_ASSETS_TOKEN` (Netlify). L'ancien nom `PORTFOLIO_ASSETS_TOKEN` est encore lu pendant cette version. Le verrou nomme le dossier (`"folder": "portfolio"`) ; chaque fichier garde son chemin. L'outil qui compile ces fichiers est dans `private-sources/portfolio/assets-build/`.
+- **Les médias de la page de Lumirift quittent ce dépôt public** : le clip, ses affiches, les cartes, l'avatar et l'image de partage (1,6 Mo) viennent aussi du dépôt privé ; `.gitignore` les tient hors de Git, un `LICENCES.md` dit ce qu'ils sont. L'historique n'est pas réécrit.
+- Tests : le verrou refuse un autre dossier ; les médias de Lumirift sont dans le verrou, hors de Git.
+
 ## [1.24.0] - 2026-11-26
 
 ### Modifié

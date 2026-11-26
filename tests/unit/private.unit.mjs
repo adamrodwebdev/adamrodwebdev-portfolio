@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { LOCK_FILE, PRIVATE_PATH, REPOSITORY, parseLock } from '../../scripts/private-assets.mjs';
+import { FOLDER, LOCK_FILE, PRIVATE_PATH, REPOSITORY, parseLock } from '../../scripts/private-assets.mjs';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const lockText = await readFile(new URL(`../../${LOCK_FILE}`, import.meta.url), 'utf8');
@@ -30,6 +30,8 @@ describe('nos composants restent à nous', () => {
       'js/fx/particle-silhouette.js', 'js/fx/chladni.js', 'js/fx/grain-file.js', 'js/fx/shard-file.js',
       'assets/grains/emblem.bin', 'assets/grains/emblem-shards.bin', 'scripts/taglines.json',
       'js/audio/score.js', 'js/audio/arrangement.js', 'js/audio/instruments.js', 'js/audio/sfumato.js',
+      // les médias de la page de Lumirift (1.24.1)
+      'lumirift/clip.mp4', 'lumirift/clip-poster.jpg', 'lumirift/og-lumirift-1200x630.png', 'lumirift/card-modes-800.avif',
     ]) assert.ok(paths.has(path), path);
   });
 
@@ -47,9 +49,11 @@ describe('nos composants restent à nous', () => {
     const variant = (change) => JSON.stringify(change(structuredClone(good)));
     assert.throws(() => parseLock('x'.repeat(17 * 1024)), RangeError);
     assert.throws(() => parseLock(variant((l) => ({ ...l, repository: 'someone/else' }))), TypeError);
+    assert.throws(() => parseLock(variant((l) => ({ ...l, folder: 'lumirift' }))), TypeError, 'le dossier d’un autre projet');
+    assert.throws(() => parseLock(variant((l) => { delete l.folder; return l; })), TypeError, 'sans dossier');
     assert.throws(() => parseLock(variant((l) => ({ ...l, commit: 'main' }))), TypeError);
     assert.throws(() => parseLock(variant((l) => ({ ...l, files: [] }))), RangeError);
-    for (const path of ['../secret.js', 'js/fx/../../x.js', 'index.html', 'js/fx/A.js', 'css/x.css']) {
+    for (const path of ['../secret.js', 'js/fx/../../x.js', 'index.html', 'js/fx/A.js', 'css/x.css', 'lumirift/index.html', 'lumirift/clip.mov', 'lumirift/privacy/x.png']) {
       assert.throws(() => parseLock(variant((l) => { l.files[0].path = path; return l; })), TypeError, path);
     }
     assert.throws(() => parseLock(variant((l) => { l.files[1].path = l.files[0].path; return l; })), TypeError, 'un doublon');
@@ -58,6 +62,7 @@ describe('nos composants restent à nous', () => {
     }
     assert.throws(() => parseLock(variant((l) => { l.files[0].sha256 = 'abc'; return l; })), TypeError);
     assert.equal(lock.repository, REPOSITORY);
+    assert.equal(lock.folder, FOLDER);
     assert.ok(lock.files.every((f) => PRIVATE_PATH.test(f.path)));
   });
 });
