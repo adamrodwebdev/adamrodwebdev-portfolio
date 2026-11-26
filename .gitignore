@@ -6,3 +6,18 @@ dist/
 *.log
 test-results/
 playwright-report/
+
+# Nos propres composants (1.23.1) : leurs fichiers compilés viennent du dépôt privé
+# adamrodwebdev-portfolio-assets, copiés à la génération (scripts/private-assets.mjs, private-assets.lock.json).
+# Jamais dans ce dépôt public : voir les LICENCES.md à côté.
+/fonts/clivage-*.woff2
+/js/fx/particle-silhouette.js
+/js/fx/chladni.js
+/js/fx/grain-file.js
+/js/fx/shard-file.js
+/assets/grains/*.bin
+/scripts/taglines.json
+/js/audio/score.js
+/js/audio/arrangement.js
+/js/audio/instruments.js
+/js/audio/sfumato.js
