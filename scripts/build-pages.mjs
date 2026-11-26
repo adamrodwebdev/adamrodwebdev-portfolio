@@ -192,6 +192,8 @@ export async function buildPages({ root, out, imports }) {
       contactEmail: escape(config.contactEmail),
       playCatapulte: escape(playUrl('catapulte-mania')),
       playBastion: escape(playUrl('bastion')),
+      playBallmania: escape(playUrl('ballmania')),
+      playLumirift: escape(playUrl('lumirift')),
       importMap: JSON.stringify({ imports }),
       fonts: FONTS,
       css: siteCss,

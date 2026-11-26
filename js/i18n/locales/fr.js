@@ -186,7 +186,7 @@ export default {
       description: 'Tir de billes en chaîne réinventé : six mondes à mécaniques propres (miroirs, aimant, alchimie des couleurs, lave, trou noir), Colosses, modes Arcade, destruction spectaculaire. Moteur maison en TypeScript, rendu Canvas et WebGL, musique et sons générés en direct, FR / EN / ID, Lighthouse 95+.',
       tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
       staticText: 'Tir de billes en chaîne réinventé : six mondes, Colosses, modes Arcade et destruction spectaculaire.',
-      staticSoon: 'Bientôt sur Playgama.',
+      staticLink: 'Jouer à Ballmania sur Playgama',
     },
     lumirift: {
       title: 'Lumirift',
@@ -194,7 +194,7 @@ export default {
       tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
       link: 'Jouer à Lumirift',
       staticText: 'Un puzzle de sable où les blocs contre-attaquent : quatorze modes, une campagne de 69 niveaux et quatre Gardiens.',
-      staticLink: 'Jouer gratuitement à Lumirift',
+      staticLink: 'Jouer à Lumirift sur Playgama',
     },
     'short-reel': {
       title: 'Short Reel',

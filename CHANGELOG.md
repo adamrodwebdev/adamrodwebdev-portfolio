@@ -2,6 +2,11 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.24.3] - 2026-11-26
+
+### Modifié
+- **Chaque jeu mène à sa page Playgama** (demande de l’utilisateur du 26 novembre 2026) : Ballmania, publié sur Playgama, passe de « à venir » à « en ligne » avec son lien ; la fiche de Lumirift et sa ligne sans JavaScript mènent à Lumirift Blocks sur Playgama au lieu de la page /lumirift/ (qui reste en ligne, dans le plan du site). Catapulte Mania et Bastion y menaient déjà. Short Reel, absent de Playgama, garde son lien itch.io. Adresses lues dans le tableau de bord Playgama.
+
 ## [1.24.1] - 2026-11-26
 
 ### Modifié

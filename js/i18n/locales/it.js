@@ -182,7 +182,7 @@ export default {
       description: 'Il gioco delle biglie in catena reinventato: sei mondi con meccaniche proprie (specchi, magnete, alchimia dei colori, lava, buco nero), boss Colossi, modalità Arcade, distruzione spettacolare. Motore proprietario in TypeScript, rendering Canvas e WebGL, musica e suoni generati dal vivo, FR / EN / ID, Lighthouse 95+.',
       tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
       staticText: 'Il gioco delle biglie in catena reinventato: sei mondi, boss Colossi, modalità Arcade e distruzione spettacolare.',
-      staticSoon: 'Presto su Playgama.',
+      staticLink: 'Gioca a Ballmania su Playgama',
     },
     lumirift: {
       title: 'Lumirift',
@@ -190,7 +190,7 @@ export default {
       tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
       link: 'Gioca a Lumirift',
       staticText: 'Un puzzle di sabbia in cui i blocchi contrattaccano: quattordici modalità, una campagna di 69 livelli e quattro Guardiani.',
-      staticLink: 'Gioca gratis a Lumirift',
+      staticLink: 'Gioca a Lumirift su Playgama',
     },
     'short-reel': {
       title: 'Short Reel',

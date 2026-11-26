@@ -183,7 +183,7 @@ export default {
       description: 'Новый взгляд на шарики-стрелялки: шесть миров со своими механиками (зеркала, магнит, алхимия цветов, лава, чёрная дыра), боссы-Колоссы, аркадные режимы, зрелищные разрушения. Собственный движок на TypeScript, рендеринг Canvas и WebGL, музыка и звуки генерируются в реальном времени, FR / EN / ID, Lighthouse 95+.',
       tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
       staticText: 'Новый взгляд на шарики-стрелялки: шесть миров, боссы-Колоссы, аркадные режимы и зрелищные разрушения.',
-      staticSoon: 'Скоро на Playgama.',
+      staticLink: 'Играть в Ballmania на Playgama',
     },
     lumirift: {
       title: 'Lumirift',
@@ -191,7 +191,7 @@ export default {
       tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
       link: 'Играть в Lumirift',
       staticText: 'Головоломка с падающим песком, где блоки дают отпор: четырнадцать режимов, кампания из 69 уровней и четыре Стража.',
-      staticLink: 'Играть в Lumirift бесплатно',
+      staticLink: 'Играть в Lumirift на Playgama',
     },
     'short-reel': {
       title: 'Short Reel',
