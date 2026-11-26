@@ -38,12 +38,12 @@ const FONTS = '/css/fonts.css';
  */
 export const HOME_FONTS = Object.freeze({
   default: [
-    ['700 1em Clivage', 'A', '/fonts/clivage-v2-latin.woff2'],
+    ['700 1em Clivage', 'A', '/fonts/clivage-v3-latin.woff2'],
     ['400 1em Barlow', 'A', '/fonts/barlow-400.woff2'],
     ['500 1em Barlow', 'A', '/fonts/barlow-500.woff2'],
     ['600 1em Barlow', 'A', '/fonts/barlow-600.woff2'],
   ],
-  ru: [['700 1em Clivage', 'A', '/fonts/clivage-v2-latin.woff2'], ['700 1em Clivage', 'Ж', '/fonts/clivage-v2-cyrillic.woff2']],
+  ru: [['700 1em Clivage', 'A', '/fonts/clivage-v3-latin.woff2'], ['700 1em Clivage', 'Ж', '/fonts/clivage-v3-cyrillic.woff2']],
 });
 
 /** La première plateforme où jouer à un jeu du carrousel (le contenu statique de l'accueil n'en cite qu'une). */

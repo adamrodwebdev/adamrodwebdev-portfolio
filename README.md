@@ -88,7 +88,7 @@ Règle de l'utilisateur du 26 novembre 2026 : ce que nous créons (polices, anim
 
 | Fichiers copiés | Composant | Source privée |
 | --- | --- | --- |
-| `fonts/clivage-v2-*.woff2` | Clivage, la police signature | `type-foundry` |
+| `fonts/clivage-v3-*.woff2` | Clivage, la police signature | `type-foundry` |
 | `js/fx/particle-silhouette.js`, `chladni.js`, `grain-file.js`, `shard-file.js` | la silhouette de grains, compilée | `particle-silhouette` |
 | `assets/grains/*.bin`, `scripts/taglines.json` | les grains précalculés (marqués) et le texte de la devise | `particle-silhouette` |
 | `js/audio/score.js`, `arrangement.js`, `instruments.js`, `sfumato.js` | Sfumato, le thème du site, compilé | `sfumato` |
@@ -199,7 +199,7 @@ La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad :
 - **Jamais de `-webkit-text-stroke` sur la signature** : la lettre est faite d'éclats jointifs, un contour CSS tracerait leurs lignes de cassure. Pour un effet doré, remplir (`background-clip: text`) ; un test le vérifie.
 - **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`Clivage Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive. Le russe a son propre repli (77,95 %), calculé sur ses titres, menus et boutons.
 - **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs, et **cyrillique du russe** (1.15.0). Un caractère absent passe à la police suivante de la pile.
-- **Deux fichiers** : `clivage-v2-latin.woff2` (30 Ko) et `clivage-v2-cyrillic.woff2` (20 Ko), découpés dans la même police variable et déclarés avec leur `unicode-range` : une page ne télécharge que les lettres qu'elle affiche (le russe prend les deux, pour ses chiffres, sa ponctuation et le logo). Le menu des langues fermé n'est pas mis en page (`display: none`) : sans quoi le « Русский » de ce menu ferait venir le cyrillique sur les pages latines, ce que fait le Chrome de Lighthouse avec un `<details>` fermé. Le cyrillique n'arrive qu'à l'ouverture du menu.
+- **Deux fichiers** : `clivage-v3-latin.woff2` (30 Ko) et `clivage-v3-cyrillic.woff2` (20 Ko), découpés dans la même police variable et déclarés avec leur `unicode-range` : une page ne télécharge que les lettres qu'elle affiche (le russe prend les deux, pour ses chiffres, sa ponctuation et le logo). Le menu des langues fermé n'est pas mis en page (`display: none`) : sans quoi le « Русский » de ce menu ferait venir le cyrillique sur les pages latines, ce que fait le Chrome de Lighthouse avec un `<details>` fermé. Le cyrillique n'arrive qu'à l'ouverture du menu.
 - **La remplacer** : refaire la police depuis la fonderie, la découper en deux (`fontTools.subset`, mêmes plages que dans `css/fonts.css`, toutes les fonctions OpenType gardées), compresser en WOFF2, déposer les fichiers sous un **nouveau nom** (`clivage-v3-…`, les polices sont mises en cache un an) dans le dossier `portfolio/fonts/` du dépôt privé `private-assets`, puis ici `npm run assets:lock`, `.gitignore` et `css/fonts.css`.
 
 ## Sélection du texte (1.14.1)

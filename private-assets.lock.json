@@ -1,7 +1,7 @@
 {
   "repository": "adamrodwebdev/private-assets",
   "folder": "portfolio",
-  "commit": "b1bfd94e4ee6b8da4bcbbca5e384bc5fadcdfa69",
+  "commit": "daa6588394a7477ab8cb16b533d95bd36129084f",
   "files": [
     {
       "path": "assets/grains/emblem-shards.bin",
@@ -39,14 +39,14 @@
       "sha256": "b802ade6bd65888395ec088a9a16a1ffeccf97d0cc2e82656ef35bb66f985484"
     },
     {
-      "path": "fonts/clivage-v2-cyrillic.woff2",
-      "size": 20156,
-      "sha256": "94fe9f7f0595cfd3141762cf23af982ba64282070658115810fed67c8c646317"
+      "path": "fonts/clivage-v3-cyrillic.woff2",
+      "size": 20164,
+      "sha256": "d617c3bd58aa6aff0f378282a0835d4d1d5530ae8314739f4d4bedaa1bc8baa5"
     },
     {
-      "path": "fonts/clivage-v2-latin.woff2",
-      "size": 30064,
-      "sha256": "9fad8f613ad67ab91c555ed3593a0d894c27009a1a5bc8c7bec4086a0fe75b15"
+      "path": "fonts/clivage-v3-latin.woff2",
+      "size": 30128,
+      "sha256": "0961be834869878d7cbbf2e45784777ee4b2779fba452081fc734d81b2b0e784"
     },
     {
       "path": "js/audio/arrangement.js",

@@ -26,7 +26,7 @@ describe('nos composants restent à nous', () => {
   it('les composants attendus sont tous là : Clivage, la silhouette de grains, ses fichiers, Sfumato', () => {
     const paths = new Set(lock.files.map((f) => f.path));
     for (const path of [
-      'fonts/clivage-v2-latin.woff2', 'fonts/clivage-v2-cyrillic.woff2',
+      'fonts/clivage-v3-latin.woff2', 'fonts/clivage-v3-cyrillic.woff2',
       'js/fx/particle-silhouette.js', 'js/fx/chladni.js', 'js/fx/grain-file.js', 'js/fx/shard-file.js',
       'assets/grains/emblem.bin', 'assets/grains/emblem-shards.bin', 'scripts/taglines.json',
       'js/audio/score.js', 'js/audio/arrangement.js', 'js/audio/instruments.js', 'js/audio/sfumato.js',
@@ -47,7 +47,7 @@ describe('nos composants restent à nous', () => {
   it('le verrou refuse un dépôt, un commit, un chemin ou une taille hors des règles', () => {
     const good = JSON.parse(lockText);
     const variant = (change) => JSON.stringify(change(structuredClone(good)));
-    assert.throws(() => parseLock('x'.repeat(17 * 1024)), RangeError);
+    assert.throws(() => parseLock('x'.repeat(33 * 1024)), RangeError);
     assert.throws(() => parseLock(variant((l) => ({ ...l, repository: 'someone/else' }))), TypeError);
     assert.throws(() => parseLock(variant((l) => ({ ...l, folder: 'lumirift' }))), TypeError, 'le dossier d’un autre projet');
     assert.throws(() => parseLock(variant((l) => { delete l.folder; return l; })), TypeError, 'sans dossier');
