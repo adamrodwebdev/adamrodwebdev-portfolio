@@ -347,7 +347,7 @@ test('polices bloc par bloc (1.18.1) : chaque texte de l’accueil finit dans un
         const weight = Number(style.fontWeight);
         // Une tête de pile locale (le repli de Clivage, ou Segoe UI hors du russe) : un bloc oublié ;
         // une police du site sans fichier chargé à sa graisse : une police oubliée dans HOME_FONTS
-        const leftover = family === 'Clivage Fallback' || (family === 'Segoe UI' && !ru);
+        const leftover = family === 'Clivage Fallback' || ((family === 'Segoe UI' || family.startsWith('Barlow Fallback')) && !ru);
         const missing = (family === 'Clivage' || family === 'Barlow') && !covered(family, weight);
         if (leftover || missing) found.add(`${family} ${weight} : ${element.tagName.toLowerCase()}.${element.classList[0] ?? ''} « ${text.slice(0, 30)} »`);
       }
@@ -379,6 +379,83 @@ test('polices bloc par bloc (1.18.1) : l’écran d’abord, chaque bloc dans sa
   expect(blocks[0].seen).toBe(true);
   expect(blocks.at(-1).seen).toBe(false);
   expect(blocks.filter((block) => block.shared)).toEqual([]);
+});
+
+// Polices sans changement visible (1.24.0) : le texte en Clivage n'est jamais montré dans son repli, le texte
+// courant si (le plus grand texte de l'écran), et il garde ses lignes quand Barlow arrive
+const ink = (locator) => locator.evaluate((element) => {
+  const style = getComputedStyle(element);
+  return { fill: style.webkitTextFillColor, color: style.color, gradient: style.backgroundImage !== 'none' };
+});
+
+test('polices (1.24.0) : le texte en Clivage attend sa police, le texte courant se lit dès le premier affichage', async ({ page }) => {
+  let release;
+  const held = new Promise((resolve) => { release = resolve; });
+  await page.route(/\.woff2$/, async (route) => { await held; await route.continue(); });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/\bfonts-staged\b/);
+  // Les fichiers des polices partent avec leur feuille, préchargés comme la feuille les déclare
+  await expect(page.locator('link[rel="preload"][as="font"]')).toHaveCount(4);
+  const preloads = await page.locator('link[rel="preload"][as="font"]').evaluateAll((links) => links.map((l) => [l.getAttribute('href'), l.crossOrigin]));
+  expect(preloads).toEqual(expect.arrayContaining([['/fonts/clivage-v2-latin.woff2', 'anonymous'], ['/fonts/barlow-400.woff2', 'anonymous']]));
+  // En attente : le titre, l'état et les boutons sans encre (le doré sans son dégradé), le paragraphe lisible
+  for (const selector of ['.hero__title .hero__line', '.hero__status', '.hero .btn']) {
+    expect((await ink(page.locator(selector).first())).fill, selector).toBe('rgba(0, 0, 0, 0)');
+  }
+  expect((await ink(page.locator('.hero__line--gold'))).gradient).toBe(false);
+  const lead = await ink(page.locator('.hero__lead'));
+  expect(lead.fill).toBe(lead.color);
+  release();
+  await fontsApplied(page);
+  for (const selector of ['.hero__title .hero__line', '.hero__status', '.hero .btn']) {
+    const after = await ink(page.locator(selector).first());
+    expect(after.fill, selector).toBe(after.color);
+  }
+  expect((await ink(page.locator('.hero__line--gold'))).gradient).toBe(true);
+  // La visite suivante le sait : les polices, en cache, partent sans attendre le premier affichage
+  expect(await page.evaluate(() => localStorage.getItem('arwd-fonts'))).toBe('1');
+});
+
+test('polices (1.24.0) : si elles tardent, le texte en Clivage paraît en repli au bout de 2,5 s', async ({ page }) => {
+  await page.route(/\.woff2$/, () => {});   // jamais servies
+  await page.goto('/');
+  const line = page.locator('.hero__title .hero__line').first();
+  expect((await ink(line)).fill).toBe('rgba(0, 0, 0, 0)');
+  await expect(page.locator('html')).toHaveClass(/\bfonts-late\b/, { timeout: 5000 });
+  const late = await ink(line);
+  expect(late.fill).toBe(late.color);
+});
+
+test('polices (1.24.0) : le repli du texte courant a la chasse de Barlow, graisse par graisse, à 1 % près', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'replis mesurés sur les polices de Windows');
+  await page.goto('/');
+  await fontsApplied(page);
+  // Tout le texte courant de la page, sur une seule ligne, dans Barlow puis dans son repli : la même longueur
+  // totale, donc les mêmes coupures de ligne presque partout. Un texte court, selon ses lettres, peut s'en
+  // écarter de quelques pour cent : c'est la somme qui doit tomber juste.
+  const ratios = await page.evaluate(() => {
+    const local = getComputedStyle(document.documentElement).getPropertyValue('--font-body-local');
+    const totals = {};
+    const width = (element, family, style) => {
+      const probe = document.createElement('span');
+      probe.textContent = element.textContent;
+      probe.style.cssText = `position:absolute;white-space:nowrap;visibility:hidden;font-family:${family};font-weight:${style.fontWeight};font-size:${style.fontSize};letter-spacing:${style.letterSpacing};text-transform:${style.textTransform}`;
+      document.body.append(probe);
+      const w = probe.getBoundingClientRect().width;
+      probe.remove();
+      return w;
+    };
+    for (const element of document.querySelectorAll('main p, main li')) {
+      const style = getComputedStyle(element);
+      if (!element.checkVisibility() || !style.fontFamily.startsWith('Barlow')) continue;
+      const sums = (totals[style.fontWeight] ??= [0, 0]);
+      sums[0] += width(element, 'Barlow', style);
+      sums[1] += width(element, local, style);
+    }
+    return Object.fromEntries(Object.entries(totals).map(([weight, [barlow, fallback]]) => [weight, fallback / barlow]));
+  });
+  expect(Object.keys(ratios)).toContain('400');
+  for (const [weight, ratio] of Object.entries(ratios)) expect(Math.abs(ratio - 1), `graisse ${weight} : ${ratio}`).toBeLessThan(0.01);
 });
 
 test('police signature : le menu des langues fermé n’est pas mis en page, le cyrillique ne vient qu’à son ouverture (1.15.0)', async ({ page }) => {

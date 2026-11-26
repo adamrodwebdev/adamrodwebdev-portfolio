@@ -99,6 +99,19 @@ Statut : demandée le 17 novembre 2026 après un audit de la vitrine (« excelle
 - Créer le compte Cal.com (appel vidéo de 15 minutes) et le profil Malt, puis renseigner `bookingUrl` et `maltUrl`.
 - Demander un avis écrit aux premiers clients.
 
+## 1.24.0 : des polices qui arrivent sans se voir
+
+Statut : demandé le 26 novembre 2026 (« le visiteur voit nettement la police passer du repli à la nôtre ») ; l'utilisateur a choisi la solution sans écran de chargement. Réalisé sur la branche `feat/1.24-fonts-instant` (PR vers `dev`). Mise en ligne sur le feu vert de l'utilisateur.
+
+### Ce qui a été décidé (26 novembre 2026)
+- **Pas d'écran de chargement** : il ferait attendre chaque première visite de 0,3 à 1,7 s, et Lighthouse ne le verrait pas (le plus grand texte serait peint dessous).
+- **Clivage caché jusqu'à sa police**, le texte courant visible ; repli au bout de 2,5 s.
+- **Replis de Barlow à sa chasse**, polices préchargées avec leur feuille, départ immédiat à la visite suivante.
+
+### Vérifications (« fini » quand)
+- `npm test` passe, dont les tests de l'attente, du repli tardif et de la chasse.
+- Lighthouse de l'accueil en passages alternés avec `dev` : pas de recul, CLS à 0.
+
 ## 1.23.0 : la devise en poussière d'or
 
 Statut : demandé le 25 novembre 2026 (le labo de Catapulte Mania a transmis le champ du curseur et l'idée ; l'utilisateur a choisi la place et la devise). Réalisé sur la branche `feat/1.23-clients-dust`, partie de la 1.22.0 (PR vers `dev` après celle de la 1.22.0). Mise en ligne sur le feu vert de l'utilisateur.

@@ -1,0 +1,96 @@
+{
+  "repository": "adamrodwebdev/adamrodwebdev-portfolio-assets",
+  "commit": "f21090965dbd226effab8dedf2ab8540c69b1cce",
+  "files": [
+    {
+      "path": "assets/grains/emblem-shards.bin",
+      "size": 28450,
+      "sha256": "15c6ba57aff96ef5a8cea0ce0946be9ed87c003fb15aae0f9e31424b9d2e29ee"
+    },
+    {
+      "path": "assets/grains/emblem.bin",
+      "size": 70016,
+      "sha256": "6a83ed9ea883a5b1e96850b01003f969a534b11887903e4e33637ddff04d4c43"
+    },
+    {
+      "path": "assets/grains/tagline-en.bin",
+      "size": 80020,
+      "sha256": "71962d8d7ebcf01f958d7af4a402c3da55ba7fbe6fb9f13dc1f7a7b2414a1d82"
+    },
+    {
+      "path": "assets/grains/tagline-es.bin",
+      "size": 80020,
+      "sha256": "bc8242351d03a7fb73bd5f35a3438c9844b234a9114a00e7f41fa9c914dc2205"
+    },
+    {
+      "path": "assets/grains/tagline-fr.bin",
+      "size": 80020,
+      "sha256": "e6e41ed58aab0f97faaf710ba35a043b483ce5e39eb2126a4d6c750c5e1469db"
+    },
+    {
+      "path": "assets/grains/tagline-it.bin",
+      "size": 80020,
+      "sha256": "74fa051fe51786b1f8a755a8e26edf3375bf732ec6a66e5d0261f04d46ec9e82"
+    },
+    {
+      "path": "assets/grains/tagline-ru.bin",
+      "size": 80020,
+      "sha256": "b802ade6bd65888395ec088a9a16a1ffeccf97d0cc2e82656ef35bb66f985484"
+    },
+    {
+      "path": "fonts/clivage-v2-cyrillic.woff2",
+      "size": 20156,
+      "sha256": "94fe9f7f0595cfd3141762cf23af982ba64282070658115810fed67c8c646317"
+    },
+    {
+      "path": "fonts/clivage-v2-latin.woff2",
+      "size": 30064,
+      "sha256": "9fad8f613ad67ab91c555ed3593a0d894c27009a1a5bc8c7bec4086a0fe75b15"
+    },
+    {
+      "path": "js/audio/arrangement.js",
+      "size": 5976,
+      "sha256": "3a50d399126a6513dfb66c81a1effd81ccfdfbc87a30643b03acb5a1e7a0c309"
+    },
+    {
+      "path": "js/audio/instruments.js",
+      "size": 10076,
+      "sha256": "62adfff2def6313ad2bff3b9e75ee1b742b9979e88d800159325dfafb5ea3991"
+    },
+    {
+      "path": "js/audio/score.js",
+      "size": 3359,
+      "sha256": "8f8de0de8a1513c70da2cfd83af4e68c977bb7a8149f11d1ebae978df4bf5a8a"
+    },
+    {
+      "path": "js/audio/sfumato.js",
+      "size": 4465,
+      "sha256": "78bd3a6366ac88cd338cad61348ea967d360c56dd94f6032cf58622353e9eafd"
+    },
+    {
+      "path": "js/fx/chladni.js",
+      "size": 1289,
+      "sha256": "dad07be5a753b20fa867a4698faacbcbe8e15c428eec18f28e274159e7f6bcdc"
+    },
+    {
+      "path": "js/fx/grain-file.js",
+      "size": 1920,
+      "sha256": "2c90883ac21e1279e2ab024dfdc2bbc26a5e16492b01b191a7ffb742df437cbd"
+    },
+    {
+      "path": "js/fx/particle-silhouette.js",
+      "size": 33500,
+      "sha256": "51048088e67eb77b21ee40210ba039886e33559ce55d41d6a93d7b1fbf56e5e1"
+    },
+    {
+      "path": "js/fx/shard-file.js",
+      "size": 1249,
+      "sha256": "d053cda1e762d5bcefdb22b286d8575c13e333cb7985eb81dd1ef81a550a6faf"
+    },
+    {
+      "path": "scripts/taglines.json",
+      "size": 180,
+      "sha256": "bf5ea8cc1b997b91f6e3864ea9420e6838c7083ac0d1b665afa6379b380b209a"
+    }
+  ]
+}

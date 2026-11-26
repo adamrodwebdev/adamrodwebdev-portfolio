@@ -20,7 +20,7 @@ npm run build
 npm run serve
 ```
 
-`npm run build` écrit le site dans `dist/` (ignoré par Git, Netlify le régénère à chaque déploiement). `npm run serve` le sert sur http://localhost:8080 avec les en-têtes de Netlify, CSP comprise, et la compression : ce qui marche là marche en ligne.
+`npm run build` copie d'abord nos propres composants depuis leur dépôt privé (voir « Nos propres composants » ci-dessous : il faut une copie locale de ce dépôt ou `gh auth login`), puis écrit le site dans `dist/` (ignoré par Git, Netlify le régénère à chaque déploiement). `npm run serve` le sert sur http://localhost:8080 avec les en-têtes de Netlify, CSP comprise, et la compression : ce qui marche là marche en ligne.
 
 ## Branches et mise en ligne
 
@@ -57,14 +57,11 @@ js/data/offers.js       Les offres : prix des formules, de la maintenance et du 
 js/data/testimonials.js Les témoignages de clients (vide tant qu'il n'y a pas de vrai avis)
 js/data/platforms.js    Plateformes où jouer aux jeux (Playgama…)
 js/data/art.js          Illustrations SVG animées des projets
-js/fx/                  Effets (révélations, curseur, éclats, particules) ; les formes en grains d’or (particle-silhouette.js, grain-file.js) : le logo de la bande-son (soundtrack-grains.js) et la devise des offres (clients-dust.js)
-js/audio/score.js       « Sfumato » : la partition (grille, mélodie, parties), sans son
-js/audio/sfumato.js     Le moteur : mixage, effets, lecture ; chargé à la première écoute
-js/audio/instruments.js Les pupitres synthétisés (cordes, cuivres, timbales, chœur, voix, synthés)
-js/audio/arrangement.js Qui joue quoi, double croche par double croche
+js/fx/                  Effets (révélations, curseur, éclats, particules) ; les formes en grains d’or : le logo de la bande-son (soundtrack-grains.js) et la devise des offres (clients-dust.js), sur la silhouette de grains (particle-silhouette.js, grain-file.js, copiés du dépôt privé)
+js/audio/score.js, sfumato.js, instruments.js, arrangement.js  « Sfumato » : partition, moteur, pupitres et arrangement (copiés du dépôt privé)
 js/audio/soundtrack.js  L'état partagé par l'interrupteur de l'en-tête et le lecteur
-assets/                 Favicons, icônes PWA, image Open Graph ; grains/ : les grains précalculés du logo et de la devise (npm run bake:grains)
-fonts/                  Clivage (la police signature, exclusive : latin et cyrillique), Barlow, Unbounded (titre de Lumirift) : WOFF2
+assets/                 Favicons, icônes PWA, image Open Graph ; grains/ : les grains précalculés du logo et de la devise (copiés du dépôt privé)
+fonts/                  Clivage (la police signature, exclusive : copiée du dépôt privé), Barlow, Unbounded (titre de Lumirift) : WOFF2
 lumirift/               Médias de la page du jeu Lumirift ; privacy/ : la politique de confidentialité de son application Android (page écrite à la main, adresse donnée à Google Play : ne pas la déplacer)
 404.html, merci.html, mentions-legales.html, en/, ru/, it/, es/ (pages écrites à la main)
 googled16b9e042ea88c46.html  Validation Google Search Console (1.18.4), servie telle quelle : ne pas supprimer
@@ -76,14 +73,33 @@ scripts/vendor.mjs      Vue et vue-i18n copiés de node_modules, version dans le
 scripts/vue-templates.mjs  Gabarits des composants précompilés (aucun unsafe-eval)
 scripts/build-pages.mjs Pages traduites et page de Lumirift (textes, feuille copiée, chargement différé)
 scripts/css.mjs         Feuille minifiée, réduite aux règles d'une page sans îlot Vue
-scripts/bake-grains.mjs Précalcule les grains des formes en or (Chromium sans écran) : la devise par défaut, le logo avec « emblem » ; scripts/taglines.mjs tient la devise de chaque langue
-scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé ; sur l'accueil, polices données bloc par bloc
+scripts/private-assets.mjs  Copie nos propres composants depuis leur dépôt privé (private-assets.lock.json) ; s'arrête sur un fichier manquant
+scripts/after-first-paint.mjs  Polices et îlots demandés une fois le premier affichage signalé (aussitôt à la visite suivante) ; sur l'accueil, polices données bloc par bloc, le texte en Clivage caché jusqu'à sa police
 scripts/page-audit.mjs  Empreintes des scripts et styles en ligne, contrôle des domaines tiers
 scripts/headers.mjs     En-têtes HTTP et CSP, écrits dans dist/_headers
 scripts/serve.mjs       Serveur local de dist/ qui applique dist/_headers
 tests/site.spec.mjs     Tests Playwright (domaines tiers, CSP, fichiers internes, formulaire, langues)
 netlify.toml            Génération et redirections
 ```
+
+## Nos propres composants (1.23.1)
+
+Règle de l'utilisateur du 26 novembre 2026 : ce que nous créons (polices, animations, shaders, sons, générateurs) ne vit pas dans un dépôt public. Ce dépôt est public ; il ne garde que le code du site. **Clivage, la silhouette de grains, ses fichiers de grains et Sfumato** n'y sont plus : leurs fichiers compilés viennent du dépôt privé `adamrodwebdev/adamrodwebdev-portfolio-assets`, copiés à leur place par la génération, aux mêmes chemins qu'avant (CSS, imports et CSP n'ont pas changé). `.gitignore` les tient hors de Git ; un `LICENCES.md` à côté de chaque dossier dit ce qu'ils sont.
+
+| Fichiers copiés | Composant | Source privée |
+| --- | --- | --- |
+| `fonts/clivage-v2-*.woff2` | Clivage, la police signature | `type-foundry` |
+| `js/fx/particle-silhouette.js`, `chladni.js`, `grain-file.js`, `shard-file.js` | la silhouette de grains, compilée | `particle-silhouette` |
+| `assets/grains/*.bin`, `scripts/taglines.json` | les grains précalculés (marqués) et le texte de la devise | `particle-silhouette` |
+| `js/audio/score.js`, `arrangement.js`, `instruments.js`, `sfumato.js` | Sfumato, le thème du site, compilé | `sfumato` |
+
+Restent ici, comme code du site : `soundtrack-grains.js`, `clients-dust.js`, `effects.js`, `particles.js`, `js/audio/soundtrack.js` et les composants.
+
+- **`private-assets.lock.json`** (public) épingle le commit du dépôt privé, la taille et le SHA-256 de chaque fichier. `scripts/private-assets.mjs` (première étape de `npm run build` et de `npm run test:unit`, ou seul : `npm run assets`) copie chaque fichier absent ou altéré, au commit épinglé : depuis une copie locale du dépôt privé (le dossier voisin `…/claude/adamrodwebdev-portfolio-assets`, ou `PORTFOLIO_ASSETS_DIR`), sinon par l'API de GitHub avec `PORTFOLIO_ASSETS_TOKEN` ou, hors de Netlify, le jeton de `gh auth token`. Un fichier manquant, une taille ou une empreinte fausse, ni copie ni jeton : **la génération s'arrête** et nomme chaque fichier.
+- **Netlify** lit la variable d'environnement `PORTFOLIO_ASSETS_TOKEN` : un jeton GitHub *fine-grained* en lecture seule (Contents : read), limité au seul dépôt `adamrodwebdev-portfolio-assets`, avec une date d'expiration. Le renouveler avant qu'il expire, sinon le déploiement suivant échoue.
+- **Changer un composant** : dans son dépôt privé (chacun a son README), commit ; dans `adamrodwebdev-portfolio-assets`, `npm run build` (compile, marque, copie), commit, push ; ici, `npm run assets:lock` (épingle le nouveau commit), `npm test`, commit du verrou.
+- **Protections** : les scripts sont compilés par esbuild (ni carte de source ni commentaire, une mention de droits en tête de chaque fichier) ; chaque fichier de grains porte une marque invisible (le bit le plus bas de quelques centaines de valeurs) ; Clivage dit ses droits dans ses tables (`name` 0 et 13, `fsType` 4). `tests/unit/private.unit.mjs` échoue si un de ces fichiers est de nouveau suivi par Git, ou si un script copié n'est pas compilé.
+- **L'historique** garde les versions publiées avant le 26 novembre 2026 : choix de l'utilisateur, qui n'a pas voulu le réécrire. Le site les sert de toute façon à chaque visiteur ; ce qui ne sort plus, ce sont les sources lisibles et leurs générateurs.
 
 ## Sécurité (1.9.0)
 
@@ -175,7 +191,7 @@ La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad :
 
 ## La police signature (1.14.0)
 
-**Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebTech et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; seul le fichier compilé est ici. Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
+**Clivage** est la police d'affichage du site : logo, hero, titres, menus, boutons, étiquettes, grands chiffres. Barlow reste celle du texte courant. Elle a été dessinée pour AdamRodWebTech et lui est **exclusive : jamais vendue, tous droits réservés** (`fonts/LICENCES.md`). Sa source, le code qui la dessine, vit dans le dépôt privé de la fonderie ; ses fichiers compilés viennent du dépôt privé `adamrodwebdev-portfolio-assets` (1.23.1). Son nom dit les deux faces de la police : en minéralogie, le clivage est le plan selon lequel un cristal se fend net ; en français courant, la fracture qui divise une société.
 
 - **Une police variable à un axe, `FRAC`** : 0 entière, 100 brisée (le verre se fend, le signal se perd, le mot se déchire en deux). La chasse ne change jamais sur l'axe : l'animer ne déplace rien.
 - **Les animations** (`css/style.css`, `js/fx/effects.js`) : un titre arrive brisé et se répare en apparaissant (`data-repair`, classe `is-repairing`) ; le hero se brise puis se répare une fois la police chargée (`is-shattering`) ; le logo et les titres se fissurent au survol à la souris (`crack-once`) ; les pages 404 perdent leur signal (`lost-signal`). Rien avec « réduire les animations ». **Toujours par paliers** (`steps()`) : chaque état recalcule la mise en forme des lettres variables ; en continu, l'animation des grands titres chargeait le fil principal au chargement (Lighthouse tombait à 90 dès que la machine travaillait).
@@ -183,7 +199,7 @@ La licence (CLUF, EULA) des polices de la fonderie Ressac, vendues sur Gumroad :
 - **Mêmes mesures que Rajdhani**, qu'elle remplace : hauteur de capitale, boîte de ligne et chasses identiques. Son repli calé (`Clivage Fallback` : Arial Bold à 76,7 %, déclaré dans `css/style.css`, donc copié dans chaque page) sert dès le premier affichage, et rien ne bouge quand elle arrive. Le russe a son propre repli (77,95 %), calculé sur ses titres, menus et boutons.
 - **Latin** du français, de l'anglais, de l'espagnol et de l'italien, avec des chiffres tabulaires (`font-variant-numeric: tabular-nums`) pour l'horloge et les compteurs, et **cyrillique du russe** (1.15.0). Un caractère absent passe à la police suivante de la pile.
 - **Deux fichiers** : `clivage-v2-latin.woff2` (30 Ko) et `clivage-v2-cyrillic.woff2` (20 Ko), découpés dans la même police variable et déclarés avec leur `unicode-range` : une page ne télécharge que les lettres qu'elle affiche (le russe prend les deux, pour ses chiffres, sa ponctuation et le logo). Le menu des langues fermé n'est pas mis en page (`display: none`) : sans quoi le « Русский » de ce menu ferait venir le cyrillique sur les pages latines, ce que fait le Chrome de Lighthouse avec un `<details>` fermé. Le cyrillique n'arrive qu'à l'ouverture du menu.
-- **La remplacer** : refaire la police depuis la fonderie, la découper en deux (`fontTools.subset`, mêmes plages que dans `css/fonts.css`, toutes les fonctions OpenType gardées), compresser en WOFF2, déposer les fichiers sous un **nouveau nom** (`clivage-v3-…`, les polices sont mises en cache un an) et mettre à jour `css/fonts.css`.
+- **La remplacer** : refaire la police depuis la fonderie, la découper en deux (`fontTools.subset`, mêmes plages que dans `css/fonts.css`, toutes les fonctions OpenType gardées), compresser en WOFF2, déposer les fichiers sous un **nouveau nom** (`clivage-v3-…`, les polices sont mises en cache un an) dans le dépôt privé `adamrodwebdev-portfolio-assets`, puis ici `npm run assets:lock`, `.gitignore` et `css/fonts.css`.
 
 ## L'emblème du hero (1.20.0)
 
@@ -238,7 +254,7 @@ L'accueil s'ouvre sur les offres, avant les services ; les réalisations (sites 
 - **Les boutons des offres** choisissent le type de projet du formulaire (`data-project-type`, lu dans la liste fermée `PROJECT_TYPES`, dans l'ordre de `form.types`).
 - **Prendre rendez-vous et Malt** : renseignez `bookingUrl` (agenda Cal.com) et `maltUrl` (profil) dans `js/config.js`. Tant qu'ils sont vides, rien n'est généré : le second bouton du héros reste « Démarrer un projet ». Ce sont de simples liens qui s'ouvrent dans un nouvel onglet, aucun widget, rien chargé d'un autre domaine ; seules les adresses https de `cal.com` et `malt.fr` sont admises (la génération échoue sinon).
 - **Témoignages** : ajoutez un avis dans `js/data/testimonials.js` (nom, rôle et citation dans les cinq langues) ; la section apparaît dès le premier. **Uniquement de vrais avis, donnés par écrit, avec l'accord de la personne : n'en inventez jamais.**
-- **La devise en poussière d'or** (1.23.0) : en tête des offres, « Le client à cœur » en grains d'or que le curseur ou le doigt écarte (`js/fx/clients-dust.js`). La phrase lue vient de `offers.motto` ; la forme dessinée, en capitales et en deux lignes, de `scripts/taglines.mjs` (un test vérifie qu'elles disent la même chose). **Changer une devise** : modifier les deux, puis `npm run bake:grains` (seules les devises sont recalculées ; le logo de la bande-son ne l'est qu'avec `npm run bake:grains emblem`, et ses éclats doivent alors suivre).
+- **La devise en poussière d'or** (1.23.0) : en tête des offres, « Le client à cœur » en grains d'or que le curseur ou le doigt écarte (`js/fx/clients-dust.js`). La phrase lue vient de `offers.motto` ; la forme dessinée, en capitales et en deux lignes, du dépôt privé `particle-silhouette` (`portfolio/bake/taglines.mjs`, copiée ici en `scripts/taglines.json` ; un test vérifie qu'elles disent la même chose). **Changer une devise** : modifier la traduction ici et la devise là-bas, `npm run bake` dans `particle-silhouette` (seules les devises sont recalculées ; le logo de la bande-son ne l'est qu'avec `npm run bake emblem`, et ses éclats doivent alors suivre), puis la suite de « Changer un composant ».
 - **Marque** : le site s'affiche sous le nom commercial déclaré, AdamRodWebTech ; le domaine, l'e-mail et les comptes restent en « adamrodwebdev ».
 
 ## Profondeur (1.11.0)
@@ -260,6 +276,7 @@ Mesuré sur mobile (trois passages après un passage de préchauffage, le pire c
 - **Le plus grand élément du premier écran est visible dès la première image** (le paragraphe du hero ; l'affiche du clip sur `/lumirift/`) : jamais de fondu d'entrée sur lui, sinon Chrome peut le compter tard. Le titre du hero entre en se dévoilant (`slice-in`, un `clip-path`) : Chrome ne le compte qu'à la fin de cette entrée, vers 0,9 s. Il doit donc rester plus petit que le paragraphe dans chaque langue, sinon il devient le plus grand élément en retard. Depuis « WebTech », il est réglé 4 % plus petit (`--step-4`, 1.18.0) ; vérifiez la langue au paragraphe le plus court (l'espagnol) après tout changement du titre ou de l'accroche.
 - **Aucune longue tâche** : les îlots Vue se montent chacun dans sa propre tâche, les deux carrousels à l'approche de leur section (1.18.1), les effets décoratifs après le chargement, et aucune mesure de mise en page pendant un montage.
 - **Les polices de l'accueil, bloc par bloc** (1.18.1). À la première mise en page d'une police web, Chrome mesure chaque lettre à chaque taille : de 0,3 à 0,6 ms par lettre et par taille sur un téléphone simulé, quand une police du système, déjà prête, ne coûte presque rien. Avant ses îlots, l'accueil emploie Clivage à 19 tailles et Barlow à 14 ; données à toute la page d'un coup, les polices faisaient la plus longue tâche du chargement sur mobile (300 à 400 ms au ralenti 4 ×). Le chargeur (`scripts/after-first-paint.mjs`) pose `fonts-staged` avant le premier affichage, charge les polices, puis les donne aux morceaux de la page un par un (`fonts-on`), ceux de l'écran d'abord, chacun dans sa tâche ; `fonts-ready` marque la fin, et le titre du hero attend la sienne pour se briser. Les règles sont dans `css/style.css` (« Polices bloc par bloc »), la liste des polices de chaque langue dans `HOME_FONTS` (`scripts/build-pages.mjs`) : **une nouvelle graisse employée sur l'accueil s'y ajoute**, sinon son texte resterait en police locale (un test le vérifie dans les cinq langues). Sans JavaScript, la page prend ses polices comme avant.
+- **Aucun changement de police visible** (1.24.0). Sur l'accueil, le texte en Clivage attend la police de son bloc (`--signature-ink` : transparent tant que le bloc n'a pas `fonts-on`, chaque règle en Clivage prend sa couleur de texte de cette variable) ; les textes dorés en dégradé cachent leur dégradé. **Une nouvelle règle qui met un texte en Clivage doit prendre `-webkit-text-fill-color: var(--signature-ink)`**, sinon son repli se verra. Le texte courant reste visible : c'est le plus grand texte de l'écran, Lighthouse le mesure. Ses replis (`Barlow Fallback Segoe/Roboto/Arial`) ont la chasse de Barlow ; un test le vérifie. Les fichiers des polices sont préchargés avec leur feuille (`HOME_FONTS` donne leur adresse), et à la visite suivante le chargeur part aussitôt (`arwd-fonts` dans le stockage local).
 - **Une taille par rôle** (1.18.1) : chaque taille différente d'une police du site se paie à la première mise en page, même à quelques dixièmes de pixel d'une autre. En dehors de l'échelle fluide (`--step-*` : titres, texte courant, hero), l'interface prend ses tailles fixes dans six jetons de `css/style.css` : `--size-tag` (étiquettes), `--size-label` (libellés en capitales), `--size-note` (petit texte), `--size-text` (paragraphes des cartes), `--size-ui` (boutons, menus, numéros) et `--size-name` (titres de carte). Un nouvel élément prend la taille de son rôle plutôt qu'une valeur à lui.
 - Contenu dans le HTML, aucune image lourde, contrastes AA vérifiés, navigation clavier, `prefers-reduced-motion`, métadonnées, JSON-LD, sitemap.
 

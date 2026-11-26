@@ -15,13 +15,31 @@
  * dans css/style.css (« Polices bloc par bloc »). Un événement « fontsapplied » suit chaque bloc ; la classe
  * fonts-ready marque la fin.
  *
+ * Polices sans changement visible (1.24.0) :
+ *  - les fichiers des polices partent avec la feuille des polices (préchargement), pas après elle : un aller-retour
+ *    de moins avant qu'elles s'affichent ;
+ *  - le texte en Clivage reste caché tant que son bloc n'a pas sa police (--signature-ink, css/style.css) : il
+ *    apparaît directement dans la bonne police. Si elles tardent (réseau lent), il paraît en repli au bout de
+ *    HOLD_MS (classe fonts-late) ;
+ *  - à la visite suivante (FONTS_SEEN dans le stockage local), les polices sont en cache : tout part aussitôt,
+ *    sans attendre le premier affichage, et le texte reçoit sa police presque d'emblée.
+ *
  * La fonction est copiée telle quelle dans un <script> de la page : JavaScript simple, sans module.
  */
 function afterFirstPaint(stylesheets, modules, entry, fonts) {
   var started = false;
   var root = document.documentElement;
   var staged = fonts.length > 0 && !!document.fonts && typeof document.fonts.load === 'function';
-  if (staged) root.classList.add('fonts-staged');
+  var FONTS_SEEN = 'arwd-fonts';
+  var HOLD_MS = 2500;
+  // Le stockage ne dit qu'une chose, et seulement par cette valeur exacte : les polices ont déjà été chargées ici
+  var seen = false;
+  try { seen = staged && window.localStorage.getItem(FONTS_SEEN) === '1'; } catch (error) { seen = false; }
+  if (staged) {
+    root.classList.add('fonts-staged');
+    // Le texte en Clivage, caché jusqu'à sa police : passé ce délai, il paraît en repli plutôt que de manquer
+    setTimeout(function () { root.classList.add('fonts-late'); }, HOLD_MS);
+  }
   var link = function (rel, href) {
     var element = document.createElement('link');
     element.rel = rel;
@@ -54,6 +72,7 @@ function afterFirstPaint(stylesheets, modules, entry, fonts) {
       setTimeout(step, 0);
     };
     step();
+    try { window.localStorage.setItem(FONTS_SEEN, '1'); } catch (error) { /* stockage indisponible */ }
   };
   // Une police qui ne vient pas laisse sa place au repli : les blocs reçoivent quand même les autres
   var loadFonts = function () {
@@ -64,6 +83,20 @@ function afterFirstPaint(stylesheets, modules, entry, fonts) {
   var start = function () {
     if (started) return;
     started = true;
+    // Les fichiers des polices partent tout de suite, avec la feuille qui les déclare (même adresse, même mode)
+    if (staged) {
+      fonts.forEach(function (font) {
+        if (!font[2] || document.querySelector('link[rel="preload"][href="' + font[2] + '"]')) return;
+        // Tout est posé avant l'insertion : le navigateur lit as et crossorigin quand la requête part
+        var preload = document.createElement('link');
+        preload.rel = 'preload';
+        preload.as = 'font';
+        preload.type = 'font/woff2';
+        preload.crossOrigin = '';
+        preload.href = font[2];
+        document.head.appendChild(preload);
+      });
+    }
     var waiting = stylesheets.length;
     stylesheets.forEach(function (href) {
       var sheet = link('stylesheet', href);
@@ -82,7 +115,10 @@ function afterFirstPaint(stylesheets, modules, entry, fonts) {
     document.head.appendChild(script);
   };
   var types = window.PerformanceObserver && PerformanceObserver.supportedEntryTypes;
-  if (document.visibilityState === 'hidden') {
+  if (seen) {
+    // Visite suivante : les polices sont en cache, elles ne disputent rien au premier affichage
+    start();
+  } else if (document.visibilityState === 'hidden') {
     start();
   } else if (types && types.indexOf('paint') !== -1) {
     new PerformanceObserver(function (list, observer) {
@@ -100,8 +136,9 @@ function afterFirstPaint(stylesheets, modules, entry, fonts) {
  * Le script à placer dans la page.
  * @param {{ stylesheets?: string[], modules?: string[], entry?: string, fonts?: [string, string][] }} assets
  *   feuilles de style (les polices), modules à précharger, module d'entrée des îlots Vue, et les polices à
- *   donner bloc par bloc : [police, texte] pour document.fonts.load, le texte choisissant le fichier
- *   (unicode-range). Sans cette liste, les polices arrivent comme le navigateur les trouve.
+ *   donner bloc par bloc : [police, texte, fichier] pour document.fonts.load, le texte choisissant le fichier
+ *   (unicode-range), le fichier étant préchargé dès le départ. Sans cette liste, les polices arrivent comme le
+ *   navigateur les trouve.
  */
 export function afterFirstPaintScript({ stylesheets = [], modules = [], entry = '', fonts = [] }) {
   const args = [stylesheets, modules, entry, fonts].map((value) => JSON.stringify(value)).join(', ');
