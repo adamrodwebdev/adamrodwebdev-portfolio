@@ -31,13 +31,19 @@ const FONTS = '/css/fonts.css';
 
 /**
  * Les polices de l'accueil (1.18.1), chargées ensemble puis données bloc par bloc (scripts/after-first-paint.mjs) :
- * [police, texte] pour document.fonts.load, le texte choisissant le fichier par son unicode-range. Toutes celles que
+ * [police, texte, fichier] pour document.fonts.load, le texte choisissant le fichier par son unicode-range ; le
+ * fichier est préchargé avec la feuille des polices (1.24.0), et doit être celui que css/fonts.css déclare. Toutes celles que
  * la page emploie, sinon un texte resterait en police locale : un test le vérifie dans chaque langue. Le russe
  * prend aussi le cyrillique de Clivage, et pas Barlow (son texte courant est en polices système).
  */
 export const HOME_FONTS = Object.freeze({
-  default: [['700 1em Clivage', 'A'], ['400 1em Barlow', 'A'], ['500 1em Barlow', 'A'], ['600 1em Barlow', 'A']],
-  ru: [['700 1em Clivage', 'A'], ['700 1em Clivage', 'Ж']],
+  default: [
+    ['700 1em Clivage', 'A', '/fonts/clivage-v2-latin.woff2'],
+    ['400 1em Barlow', 'A', '/fonts/barlow-400.woff2'],
+    ['500 1em Barlow', 'A', '/fonts/barlow-500.woff2'],
+    ['600 1em Barlow', 'A', '/fonts/barlow-600.woff2'],
+  ],
+  ru: [['700 1em Clivage', 'A', '/fonts/clivage-v2-latin.woff2'], ['700 1em Clivage', 'Ж', '/fonts/clivage-v2-cyrillic.woff2']],
 });
 
 /** La première plateforme où jouer à un jeu du carrousel (le contenu statique de l'accueil n'en cite qu'une). */
