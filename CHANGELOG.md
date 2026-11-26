@@ -11,6 +11,14 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEU
 - **Les polices arrivent plus tôt** : leurs fichiers partent avec la feuille qui les déclare au lieu d'après elle ; sur 4G rapide, de 440-520 ms à 250-380 ms après le premier affichage.
 - **Visite suivante** : les polices sont en cache, le chargeur le sait (une seule valeur dans le stockage local) et les donne sans attendre le premier affichage : de 150 ms à presque rien.
 - Tests : en attente, le texte en Clivage est sans encre et le paragraphe lisible, puis tout paraît ; repli au bout de 2,5 s si les polices ne viennent pas ; chasse des replis à 1 % près par graisse.
+## [1.23.1] - 2026-11-26
+
+### Sécurité
+- **Nos propres composants quittent ce dépôt public** (règle de l'utilisateur du 26 novembre 2026) : Clivage, la silhouette de grains (`particle-silhouette.js`, `chladni.js`, `grain-file.js`, `shard-file.js`), ses fichiers de grains (`assets/grains/`) et Sfumato (`js/audio/score.js`, `arrangement.js`, `instruments.js`, `sfumato.js`). Leurs sources vont dans des dépôts privés (`type-foundry`, `particle-silhouette`, `sfumato`, ces deux derniers créés ce jour) ; leurs fichiers compilés dans le dépôt privé `adamrodwebdev-portfolio-assets`.
+- `scripts/private-assets.mjs`, première étape de la génération et des tests unitaires : copie chaque fichier au commit épinglé par `private-assets.lock.json` (taille et SHA-256), depuis une copie locale du dépôt privé ou par l'API de GitHub avec un jeton en lecture seule (`PORTFOLIO_ASSETS_TOKEN` sur Netlify). Un fichier manquant ou altéré arrête la génération et est nommé. Mêmes chemins qu'avant : ni CSS, ni imports, ni CSP ne changent.
+- Les scripts copiés sont compilés (esbuild, sans carte de source ni commentaire, une mention de droits en tête) : 40 à 60 % plus légers. Chaque fichier de grains porte une marque d'origine invisible. Un `LICENCES.md` à côté de chaque dossier.
+- Le générateur des grains (`scripts/bake-grains.mjs`), la devise qu'il dessine (`scripts/taglines.mjs`) et les tests du format et des figures de Chladni (`tests/unit/sand.unit.mjs`) partent dans `particle-silhouette`. Ici restent les tests qui vérifient que les fichiers copiés vont avec le site, et `tests/unit/private.unit.mjs` : aucun fichier privé suivi par Git, chacun ignoré, chaque script compilé, le verrou refuse ce qui sort de ses règles.
+- L'historique de Git garde les versions publiées jusqu'ici : l'utilisateur a choisi de ne pas le réécrire.
 
 ## [1.23.0] - 2026-11-25
 
