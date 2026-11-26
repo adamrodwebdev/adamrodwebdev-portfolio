@@ -2,6 +2,13 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.24.2] - 2026-11-26
+
+### Modifié
+- **Clivage protégée sans rien payer** (décision de l'utilisateur du 26 novembre 2026 : la police reste sur le site). Le site passe à la découpe v3 de la fonderie (`clivage-v3-*.woff2`, mêmes mesures), qui le dit dans ses tables : copyright (`name` 0), licence (13), adresse de la licence (14, vers les mentions légales), `fsType` 2 (licence restreinte), et une marque de canal. Nouveau nom de fichier, car les polices sont en cache un an.
+- **Mentions légales** : une section « Propriété intellectuelle » (en anglais « Intellectual property ») : Clivage et nos animations, images, sons et bande-son, tous droits réservés, sans licence d'extraction ni de réutilisation. La bande-son y porte enfin son nom, « Sfumato » (« Ascension » était resté d'une version passée).
+- `npm run assets:lock` n'épingle plus que les fichiers privés que le `.gitignore` de la branche déclare : un module d'une autre branche, déjà dans le dépôt privé, n'arrive plus dans celle-ci (le code de l'emblème et de /learn/ y est, pour leurs PR).
+
 ## [1.24.1] - 2026-11-26
 
 ### Modifié

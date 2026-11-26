@@ -314,7 +314,7 @@ test('police signature : tout l’affichage en Clivage, le texte courant en Barl
   expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Barlow/);
   // Une seule graisse, déclarée pour toutes : le navigateur ne simule aucun gras
   expect(await page.evaluate((family) => [...document.fonts].find((face) => face.family.replace(/["']/g, '') === family).weight, SIGNATURE)).toBe('100 900');
-  expect(fonts.some((path) => path === '/fonts/clivage-v2-latin.woff2')).toBe(true);
+  expect(fonts.some((path) => path === '/fonts/clivage-v3-latin.woff2')).toBe(true);
   // Une page latine ne télécharge pas le fichier cyrillique (1.15.0)
   expect(fonts.filter((path) => path.includes('cyrillic'))).toEqual([]);
   expect(fonts.filter((path) => path.includes('rajdhani'))).toEqual([]);
@@ -397,7 +397,7 @@ test('polices (1.24.0) : le texte en Clivage attend sa police, le texte courant 
   // Les fichiers des polices partent avec leur feuille, préchargés comme la feuille les déclare
   await expect(page.locator('link[rel="preload"][as="font"]')).toHaveCount(4);
   const preloads = await page.locator('link[rel="preload"][as="font"]').evaluateAll((links) => links.map((l) => [l.getAttribute('href'), l.crossOrigin]));
-  expect(preloads).toEqual(expect.arrayContaining([['/fonts/clivage-v2-latin.woff2', 'anonymous'], ['/fonts/barlow-400.woff2', 'anonymous']]));
+  expect(preloads).toEqual(expect.arrayContaining([['/fonts/clivage-v3-latin.woff2', 'anonymous'], ['/fonts/barlow-400.woff2', 'anonymous']]));
   // En attente : le titre, l'état et les boutons sans encre (le doré sans son dégradé), le paragraphe lisible
   for (const selector of ['.hero__title .hero__line', '.hero__status', '.hero .btn']) {
     expect((await ink(page.locator(selector).first())).fill, selector).toBe('rgba(0, 0, 0, 0)');
@@ -470,7 +470,7 @@ test('police signature : le menu des langues fermé n’est pas mis en page, le 
   await page.locator('#nav-app .lang-menu summary').click();
   const russian = list.getByRole('link', { name: 'Русский' });
   await expect(russian).toBeVisible();
-  await expect.poll(() => fonts.includes('/fonts/clivage-v2-cyrillic.woff2')).toBe(true);
+  await expect.poll(() => fonts.includes('/fonts/clivage-v3-cyrillic.woff2')).toBe(true);
   expect(await fontOf(russian)).toMatch(/^Clivage, Clivage Fallback/);
 });
 
@@ -522,7 +522,7 @@ test('police signature : en russe aussi, tout l’affichage en Clivage, ses deux
   }
   // Barlow n'a pas de cyrillique : le texte courant russe garde les polices système
   expect(await fontOf(page.locator('.hero__lead'))).toMatch(/^Segoe UI/);
-  expect(fonts.filter((path) => path.startsWith('/fonts/clivage-')).sort()).toEqual(['/fonts/clivage-v2-cyrillic.woff2', '/fonts/clivage-v2-latin.woff2']);
+  expect(fonts.filter((path) => path.startsWith('/fonts/clivage-')).sort()).toEqual(['/fonts/clivage-v3-cyrillic.woff2', '/fonts/clivage-v3-latin.woff2']);
   const faces = await page.evaluate(() => [...document.fonts].filter((face) => face.family.replace(/["']/g, '') === 'Clivage').map((face) => face.status));
   expect(faces).toEqual(['loaded', 'loaded']);
 });

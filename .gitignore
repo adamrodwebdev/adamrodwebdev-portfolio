@@ -10,7 +10,7 @@ playwright-report/
 # Nos propres composants (1.23.1, 1.24.1) : leurs fichiers compilés viennent du dossier portfolio/ du dépôt privé
 # adamrodwebdev/private-assets, copiés à la génération (scripts/private-assets.mjs, private-assets.lock.json).
 # Jamais dans ce dépôt public : voir les LICENCES.md à côté.
-/fonts/clivage-*.woff2
+/fonts/clivage-v3-*.woff2
 /js/fx/particle-silhouette.js
 /js/fx/chladni.js
 /js/fx/grain-file.js
