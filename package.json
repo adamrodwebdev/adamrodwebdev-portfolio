@@ -7,9 +7,10 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
-    "test:unit": "node --test tests/unit/offers.unit.mjs tests/unit/licence.unit.mjs tests/unit/grains.unit.mjs tests/unit/sand.unit.mjs",
-    "test": "npm run test:unit && node scripts/build.mjs && playwright test",
-    "bake:grains": "node scripts/bake-grains.mjs"
+    "assets": "node scripts/private-assets.mjs",
+    "assets:lock": "node scripts/private-assets.mjs --lock",
+    "test:unit": "node scripts/private-assets.mjs && node --test tests/unit/offers.unit.mjs tests/unit/licence.unit.mjs tests/unit/grains.unit.mjs tests/unit/private.unit.mjs",
+    "test": "npm run test:unit && node scripts/build.mjs && playwright test"
   },
   "engines": {
     "node": ">=22"
