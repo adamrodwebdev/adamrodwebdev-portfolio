@@ -1,7 +1,7 @@
 {
   "repository": "adamrodwebdev/private-assets",
   "folder": "portfolio",
-  "commit": "b1bfd94e4ee6b8da4bcbbca5e384bc5fadcdfa69",
+  "commit": "ba44c8a391eb0419d397e35ec100eba02a8615bf",
   "files": [
     {
       "path": "assets/grains/emblem-shards.bin",
@@ -49,6 +49,16 @@
       "sha256": "9fad8f613ad67ab91c555ed3593a0d894c27009a1a5bc8c7bec4086a0fe75b15"
     },
     {
+      "path": "fonts/clivage-v3-cyrillic.woff2",
+      "size": 20164,
+      "sha256": "d617c3bd58aa6aff0f378282a0835d4d1d5530ae8314739f4d4bedaa1bc8baa5"
+    },
+    {
+      "path": "fonts/clivage-v3-latin.woff2",
+      "size": 30128,
+      "sha256": "0961be834869878d7cbbf2e45784777ee4b2779fba452081fc734d81b2b0e784"
+    },
+    {
       "path": "js/audio/arrangement.js",
       "size": 5976,
       "sha256": "3a50d399126a6513dfb66c81a1effd81ccfdfbc87a30643b03acb5a1e7a0c309"
@@ -87,6 +97,86 @@
       "path": "js/fx/shard-file.js",
       "size": 1249,
       "sha256": "d053cda1e762d5bcefdb22b286d8575c13e333cb7985eb81dd1ef81a550a6faf"
+    },
+    {
+      "path": "js/learn/camera.js",
+      "size": 968,
+      "sha256": "68ce73bcdf7ea8e4a6fdc00e890253846b175bc95447da37c5c4d625a3b4ed54"
+    },
+    {
+      "path": "js/learn/captions.js",
+      "size": 240,
+      "sha256": "c5faba93a68e53d41f967e5ad129829b9590f1de8d6eefff9d5378c9c6847a2b"
+    },
+    {
+      "path": "js/learn/chrome.js",
+      "size": 2812,
+      "sha256": "734d6285ee4678bd10f070d877f18c520c91b9628eaf859652da4dd8fc8a4747"
+    },
+    {
+      "path": "js/learn/ease.js",
+      "size": 591,
+      "sha256": "2f532ea0372b93eff21be272adc985a1f3b7a6b48ef89dbdc2ce4e7610141279"
+    },
+    {
+      "path": "js/learn/episode.js",
+      "size": 684,
+      "sha256": "892c6b1a6dc4f1a7f28ad1bdadcce4697a60e614b98e055110e68dc1f6740760"
+    },
+    {
+      "path": "js/learn/episode01.js",
+      "size": 7541,
+      "sha256": "cc5c5db432c53a4431301a8f8b3cfb00e76ceba5c29fe676e121789141f983ed"
+    },
+    {
+      "path": "js/learn/episode02.js",
+      "size": 5348,
+      "sha256": "12a0e4cd1713e95189dbdd765fb427a8ac3dc8b1074ecfab602c4d4237e44329"
+    },
+    {
+      "path": "js/learn/frac.js",
+      "size": 1489,
+      "sha256": "a174bb7464b30beb6a8d888ee563baa16275db9f5e30850d0b627640f6808702"
+    },
+    {
+      "path": "js/learn/main.js",
+      "size": 3505,
+      "sha256": "695665ace393c2b18140879f267a6b74b186357cd36e18d86d9a9edb7397da68"
+    },
+    {
+      "path": "js/learn/player.js",
+      "size": 2353,
+      "sha256": "0fac0303783fb73c7f6ca21fb94ddca3ecd2e1999a892871ee09b3940998ef60"
+    },
+    {
+      "path": "js/learn/scene.js",
+      "size": 18748,
+      "sha256": "9d47b6b756f74b183bd6a1473f3ed950bcc0daecb0c8fbb776c52c6aaf921111"
+    },
+    {
+      "path": "js/learn/svg.js",
+      "size": 757,
+      "sha256": "ee957cdd1e83d7622ef5c1d498a00b35ee3ca2db00ffc44cf40c9a6578548853"
+    },
+    {
+      "path": "js/learn/theme.js",
+      "size": 1186,
+      "sha256": "b978aac7575cc2c51f61929c9d3aab68f3b6558a3071e6f89a8485eaae825c6e"
+    },
+    {
+      "path": "js/learn/timeline.js",
+      "size": 936,
+      "sha256": "538c1e0599fe0017c6253788ac1db3aabb61c323c0b583e67f85badc5dd804cb"
+    },
+    {
+      "path": "js/learn/transitions.js",
+      "size": 455,
+      "sha256": "a52b326f74a1a4d693be17849a09be53c5bb9d392425b9beae27a8392743f217"
+    },
+    {
+      "path": "js/learn/world.js",
+      "size": 3818,
+      "sha256": "22a96a4f8c66206102ffd41236ad4a1ce765d06fcb25f7cefccb1567f409f5c8"
     },
     {
       "path": "lumirift/avatar-176.avif",

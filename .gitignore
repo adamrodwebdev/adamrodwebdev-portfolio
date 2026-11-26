@@ -26,3 +26,4 @@ playwright-report/
 /lumirift/*.jpg
 /lumirift/*.png
 /lumirift/*.mp4
+/js/learn/*.js

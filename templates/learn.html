@@ -1,0 +1,307 @@
+<!doctype html>
+<!--
+  FICHIER GÉNÉRÉ — ne pas modifier directement.
+  Source : templates/learn.html + js/i18n/messages.js (learnPage, et l'en-tête de la langue)
+  + les règles de css/style.css que la page applique (copiées dans la page)
+  Régénérer : npm run build
+-->
+<html lang="[[@lang]]" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>[[page.meta.title]]</title>
+  <meta name="description" content="[[page.meta.description]]">
+  <meta name="author" content="AdamRodWebTech">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="[[@url]]">
+  [[@alternates]]
+
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="[[meta.ogLocale]]">
+  <meta property="og:site_name" content="AdamRodWebTech">
+  <meta property="og:title" content="[[page.meta.title]]">
+  <meta property="og:description" content="[[page.meta.description]]">
+  <meta property="og:url" content="[[@url]]">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('arwd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Les polices du site et l'épisode, demandés une fois le premier affichage signalé
+       (scripts/after-first-paint.mjs). -->
+  <noscript><link rel="stylesheet" href="[[@fonts]]"></noscript>
+  <script>[[@afterFirstPaint]]</script>
+
+  <!-- Les règles de css/style.css que cette page applique, copiées ici à la génération. -->
+  <style>[[@css]]</style>
+  <style>
+    /* La série « Comment marche le Web » : ses parties propres, aux couleurs du site. En-tête, pied de page,
+       jetons, thèmes, boutons, panneau à marche, étiquette de section : style.css. L'image garde le noir du
+       film dans les deux thèmes ; aucune couleur hors des jetons du site (ni rouge, ni bleu, ni jaune). */
+    /* L'en-tête défile avec la page, comme sur les autres pages générées (licence, Lumirift) : sans îlot Vue,
+       rien ne lui donnerait son fond une fois la page défilée, et le texte passerait dessous. */
+    .site-header { position: relative; inset: auto; }
+    .learn-episode.panel { position: relative; margin-top: 1.5rem; padding-block: clamp(2.75rem, 2rem + 4vw, 4.5rem) 3rem; }
+    .learn-layout { display: grid; gap: clamp(2rem, 1.5rem + 3vw, 3.5rem); align-items: center; }
+    @media (width >= 64rem) { .learn-layout { grid-template-columns: minmax(0, 5fr) minmax(0, 4fr); } }
+    .learn-head { display: grid; justify-items: start; max-width: 36rem; }
+    .learn-head .section__tag { margin-bottom: 0.9rem; }
+    .learn-title { margin: 0; font: 700 var(--step-3)/1.02 var(--font-display); text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance; }
+    .learn-lede { margin: 1.1rem 0 0; color: var(--muted); font-size: var(--step-1); line-height: 1.5; text-wrap: pretty; max-width: 58ch; }
+    .learn-player { display: grid; gap: 1rem; justify-items: center; width: 100%; }
+
+    /* Le cadre du lecteur : chanfreiné comme les plaques du site, deux équerres d'or (HUD). */
+    .learn-stage {
+      --cut: clamp(14px, 4cqi, 22px);
+      position: relative; margin: 0; width: min(100%, 25rem); aspect-ratio: 9 / 16;
+      /* Sur un écran bas, le lecteur et son bouton Lire tiennent ensemble dans la hauteur. */
+      max-width: max(16rem, (100svh - 15rem) * 9 / 16);
+      container: learn-stage / inline-size; overflow: hidden; background: #000; color: #f6f4ef;
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+      user-select: none;
+    }
+    .learn-scene, .learn-overlay { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+    /* La bande des sous-titres : un dégradé sombre sur le haut de l'image, le même dans le film et la page. */
+    .learn-scrim {
+      position: absolute; inset: 0 0 auto; height: 27%; pointer-events: none;
+      background: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.86) 46%, rgb(0 0 0 / 0) 100%);
+    }
+    .learn-corner { position: absolute; width: 7cqi; height: 7cqi; border: 0.6cqi solid #e0b04a; pointer-events: none; }
+    .learn-corner--tl { top: 4.5%; left: 4.5%; border-right: 0; border-bottom: 0; }
+    .learn-corner--br { bottom: 22%; right: 4.5%; border-left: 0; border-top: 0; }
+
+    /* Les textes de la scène (SVG) : Barlow pour les noms, Clivage pour ce qui se brise et se répare. */
+    .learn-scene text { font-family: var(--font-body); }
+    .learn-url { font-size: 17px; font-weight: 500; }
+    .learn-code { font-size: 22px; font-weight: 600; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+    .learn-badge { font-size: 15px; font-weight: 600; }
+    .learn-heart { font-size: 26px; font-weight: 600; }
+    .learn-count { font-size: 24px; font-weight: 600; }
+    .learn-token { font-size: 21px; font-weight: 600; }
+    .learn-bits { font-size: 23px; font-weight: 600; }
+    .learn-file-name { font-size: 17px; font-weight: 600; }
+    .learn-scene .learn-mark, .learn-scene .learn-word, .learn-scene .learn-file-label, .learn-overlay .learn-index { font-family: var(--font-signature); font-weight: 700; }
+    .learn-mark { font-size: 40px; }
+    .learn-word { font-size: 80px; letter-spacing: 0.01em; }
+    .learn-file-label { font-size: 26px; letter-spacing: 0.04em; }
+    .learn-index { font-size: 400px; }
+
+    /* La ligne d'état : l'épisode, le battement en cours, n / 6. */
+    .learn-status {
+      position: absolute; top: 7.5%; inset-inline: 8%; margin: 0; display: flex; justify-content: space-between; gap: 1rem;
+      font: 600 3.6cqi/1.2 var(--font-signature); letter-spacing: 0.1em; text-transform: uppercase; color: #e0b04a;
+    }
+    .learn-status i { font-style: normal; color: #a8a193; }
+    /* Dans le film, la ligne d'état reste dans la zone sûre des applis (kit vidéo : x 32 à 918, y dès 192 à
+       1080 × 1920), alignée sur la plaque, et finit avant elle (y 232). */
+    .learn-film .learn-status { top: 10%; left: 5.37%; right: 15%; font-size: 2.6cqi; line-height: 1.15; }
+    /* La plaque du sous-titre, celle du kit vidéo (.helpers/social-video-style, mesures à 1080 px de large) :
+       chanfreinée, liseré d'or tracé par une plaque intérieure. Le sous-titre en capitales de Clivage arrive
+       brisé et se répare ; dans le film, l'étiquette de la série au-dessus et le pseudo en dessous, entiers. */
+    .learn-plate {
+      --cut: 2.22cqi;
+      position: absolute; top: 12.1%; left: 5.37%; max-width: 75.9%; padding: 2.78cqi 3.33cqi; isolation: isolate;
+      background: rgb(224 176 74 / 0.55);
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    }
+    .learn-plate::before { content: ""; position: absolute; inset: max(1px, 0.185cqi); z-index: -1; background: #0e0c08; clip-path: inherit; }
+    .learn-caption {
+      margin: 0; font: 700 clamp(0.85rem, 5.93cqi, 4rem)/1 var(--font-signature); text-transform: uppercase; letter-spacing: 0.01em; text-wrap: balance; color: #f6f4ef;
+    }
+    .learn-plate__tag {
+      display: none; align-items: center; gap: 1.3cqi; margin: 0 0 1.3cqi;
+      font: 700 3.33cqi/1 var(--font-signature); letter-spacing: 0.12em; text-transform: uppercase; color: #e0b04a;
+    }
+    .learn-plate__tag::before { content: ""; width: 3.7cqi; height: max(2px, 0.28cqi); background: currentColor; }
+    .learn-plate__handle { display: none; margin: 1.3cqi 0 0; font: 600 3.15cqi/1.1 var(--font-body); color: #a8a193; }
+    .learn-film .learn-plate__tag { display: flex; }
+    .learn-film .learn-plate__handle { display: block; }
+    /* Dans le film, les mesures exactes du kit : 2 px de liseré et un tiret de 3 px à 1080 px de large, sans
+       les minimums qui servent au petit lecteur de la page (à 360 px, ils doublaient l'un et l'autre). */
+    .learn-film .learn-plate::before { inset: 0.185cqi; }
+    .learn-film .learn-plate__tag::before { height: 0.28cqi; }
+    /* Le titre de la première seconde : le nom de la série se brise et se répare. */
+    .learn-titlecard { position: absolute; inset: 0; display: grid; place-content: center; gap: 3cqi; padding: 8%; text-align: center; background: #000; }
+    .learn-titlecard__series {
+      margin: 0; font: 700 15cqi/0.9 var(--font-signature); text-transform: uppercase; text-wrap: balance;
+      color: transparent; background: linear-gradient(100deg, #9a7420, #f5cf6e 40%, #e0b04a 60%, #9a7420); -webkit-background-clip: text; background-clip: text;
+    }
+    .learn-titlecard__episode { margin: 0; font: 600 4cqi/1.3 var(--font-body); color: #a8a193; }
+    .learn-titlecard[hidden], .learn-status[hidden], .learn-plate[hidden] { display: none; }
+    .learn-noscript { position: absolute; inset: auto 1.25rem 1.25rem; margin: 0; color: #f6f4ef; font-size: 1rem; }
+
+    /* La fracture de Clivage, par paliers de 5 (js/learn/frac.js) : la CSP refuse l'attribut style. */
+    .frac-0 { font-variation-settings: "FRAC" 0; } .frac-5 { font-variation-settings: "FRAC" 5; } .frac-10 { font-variation-settings: "FRAC" 10; }
+    .frac-15 { font-variation-settings: "FRAC" 15; } .frac-20 { font-variation-settings: "FRAC" 20; } .frac-25 { font-variation-settings: "FRAC" 25; }
+    .frac-30 { font-variation-settings: "FRAC" 30; } .frac-35 { font-variation-settings: "FRAC" 35; } .frac-40 { font-variation-settings: "FRAC" 40; }
+    .frac-45 { font-variation-settings: "FRAC" 45; } .frac-50 { font-variation-settings: "FRAC" 50; } .frac-55 { font-variation-settings: "FRAC" 55; }
+    .frac-60 { font-variation-settings: "FRAC" 60; } .frac-65 { font-variation-settings: "FRAC" 65; } .frac-70 { font-variation-settings: "FRAC" 70; }
+    .frac-75 { font-variation-settings: "FRAC" 75; } .frac-80 { font-variation-settings: "FRAC" 80; } .frac-85 { font-variation-settings: "FRAC" 85; }
+    .frac-90 { font-variation-settings: "FRAC" 90; } .frac-95 { font-variation-settings: "FRAC" 95; } .frac-100 { font-variation-settings: "FRAC" 100; }
+
+    /* Les commandes : les boutons du site ; une pastille par battement, un hexagone qui s'allume. */
+    .learn-controls { display: flex; gap: 0.5rem; width: min(100%, 25rem); max-width: max(16rem, (100svh - 15rem) * 9 / 16); }
+    .learn-controls .btn { min-height: 48px; padding: 0 16px; }
+    .learn-controls .btn--gold { flex: 1; }
+    .learn-dots { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; list-style: none; margin: 0; padding: 0; width: min(100%, 25rem); }
+    .learn-step {
+      --cut: 8px;
+      min-height: 44px; padding: 0 0.85rem; display: inline-flex; gap: 0.5rem; align-items: center;
+      border: 1px solid var(--line); background: transparent; color: var(--muted);
+      font: 600 0.9rem var(--font-signature); letter-spacing: 0.08em; text-transform: uppercase;
+      clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+    }
+    .learn-step::before { content: ""; width: 0.62rem; aspect-ratio: 1; background: var(--line); clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); }
+    .learn-step[aria-current="step"] { color: var(--fg); border-color: var(--gold); }
+    .learn-step[aria-current="step"]::before { background: var(--gold); }
+    .learn-step:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: -5px; }
+    .learn-episode:not(.is-ready) .learn-controls,
+    .learn-episode:not(.is-ready) .learn-dots { display: none; }
+
+    .learn-transcript { max-width: 46rem; padding-block: 1rem 3.5rem; }
+    .learn-transcript h2, .learn-glossary h2 { font: 700 var(--step-2)/1.1 var(--font-display); text-transform: uppercase; margin: 0 0 1.25rem; }
+    .learn-lines { display: grid; gap: 0.9rem; margin: 0; padding-left: 1.4rem; }
+    .learn-lines li { padding-left: 0.3rem; font-size: var(--step-0); line-height: 1.55; }
+    .learn-lines li::marker { color: var(--gold); font-weight: 700; }
+    .learn-glossary { max-width: 46rem; padding-block: 0 4rem; }
+    .learn-words { display: grid; gap: 0.75rem; margin: 0; }
+    .learn-words div { display: grid; gap: 0.2rem; padding: 0.8rem 1rem 0.8rem 1.1rem; background: color-mix(in srgb, var(--gold) 6%, transparent); border-left: 2px solid var(--line); }
+    .learn-words dt { font: 600 0.95rem var(--font-signature); letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); }
+    .learn-words dd { margin: 0; line-height: 1.5; }
+
+    /* Le tournage (?film) : l'image seule, plein cadre ; ?film&captions=off cache aussi ses textes. */
+    .learn-film body { background: #000; }
+    .learn-film .site-header, .learn-film .site-footer, .learn-film .skip-link, .learn-film .learn-head, .learn-film .learn-controls,
+    .learn-film .learn-dots, .learn-film .learn-transcript, .learn-film .learn-glossary, .learn-film .panel__index { display: none; }
+    .learn-film .learn-episode.panel { margin: 0; padding: 0; }
+    .learn-film .learn-episode.panel::before, .learn-film .learn-episode.panel::after { display: none; }
+    .learn-film .learn-stage { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; clip-path: none; }
+    .learn-film--clean .learn-plate, .learn-film--clean .learn-titlecard, .learn-film--clean .learn-status { display: none; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenu">[[a11y.skip]]</a>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="[[a11y.mainNav]]">
+      <a class="brand" href="[[@home]]" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebTech</b></span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="[[@home]]#offres">[[nav.offers]]</a></li>
+        <li><a href="[[@home]]#services">[[nav.services]]</a></li>
+        <li><a href="[[@home]]#projets">[[nav.projects]]</a></li>
+        <li><a href="[[@home]]#creations">[[nav.creations]]</a></li>
+        <li><a href="[[@home]]#contact">[[nav.contact]]</a></li>
+      </ul>
+      <div class="nav__tools">
+        <a class="icon-btn lang-btn" href="[[@otherHref]]" hreflang="[[@otherLang]]" lang="[[@otherLang]]">[[@otherCode]]<span class="visually-hidden"> [[page.otherLanguage]]</span></a>
+        <button class="icon-btn is-dark" type="button" data-theme-toggle aria-pressed="true" aria-label="[[nav.themeLight]]"
+          data-to-light="[[nav.themeLight]]" data-to-dark="[[nav.themeDark]]">
+          <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="moon-mask"><rect width="24" height="24" fill="#fff"/><circle class="theme-icon__mask-circle" cx="17" cy="7" r="7" fill="#000"/></mask>
+            <circle class="theme-icon__core" cx="12" cy="12" r="8" fill="currentColor" mask="url(#moon-mask)"/>
+            <g class="theme-icon__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="learn-episode panel panel--rise" data-learn aria-labelledby="learn-title">
+      <span class="panel__index" data-index="01" aria-hidden="true"></span>
+      <div class="container learn-layout">
+        <div class="learn-head">
+          <p class="section__tag">[[page.series]] · [[page.episode]]</p>
+          <h1 class="learn-title" id="learn-title">[[page.title]]</h1>
+          <p class="learn-lede">[[page.lede]]</p>
+        </div>
+        <div class="learn-player">
+          <figure class="learn-stage">
+            <svg class="learn-scene" data-learn-scene aria-hidden="true" focusable="false"></svg>
+            <svg class="learn-overlay" data-learn-overlay aria-hidden="true" focusable="false"></svg>
+            <div class="learn-scrim" aria-hidden="true"></div>
+            <i class="learn-corner learn-corner--tl" aria-hidden="true"></i>
+            <i class="learn-corner learn-corner--br" aria-hidden="true"></i>
+            <p class="learn-status" data-learn-status aria-hidden="true" hidden><span>[[page.status]] — <b data-learn-status-beat></b></span><i data-learn-status-count></i></p>
+            <div class="learn-plate" data-learn-plate aria-hidden="true" hidden>
+              <p class="learn-plate__tag" data-learn-tag>[[page.series]]</p>
+              <p class="learn-caption" data-learn-caption></p>
+              <p class="learn-plate__handle" data-learn-handle>@adamrodwebdev</p>
+            </div>
+            <div class="learn-titlecard" data-learn-titlecard aria-hidden="true">
+              <p class="learn-titlecard__series">[[page.series]]</p>
+              <p class="learn-titlecard__episode">[[page.episode]] · [[page.title]]</p>
+            </div>
+            <figcaption class="visually-hidden">[[page.stage]]</figcaption>
+            <noscript><p class="learn-noscript">[[page.noscript]]</p></noscript>
+          </figure>
+          <div class="learn-controls">
+            <button class="btn btn--ghost" type="button" data-learn-back><span>[[page.controls.back]]</span></button>
+            <button class="btn btn--gold" type="button" data-learn-play
+              data-play="[[page.controls.play]]" data-pause="[[page.controls.pause]]" data-replay="[[page.controls.replay]]"><span>[[page.controls.play]]</span></button>
+            <button class="btn btn--ghost" type="button" data-learn-next><span>[[page.controls.next]]</span></button>
+          </div>
+          <ol class="learn-dots" aria-label="[[page.controls.steps]]">
+            [[@dots]]
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="learn-transcript container" aria-labelledby="learn-transcript">
+      <h2 id="learn-transcript">[[page.transcript]]</h2>
+      <ol class="learn-lines">
+        [[@narration]]
+      </ol>
+    </section>
+
+    <section class="learn-glossary container" aria-labelledby="learn-glossary">
+      <h2 id="learn-glossary">[[page.glossaryTitle]]</h2>
+      <dl class="learn-words">
+        [[@glossary]]
+      </dl>
+    </section>
+    <ol data-learn-captions hidden>
+      [[@captions]]
+    </ol>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer">
+      <a class="brand" href="[[@home]]" aria-label="[[a11y.brandHome]]">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 33 24 13l9 20M19 26h10" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+        <span class="brand__name">AdamRod<b>WebTech</b></span>
+      </a>
+      <nav aria-label="[[a11y.footerNav]]">
+        <ul class="footer__links">
+          <li><a href="[[@home]]#offres">[[nav.offers]]</a></li>
+          <li><a href="[[@home]]#services">[[nav.services]]</a></li>
+          <li><a href="[[@home]]#projets">[[nav.projects]]</a></li>
+          <li><a href="[[@home]]#contact">[[nav.contact]]</a></li>
+          <li><a href="[[@legal]]"[[@legalHreflang]]>[[nav.legal]]</a></li>
+        </ul>
+      </nav>
+      <p class="footer__copy">© 2026 AdamRodWebTech. [[footer.copy]]</p>
+    </div>
+  </footer>
+</body>
+</html>

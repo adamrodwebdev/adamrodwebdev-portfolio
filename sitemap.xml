@@ -71,6 +71,20 @@
     <lastmod>2026-11-18</lastmod><changefreq>yearly</changefreq><priority>0.2</priority>
   </url>
   <url>
+    <loc>https://adamrodwebdev.com/learn/1/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/learn/1/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/learn/1/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/en/learn/1/"/>
+    <lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://adamrodwebdev.com/en/learn/1/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/learn/1/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/learn/1/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://adamrodwebdev.com/en/learn/1/"/>
+    <lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://adamrodwebdev.com/ressac/licence/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://adamrodwebdev.com/ressac/licence/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://adamrodwebdev.com/en/ressac/licence/"/>

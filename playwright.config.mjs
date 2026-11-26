@@ -9,6 +9,8 @@ const PORT = 8090;
 
 export default defineConfig({
   testDir: 'tests',
+  // Les tests du navigateur seulement : les tests unitaires (tests/unit/*.test.mjs) passent par node --test.
+  testMatch: '**/*.spec.mjs',
   workers: 1,
   fullyParallel: false,
   reporter: 'list',
