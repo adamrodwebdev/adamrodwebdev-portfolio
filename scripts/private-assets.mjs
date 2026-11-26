@@ -29,9 +29,9 @@ export const LOCK_FILE = 'private-assets.lock.json';
 export const REPOSITORY = 'adamrodwebdev/private-assets';
 /** Le dossier de ce site dans le dépôt privé commun : chaque projet n'y lit que le sien. */
 export const FOLDER = 'portfolio';
-const LIMITS = Object.freeze({ lockBytes: 16 * 1024, fileBytes: 2 * 1024 * 1024, files: 64, pathChars: 1024 });
+const LIMITS = Object.freeze({ lockBytes: 32 * 1024, fileBytes: 2 * 1024 * 1024, files: 128, pathChars: 1024 });
 /** Les seuls chemins qu'un fichier privé peut prendre : une liste fermée de dossiers et d'extensions. */
-export const PRIVATE_PATH = /^(?:(?:fonts|js\/fx|js\/audio|assets\/grains|scripts)\/[a-z0-9-]+\.(?:woff2|js|bin|json)|lumirift\/[a-z0-9-]+\.(?:avif|webp|jpg|png|mp4))$/;
+export const PRIVATE_PATH = /^(?:(?:fonts|js\/fx|js\/audio|js\/learn|assets\/grains|scripts)\/[a-z0-9-]+\.(?:woff2|js|bin|json)|lumirift\/[a-z0-9-]+\.(?:avif|webp|jpg|png|mp4))$/;
 const COMMIT = /^[0-9a-f]{40}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 const TOKEN = /^[A-Za-z0-9_]{20,255}$/;
@@ -221,6 +221,10 @@ export async function writeLock(root, { env = process.env, log = console.log } =
   // Seulement le dossier de ce site, chemins rendus relatifs à lui
   const paths = git(dir, ['ls-tree', '-r', '--name-only', commit, '--', `${FOLDER}/`]).split('\n')
     .filter((p) => p.startsWith(`${FOLDER}/`)).map((p) => p.slice(FOLDER.length + 1)).filter((p) => PRIVATE_PATH.test(p)).sort();
+  // Une branche n'épingle que les fichiers privés qu'elle déclare : ceux que son .gitignore tient hors de Git
+  // (un module d'une autre branche, déjà dans le dépôt privé, n'arrive pas dans celle-ci)
+  const declared = new Set(paths.length ? git(root, ['check-ignore', '--no-index', '--', ...paths]).split('\n').map((p) => p.trim()).filter(Boolean) : []);
+  paths.splice(0, paths.length, ...paths.filter((p) => declared.has(p)));
   const files = paths.map((path) => {
     const bytes = git(dir, ['show', `${commit}:${FOLDER}/${path}`], 'buffer');
     return { path, size: bytes.length, sha256: sha256(bytes) };
