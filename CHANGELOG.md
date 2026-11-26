@@ -2,6 +2,16 @@
 
 Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/) : MAJEUR.MINEUR.CORRECTIF.
 
+## [1.24.0] - 2026-11-26
+
+### Modifié
+- **Plus de changement de police visible au chargement de l'accueil.** Avant, le texte s'affichait d'abord dans ses polices de repli, puis passait à Clivage et à Barlow de 0,3 à 0,5 s plus tard (1,7 s en 4G lente), et certaines lignes du texte courant se recoupaient.
+- **Clivage attend sa police** : le texte en Clivage (le nom du hero, le menu, les boutons, les étiquettes) reste caché tant que son bloc n'a pas sa police, puis paraît directement dans la bonne lettre, à sa place. Le texte courant, et le plus grand texte de l'écran (le paragraphe du hero), restent visibles dès le premier affichage. Si les polices tardent, le repli paraît au bout de 2,5 s.
+- **Le texte courant garde ses lignes** : Barlow a maintenant des replis à sa chasse (Segoe UI sous Windows, Roboto sous Android, Arial ailleurs, mis à la taille de Barlow graisse par graisse) ; l'écart de largeur passe de 3 à 5 % à moins de 0,2 %.
+- **Les polices arrivent plus tôt** : leurs fichiers partent avec la feuille qui les déclare au lieu d'après elle ; sur 4G rapide, de 440-520 ms à 250-380 ms après le premier affichage.
+- **Visite suivante** : les polices sont en cache, le chargeur le sait (une seule valeur dans le stockage local) et les donne sans attendre le premier affichage : de 150 ms à presque rien.
+- Tests : en attente, le texte en Clivage est sans encre et le paragraphe lisible, puis tout paraît ; repli au bout de 2,5 s si les polices ne viennent pas ; chasse des replis à 1 % près par graisse.
+
 ## [1.23.0] - 2026-11-25
 
 ### Ajouté

@@ -27,11 +27,14 @@
      polices (1.18.1, règle « Polices bloc par bloc » plus bas). */
   --font-signature-local: "Clivage Fallback", "Bahnschrift", "Arial Narrow", system-ui, sans-serif;
   --font-signature-web: "Clivage", var(--font-signature-local);
-  --font-body-local: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body-local: "Barlow Fallback Segoe", "Barlow Fallback Roboto", "Barlow Fallback Arial", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-body-web: "Barlow", var(--font-body-local);
   --font-signature: var(--font-signature-web);
   --font-display: var(--font-signature);
   --font-body: var(--font-body-web);
+  /* L'encre du texte en Clivage (1.24.0) : la couleur du texte, sauf sur l'accueil tant que son bloc attend la
+     police (règle « Polices bloc par bloc » plus bas) */
+  --signature-ink: currentColor;
 
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.92rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
@@ -129,6 +132,74 @@
   line-gap-override: 0%;
 }
 
+/* Replis de Barlow (1.24.0), mis à sa chasse : un texte garde ses lignes quand Barlow arrive. Chasse mesurée
+   dans la mise en page de Chromium, sur les textes du site en quatre langues et par graisse (Segoe UI, Arial) ; Roboto, absent ici, est estimé
+   d'après Arial par la largeur moyenne de ses lettres. Hauteurs de Barlow : 1 em au-dessus de la ligne de base,
+   0,2 em en dessous. */
+@font-face {
+  font-family: "Barlow Fallback Segoe";
+  src: local("Segoe UI"), local("SegoeUI");
+  font-weight: 400;
+  size-adjust: 97.5%;
+  ascent-override: 102.56%;
+  descent-override: 20.51%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Barlow Fallback Segoe";
+  src: local("Segoe UI Semibold"), local("SegoeUI-Semibold");
+  font-weight: 500 600;
+  size-adjust: 96.5%;
+  ascent-override: 103.63%;
+  descent-override: 20.73%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Barlow Fallback Roboto";
+  src: local("Roboto"), local("Roboto-Regular");
+  font-weight: 400;
+  size-adjust: 95.6%;
+  ascent-override: 104.60%;
+  descent-override: 20.92%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Barlow Fallback Roboto";
+  src: local("Roboto Medium"), local("Roboto-Medium");
+  font-weight: 500 600;
+  size-adjust: 95.6%;
+  ascent-override: 104.60%;
+  descent-override: 20.92%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Barlow Fallback Arial";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 400;
+  size-adjust: 96.3%;
+  ascent-override: 103.84%;
+  descent-override: 20.77%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Barlow Fallback Arial";
+  src: local("Arial"), local("ArialMT");
+  font-weight: 500;
+  size-adjust: 98.6%;
+  ascent-override: 101.42%;
+  descent-override: 20.28%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Barlow Fallback Arial";
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  font-weight: 600;
+  size-adjust: 92.6%;
+  ascent-override: 107.99%;
+  descent-override: 21.60%;
+  line-gap-override: 0%;
+}
+
 /* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); -webkit-text-size-adjust: 100%; }
@@ -158,7 +229,7 @@ input:is(:not([type]), [type='text'], [type='email'], [type='search'], [type='pa
 textarea:not(:disabled), [contenteditable='true'] { cursor: text; }
 :disabled, [aria-disabled='true'] { cursor: not-allowed; }
 button, input, select, textarea { font: inherit; color: inherit; }
-h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; margin: 0; text-wrap: balance; font-weight: 700; }
+h1, h2, h3 { font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); line-height: 1.05; margin: 0; text-wrap: balance; font-weight: 700; }
 p { margin: 0; text-wrap: pretty; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 /* La sélection (1.14.1) : les titres et l'interface ne se sélectionnent pas, et l'appui long d'un téléphone
@@ -219,7 +290,7 @@ body::before {
   --bcut: 12px;
   position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   min-height: 52px; padding: 0 28px;
-  font-family: var(--font-display); font-weight: 700; font-size: var(--size-ui); letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: var(--size-ui); letter-spacing: 0.08em; text-transform: uppercase;
   text-decoration: none; border: 0; cursor: pointer; isolation: isolate;
   clip-path: polygon(var(--bcut) 0, 100% 0, 100% calc(100% - var(--bcut)), calc(100% - var(--bcut)) 100%, 0 100%, 0 var(--bcut));
   transition: transform 0.4s var(--ease-out), color 0.3s, background-color 0.3s;
@@ -257,11 +328,11 @@ body::before {
 .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--fg); }
 .brand__mark { flex: none; width: 38px; height: 38px; color: var(--gold); transition: transform 0.6s var(--ease-out); }
 .brand:hover .brand__mark { transform: rotate(60deg); }
-.brand__name { font-family: var(--font-signature); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.04em; }
+.brand__name { font-family: var(--font-signature); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.04em; }
 .brand__name b { color: var(--gold); font-weight: 700; }
 .nav__links { display: flex; gap: clamp(12px, 2.4vw, 36px); }
 .nav__links a, .nav__link {
-  position: relative; text-decoration: none; font-family: var(--font-display); font-weight: 600;
+  position: relative; text-decoration: none; font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600;
   font-size: var(--size-ui); letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 2px; color: var(--fg);
 }
 .nav__links a::after, .nav__link::after {
@@ -312,7 +383,7 @@ body::before {
 .mobile-menu.is-open { clip-path: circle(150% at calc(100% - 40px) 36px); visibility: visible; transition: clip-path 0.7s var(--ease-in-out); }
 .mobile-menu ul { display: grid; gap: 8px; }
 .mobile-menu a {
-  display: block; font-family: var(--font-display); font-weight: 700; font-size: clamp(2.4rem, 11vw, 4rem);
+  display: block; font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: clamp(2.4rem, 11vw, 4rem);
   text-transform: uppercase; text-decoration: none; letter-spacing: 0.02em; line-height: 1.1;
   opacity: 0; transform: translateY(30px); transition: opacity 0.5s, transform 0.6s var(--ease-out), color 0.3s;
 }
@@ -340,12 +411,12 @@ body::before {
 .hero__copy { min-width: 0; }
 .hero__status {
   display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px;
-  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label);
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label);
   color: var(--gold); padding: 6px 14px 6px 12px; border: 1px solid var(--line);
 }
 .pulse-dot { width: 8px; height: 8px; background: var(--gold-hi); border-radius: 50%; box-shadow: 0 0 0 0 var(--glow); animation: pulse 2s infinite; }
 .hero__title {
-  font-family: var(--font-signature); font-size: var(--step-4); font-weight: 700; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.88;
+  font-family: var(--font-signature); -webkit-text-fill-color: var(--signature-ink); font-size: var(--step-4); font-weight: 700; letter-spacing: -0.01em; text-transform: uppercase; line-height: 0.88;
   display: grid;
 }
 .hero__line { display: block; animation: slice-in 1.1s var(--ease-out) both; }
@@ -410,7 +481,7 @@ body::before {
 .section__head { max-width: 760px; margin-bottom: clamp(40px, 6vw, 72px); }
 .section__tag {
   display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px;
-  font-family: var(--font-display); font-weight: 600; font-size: var(--size-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; font-size: var(--size-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
 }
 .section__tag::before { content: ""; width: 36px; height: 2px; background: currentColor; }
 .section__title { font-size: var(--step-3); text-transform: uppercase; letter-spacing: 0.01em; }
@@ -467,7 +538,7 @@ body::before {
 .panel__index {
   position: absolute; z-index: -1; top: 0; right: max(var(--gutter), (100% - 1240px) / 2 + var(--gutter));
   translate: 0 -18%; pointer-events: none; user-select: none;
-  font-family: var(--font-signature); font-weight: 700; font-size: clamp(5.5rem, 3rem + 12vw, 15rem); line-height: 0.8; letter-spacing: -0.02em;
+  font-family: var(--font-signature); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: clamp(5.5rem, 3rem + 12vw, 15rem); line-height: 0.8; letter-spacing: -0.02em;
   font-variation-settings: "FRAC" 35; /* un numéro fêlé, immobile : un décor */
   color: transparent;
   background: linear-gradient(180deg, var(--line) 0%, var(--line-soft) 45%, transparent 80%); -webkit-background-clip: text; background-clip: text;
@@ -560,7 +631,7 @@ body::before {
 .is-in .aug__icon path, .is-in .aug__icon circle, html:not(.js) .aug__icon * { stroke-dashoffset: 0; }
 .aug__title { font-size: var(--step-2); text-transform: uppercase; margin-bottom: 12px; }
 .aug__text { color: var(--muted); }
-.aug__meta { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); color: var(--gold); }
+.aug__meta { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); color: var(--gold); }
 
 /* ---------- Carrousel de projets ---------- */
 .section--projects { overflow-x: clip; }
@@ -606,7 +677,7 @@ body::before {
 .slide__body { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px 24px; padding: 22px 28px 26px; }
 .slide__status {
   grid-column: 1 / -1; display: inline-flex; width: fit-content; align-items: center; gap: 8px;
-  font-family: var(--font-display); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: var(--size-label);
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: var(--size-label);
   color: var(--gold);
 }
 .slide__status::before { content: ""; width: 8px; height: 8px; background: currentColor; transform: rotate(45deg); }
@@ -619,7 +690,7 @@ body::before {
 .slide__links { grid-column: 2; grid-row: 2 / 4; align-self: center; display: flex; flex-wrap: wrap; gap: 4px 20px; }
 .slide__link {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); text-decoration: none;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); text-decoration: none;
   padding: 10px 0; border-bottom: 2px solid var(--line);
   transition: border-color 0.3s, gap 0.3s var(--ease-out);
 }
@@ -627,7 +698,7 @@ body::before {
 .slide__more {
   grid-column: 1 / -1; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-block: -10px -4px; padding: 0;
   background: none; border: 0; cursor: pointer; color: var(--gold);
-  font-family: var(--font-display); font-weight: 600; font-size: var(--size-label); letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; font-size: var(--size-label); letter-spacing: 0.08em; text-transform: uppercase;
 }
 .slide__more svg { width: 16px; height: 16px; transition: transform 0.4s var(--ease-out); }
 .slide__more[aria-expanded="true"] svg { transform: rotate(180deg); }
@@ -644,7 +715,7 @@ body::before {
 }
 .swiper__bullet[aria-current="true"]::before { background: var(--gold); transform: rotate(225deg) scale(1.2); }
 .swiper__meter { display: grid; justify-items: center; gap: 6px; }
-.swiper__counter { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.08em; min-width: 72px; text-align: center; }
+.swiper__counter { font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.08em; min-width: 72px; text-align: center; }
 .swiper__counter b { color: var(--gold); font-size: 1.4rem; }
 .swiper__timer { position: absolute; inset: auto 0 -1px 0; height: 2px; background: var(--gold); transform-origin: left; transform: scaleX(0); }
 .swiper__timer.is-running { animation: timer var(--autoplay, 7s) linear forwards; }
@@ -672,7 +743,7 @@ body::before {
 .protocol__step::after { z-index: -1; }
 .protocol__num {
   position: absolute; top: 0; left: 22px; width: 54px; height: 54px; display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 700; font-size: var(--size-name); color: var(--on-gold); background: var(--gold-hi);
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: var(--size-name); color: var(--on-gold); background: var(--gold-hi);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 .protocol__step h3 { font-size: clamp(var(--size-name), 1.05rem + 0.7vw, 1.75rem); overflow-wrap: anywhere; hyphens: auto; text-transform: uppercase; margin-bottom: 10px; }
@@ -683,7 +754,7 @@ body::before {
 .marquee__track { display: flex; width: max-content; gap: 56px; animation: marquee 38s linear infinite; }
 .marquee:hover .marquee__track { animation-play-state: paused; }
 .marquee__track span {
-  font-family: var(--font-display); font-weight: 700; font-size: var(--step-2); text-transform: uppercase; letter-spacing: 0.04em;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: var(--step-2); text-transform: uppercase; letter-spacing: 0.04em;
   display: inline-flex; align-items: center; gap: 56px; white-space: nowrap; color: var(--fg);
 }
 .marquee__track span::after { content: ""; width: 10px; height: 10px; background: var(--gold); transform: rotate(45deg); }
@@ -713,7 +784,7 @@ body::before {
 .cform::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 .field { position: relative; display: grid; gap: 8px; min-width: 0; }
 .field--full, .cform .field:has(textarea), .field--check, .cform > .btn, .cform__actions { grid-column: 1 / -1; }
-.field label, .field__label { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); }
+.field label, .field__label { font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); }
 .field__label small { color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
 .field input:not([type="checkbox"]), .field select, .field textarea {
   width: 100%; min-height: 50px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 0;
@@ -771,7 +842,7 @@ body::before {
 .success__ping { stroke-width: 2; opacity: 0; transform-origin: 75px 75px; animation: ping 1.6s var(--ease-out) 1.2s 2; }
 .success__title { font-size: var(--step-3); text-transform: uppercase; animation: rise 0.8s var(--ease-out) 1.2s both; }
 .success__text { color: var(--muted); max-width: 46ch; animation: rise 0.8s var(--ease-out) 1.35s both; }
-.success__log { display: grid; gap: 4px; text-align: left; font-family: var(--font-display); font-weight: 500; letter-spacing: 0.06em; color: var(--muted); font-size: var(--size-label); }
+.success__log { display: grid; gap: 4px; text-align: left; font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 500; letter-spacing: 0.06em; color: var(--muted); font-size: var(--size-label); }
 .success__log li { opacity: 0; animation: rise 0.5s var(--ease-out) both; }
 .success__log li b { color: var(--gold); font-weight: 700; }
 .success .btn { animation: rise 0.8s var(--ease-out) 2.1s both; }
@@ -919,11 +990,11 @@ span.sound-deck__viz {
 .clients-dust__grains { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sound-deck__id { min-width: 0; }
 .sound-deck__title {
-  font-family: var(--font-display); font-weight: 700; font-size: var(--step-3); line-height: 1; text-transform: uppercase; letter-spacing: 0.04em;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: var(--step-3); line-height: 1; text-transform: uppercase; letter-spacing: 0.04em;
   color: transparent;
   background: linear-gradient(100deg, var(--gold-deep), var(--gold-hi) 45%, var(--gold) 60%, var(--gold-deep)); -webkit-background-clip: text; background-clip: text;
 }
-.sound-deck__facts { margin-top: 8px; color: var(--muted); font-family: var(--font-display); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); }
+.sound-deck__facts { margin-top: 8px; color: var(--muted); font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: var(--size-label); }
 .sound-deck__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
 .sound-deck__play { min-width: 11rem; }
 .sound-deck__play svg { position: relative; z-index: 1; width: 20px; height: 20px; }
@@ -931,7 +1002,7 @@ span.sound-deck__viz {
 .sound-deck__volume svg { flex: none; width: 22px; height: 22px; }
 .sound-deck input[type="range"] { width: 100%; min-width: 0; height: 44px; margin: 0; accent-color: var(--gold); cursor: pointer; }
 .sound-deck__timeline { display: flex; align-items: center; gap: 14px; }
-.sound-deck__clock { flex: none; font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
+.sound-deck__clock { flex: none; font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
 .sound-deck__note, .soundtrack__credits { color: var(--muted); font-size: var(--step--1); }
 .sound-deck__error { color: var(--danger); }
 
@@ -945,7 +1016,7 @@ span.sound-deck__viz {
 /* Le numéro : un hexagone liseré d'or (la plaque en or, son centre noir par-dessus), plein pour la partie en cours */
 .chapter__num {
   position: relative; display: grid; place-items: center; width: 44px; height: 44px; isolation: isolate;
-  font-family: var(--font-display); font-weight: 700; font-size: var(--size-ui); color: var(--gold); background: var(--gold);
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: var(--size-ui); color: var(--gold); background: var(--gold);
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 .chapter__num::before {
@@ -957,7 +1028,7 @@ span.sound-deck__viz {
 .chapter__play {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px;
   border: 1px solid var(--line); background: transparent; color: var(--gold); cursor: pointer;
-  font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.06em;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.06em;
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   transition: background-color 0.3s, color 0.3s;
 }
@@ -1168,7 +1239,7 @@ span.sound-deck__viz {
 /* ---------- Menu des langues (1.10.0) : un <details>, utilisable sans JavaScript ---------- */
 .lang-btn {
   width: auto; min-width: 46px; padding: 0 12px; text-decoration: none;
-  font-family: var(--font-display); font-weight: 700; font-size: var(--size-ui); letter-spacing: 0.1em;
+  font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 700; font-size: var(--size-ui); letter-spacing: 0.1em;
 }
 .lang-menu { position: relative; }
 .lang-menu > summary { display: flex; align-items: center; gap: 6px; list-style: none; user-select: none; }
@@ -1188,7 +1259,7 @@ span.sound-deck__viz {
 .lang-menu:not([open]) .lang-menu__list { display: none; }
 .lang-menu__list a {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 0 12px;
-  text-decoration: none; color: var(--fg); font-family: var(--font-display); font-weight: 600; font-size: var(--size-ui); letter-spacing: 0.04em;
+  text-decoration: none; color: var(--fg); font-family: var(--font-display); -webkit-text-fill-color: var(--signature-ink); font-weight: 600; font-size: var(--size-ui); letter-spacing: 0.04em;
   transition: background-color 0.2s, color 0.2s;
 }
 .lang-menu__list a:hover, .lang-menu__list a:focus-visible { background: var(--surface-2); color: var(--gold); }
@@ -1238,11 +1309,22 @@ html.fonts-staged {
   --font-signature: var(--font-signature-local);
   --font-display: var(--font-signature);
   --font-body: var(--font-body-local);
+  --signature-ink: transparent;
 }
 html.fonts-staged :is(.fonts-on, .mobile-menu) {
   --font-signature: var(--font-signature-web);
   --font-display: var(--font-signature);
   --font-body: var(--font-body-web);
+  --signature-ink: currentColor;
+}
+/* Le texte en Clivage (1.24.0) n'est pas montré dans son repli : il attend la police de son bloc et paraît
+   directement dans la bonne lettre, à sa place (le repli calé lui garde la sienne). Le texte courant, et le plus
+   grand texte de l'écran (le paragraphe du hero), restent visibles dès le premier affichage. Si les polices
+   tardent, fonts-late (posée par le chargeur au bout de 2,5 s) montre le repli. Les textes dorés, dont la
+   couleur est un dégradé découpé par la lettre, cachent leur dégradé. */
+html.fonts-staged.fonts-late { --signature-ink: currentColor; }
+html.fonts-staged:not(.fonts-late) :is(.hero__line--gold, .panel__index, .sound-deck__title):not(.fonts-on, .fonts-on *, .mobile-menu, .mobile-menu *) {
+  background-image: none;
 }
 /* Le texte courant d'un bloc hérite de body, qui garde la pile locale : le bloc la redéclare, sans rien
    imposer aux éléments qui ont leur propre police (spécificité nulle). */
