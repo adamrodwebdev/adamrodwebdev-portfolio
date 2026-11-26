@@ -1,7 +1,7 @@
 {
   "repository": "adamrodwebdev/private-assets",
   "folder": "portfolio",
-  "commit": "b1bfd94e4ee6b8da4bcbbca5e384bc5fadcdfa69",
+  "commit": "ba44c8a391eb0419d397e35ec100eba02a8615bf",
   "files": [
     {
       "path": "assets/grains/emblem-shards.bin",
@@ -49,6 +49,16 @@
       "sha256": "9fad8f613ad67ab91c555ed3593a0d894c27009a1a5bc8c7bec4086a0fe75b15"
     },
     {
+      "path": "fonts/clivage-v3-cyrillic.woff2",
+      "size": 20164,
+      "sha256": "d617c3bd58aa6aff0f378282a0835d4d1d5530ae8314739f4d4bedaa1bc8baa5"
+    },
+    {
+      "path": "fonts/clivage-v3-latin.woff2",
+      "size": 30128,
+      "sha256": "0961be834869878d7cbbf2e45784777ee4b2779fba452081fc734d81b2b0e784"
+    },
+    {
       "path": "js/audio/arrangement.js",
       "size": 5976,
       "sha256": "3a50d399126a6513dfb66c81a1effd81ccfdfbc87a30643b03acb5a1e7a0c309"
@@ -72,6 +82,16 @@
       "path": "js/fx/chladni.js",
       "size": 1289,
       "sha256": "dad07be5a753b20fa867a4698faacbcbe8e15c428eec18f28e274159e7f6bcdc"
+    },
+    {
+      "path": "js/fx/emblem-shards.js",
+      "size": 1848,
+      "sha256": "bdb1615302375b4dc576008286ee56f26b7d84519c487d64c30ac88582153fc3"
+    },
+    {
+      "path": "js/fx/emblem3d.js",
+      "size": 4240,
+      "sha256": "3102a40bda76d078f8cbaaa102720f98176cc4062e4e68d3caa894ec8b5ea60e"
     },
     {
       "path": "js/fx/grain-file.js",

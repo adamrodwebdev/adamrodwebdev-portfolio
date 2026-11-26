@@ -47,7 +47,7 @@ describe('nos composants restent à nous', () => {
   it('le verrou refuse un dépôt, un commit, un chemin ou une taille hors des règles', () => {
     const good = JSON.parse(lockText);
     const variant = (change) => JSON.stringify(change(structuredClone(good)));
-    assert.throws(() => parseLock('x'.repeat(17 * 1024)), RangeError);
+    assert.throws(() => parseLock('x'.repeat(33 * 1024)), RangeError);
     assert.throws(() => parseLock(variant((l) => ({ ...l, repository: 'someone/else' }))), TypeError);
     assert.throws(() => parseLock(variant((l) => ({ ...l, folder: 'lumirift' }))), TypeError, 'le dossier d’un autre projet');
     assert.throws(() => parseLock(variant((l) => { delete l.folder; return l; })), TypeError, 'sans dossier');
