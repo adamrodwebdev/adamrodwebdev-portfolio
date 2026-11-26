@@ -25,8 +25,8 @@ export const projects = [
   { id: 'catapulte-mania', group: 'lab', status: 'live', play: { playgama: 'https://playgama.ai/play/zifjwuawwwnzl2' }, art: 'catapult' },
   { id: 'bastion', group: 'lab', status: 'live', play: { playgama: 'https://playgama.ai/play/4f2wgyuhvp' }, art: 'bastion' },
   // Pas encore sur Playgama : sa fiche y mènera dès que la page du jeu existera.
-  { id: 'ballmania', group: 'lab', status: 'soon', art: 'marbles' },
-  { id: 'lumirift', group: 'lab', status: 'live', url: '/lumirift/', art: 'lumirift' },
+  { id: 'ballmania', group: 'lab', status: 'live', play: { playgama: 'https://playgama.ai/play/iysnewqq64' }, art: 'marbles' },
+  { id: 'lumirift', group: 'lab', status: 'live', play: { playgama: 'https://playgama.ai/play/be4bqnmqcv' }, art: 'lumirift' },
   { id: 'short-reel', group: 'lab', status: 'live', url: 'https://adamrodwebtech.itch.io/short-reel', art: 'reel' },
   { id: 'projet-03', group: 'lab', status: 'dev', url: '', art: 'classified' },
 ];

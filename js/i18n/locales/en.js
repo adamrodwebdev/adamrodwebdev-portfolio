@@ -181,7 +181,7 @@ export default {
       description: 'The marble shooter reinvented: six worlds with their own mechanics (mirrors, magnet, colour alchemy, lava, black hole), Colossus bosses, Arcade modes, spectacular destruction. Custom TypeScript engine, Canvas and WebGL rendering, music and sound generated live, FR / EN / ID, Lighthouse 95+.',
       tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
       staticText: 'The marble shooter reinvented: six worlds, Colossus bosses, Arcade modes and spectacular destruction.',
-      staticSoon: 'Coming soon to Playgama.',
+      staticLink: 'Play Ballmania on Playgama',
     },
     lumirift: {
       title: 'Lumirift',
@@ -189,7 +189,7 @@ export default {
       tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
       link: 'Play Lumirift',
       staticText: 'A falling sand puzzle where the blocks fight back: fourteen modes, a 69-level campaign and four Guardians.',
-      staticLink: 'Play Lumirift free',
+      staticLink: 'Play Lumirift on Playgama',
     },
     'short-reel': {
       title: 'Short Reel',
