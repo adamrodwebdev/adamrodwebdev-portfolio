@@ -3,6 +3,8 @@
  *
  *   npm run build      (après npm ci : Vue, vue-i18n et leur compilateur viennent de node_modules)
  *
+ *  0. copie nos propres composants depuis leur dépôt privé (scripts/private-assets.mjs, 1.23.1) : un fichier
+ *     manquant ou altéré arrête la génération ;
  *  1. copie les fichiers publiés (scripts/site-files.mjs) : rien d'autre du dépôt n'est servi ;
  *  2. copie Vue et vue-i18n à leur version figée (scripts/vendor.mjs) ;
  *  3. précompile les gabarits des composants Vue (scripts/vue-templates.mjs) ;
@@ -16,9 +18,9 @@ import { fileURLToPath } from 'node:url';
 import { copySite } from './site-files.mjs';
 import { copyVendors } from './vendor.mjs';
 import { precompileComponents } from './vue-templates.mjs';
-import { buildPages, ORIGIN } from './build-pages.mjs';
 import { auditPage, auditAsset } from './page-audit.mjs';
 import { contentSecurityPolicy, headersFile } from './headers.mjs';
+import { fetchPrivateAssets } from './private-assets.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'dist');
@@ -28,6 +30,14 @@ async function filesIn(dir) {
   const entries = await readdir(dir, { withFileTypes: true, recursive: true });
   return entries.filter((entry) => entry.isFile()).map((entry) => join(entry.parentPath, entry.name));
 }
+
+const missing = await fetchPrivateAssets(ROOT);
+if (missing.length) {
+  console.error(`✘ composants privés :\n  ${missing.join('\n  ')}`);
+  process.exit(1);
+}
+// Chargée après les composants privés : la génération des pages lit la partition de Sfumato (js/audio/score.js)
+const { buildPages, ORIGIN } = await import('./build-pages.mjs');
 
 await copySite(ROOT, OUT);
 const imports = await copyVendors(ROOT, OUT);
