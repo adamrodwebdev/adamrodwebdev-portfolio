@@ -145,19 +145,52 @@
         </div>
 
         <div class="hero__emblem" aria-hidden="true">
-          <svg viewBox="0 0 400 400" class="emblem">
-            <g class="emblem__ring emblem__ring--outer"><circle cx="200" cy="200" r="186" /></g>
-            <g class="emblem__ring emblem__ring--inner"><circle cx="200" cy="200" r="150" /></g>
-            <path class="emblem__hex" d="M200 62 319.5 131v138L200 338 80.5 269V131Z" pathLength="1"/>
-            <path class="emblem__hex emblem__hex--small" d="M200 104 283 152v96l-83 48-83-48v-96Z" pathLength="1"/>
-            <path class="emblem__a" d="M150 262 200 140l50 122M170 218h60" pathLength="1"/>
-            <g class="emblem__shards">
-              <path d="M200 62 236 82 200 104Z"/>
-              <path d="M319.5 131 283 152 300 120Z"/>
-              <path d="M80.5 269 117 248 100 280Z"/>
-              <path d="M200 338 164 318 200 296Z"/>
-            </g>
-          </svg>
+          <!-- L'emblème (1.20.0) : dessiné une fois (symbole #emblem-art), entier sans JavaScript ou avec le
+               mouvement réduit ; sinon il arrive en éclats (js/fx/emblem3d.js), une fois la page chargée. -->
+          <div class="emblem3d" data-emblem3d>
+            <div class="emblem3d__layer emblem3d__glow"></div>
+            <div class="emblem3d__layer emblem3d__shadow"></div>
+            <svg viewBox="0 0 400 400" class="emblem emblem3d__layer">
+              <g class="emblem__ring emblem__ring--outer"><circle cx="200" cy="200" r="186" /></g>
+              <g class="emblem__ring emblem__ring--inner"><circle cx="200" cy="200" r="168" /></g>
+            </svg>
+            <svg viewBox="0 0 400 400" class="emblem3d__layer emblem3d__whole" data-emblem-whole focusable="false">
+              <defs>
+                <linearGradient id="emblem-rim" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#6b4e0a"/><stop offset="0.32" stop-color="#f5cf6e"/><stop offset="0.52" stop-color="#c9972c"/>
+                  <stop offset="0.7" stop-color="#ffe7a6"/><stop offset="1" stop-color="#8a6512"/>
+                </linearGradient>
+                <linearGradient id="emblem-bevel" x1="1" y1="1" x2="0" y2="0">
+                  <stop offset="0" stop-color="#3d2c06"/><stop offset="0.5" stop-color="#9a7420"/><stop offset="1" stop-color="#e0b04a"/>
+                </linearGradient>
+                <radialGradient id="emblem-face" cx="0.42" cy="0.32" r="0.75">
+                  <stop offset="0" stop-color="#302818"/><stop offset="0.6" stop-color="#14110b"/><stop offset="1" stop-color="#090806"/>
+                </radialGradient>
+                <linearGradient id="emblem-letter" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#fff1c4"/><stop offset="0.35" stop-color="#f5cf6e"/><stop offset="0.75" stop-color="#c9972c"/><stop offset="1" stop-color="#8a6512"/>
+                </linearGradient>
+                <linearGradient id="emblem-sheen" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#fff" stop-opacity="0.2"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+                </linearGradient>
+                <symbol id="emblem-art" viewBox="0 0 400 400">
+                  <polygon points="200,58 322.98,129 322.98,271 200,342 77.02,271 77.02,129" fill="url(#emblem-rim)"/>
+                  <polygon points="200,72 310.85,136 310.85,264 200,328 89.15,264 89.15,136" fill="url(#emblem-bevel)"/>
+                  <polygon points="200,82 302.19,141 302.19,259 200,318 97.81,259 97.81,141" fill="url(#emblem-face)"/>
+                  <polygon points="200,88 297,144 297,256 200,312 103,256 103,144" fill="none" stroke="#e0b04a" stroke-opacity="0.3" stroke-width="1"/>
+                  <path d="M150 262 200 140l50 122M170 218h60" fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="17" stroke-miterlimit="10" transform="translate(3 5)"/>
+                  <path d="M150 262 200 140l50 122M170 218h60" fill="none" stroke="url(#emblem-letter)" stroke-width="17" stroke-miterlimit="10"/>
+                  <path d="M150 262 200 140l50 122" fill="none" stroke="#fff6da" stroke-opacity="0.5" stroke-width="2.2" transform="translate(-1.6 -2)"/>
+                  <polygon points="200,82 302.19,141 302.19,200 97.81,200 97.81,141" fill="url(#emblem-sheen)"/>
+                  <path d="M77.02 129 200 58 322.98 129" fill="none" stroke="#fff3d0" stroke-opacity="0.55" stroke-width="1.5"/>
+                </symbol>
+              </defs>
+              <use href="#emblem-art"/>
+            </svg>
+            <div class="emblem3d__layer emblem3d__shards" data-emblem-shards hidden></div>
+            <div class="emblem3d__layer emblem3d__seams" data-emblem-seams></div>
+            <div class="emblem3d__layer emblem3d__glint" data-emblem-glint><i></i></div>
+            <div class="emblem3d__layer emblem3d__flash" data-emblem-flash></div>
+          </div>
           <div class="hud-panel">
             <p class="hud-panel__row"><span>[[hero.hudLocation]]</span><b>[[hero.hudLocationValue]]</b></p>
             <p class="hud-panel__row"><span>[[hero.hudTime]]</span><b class="hud-clock" data-clock>--:--:--</b></p>

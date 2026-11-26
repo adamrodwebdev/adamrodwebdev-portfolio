@@ -209,6 +209,21 @@ Statut : demandée le 18 novembre 2026 pour la fonderie Ressac (« Oui, crée-la
 - La convention CM2C signée et la licence finale recopiée (commit `dbf34ba` de type-foundry : CM2C, polices achetées sur MyFonts, prix de la boutique pour une famille) : fait le 18 novembre 2026.
 - Le feu vert de l'utilisateur, une fois les contrôles GitHub verts, puis la fusion dans `dev` et la publication.
 
+## 1.20.0 : l'emblème en 3D
+
+Statut : demandée le 23 novembre 2026 (« Is it possible to implement the new 3D effect with the logo from the marketing session in the portefolio ? »), prototype validé le même jour (« Yes, integrate it »), réalisée sur la branche `feat/1.20-emblem-3d` (PR vers `dev`).
+
+### Ce qui a été décidé (23 novembre 2026)
+- **L'effet du film de la marque, refait en code** : le film (rendu Blender) et son son ne vont ni dans ce dépôt public ni dans le site, par leur propre licence ; la vidéo transparente aurait aussi pesé environ 3 Mo, sans transparence sur Safari. Le geste est le même (éclats, éclair, coutures qui se referment, reflet) ; l'éclairage du verre et du métal, non.
+- **L'arrivée seulement**, une fois par chargement, l'emblème à l'écran ; il reste entier ensuite.
+- **À la place de l'emblème dessiné au trait** : les anneaux et le panneau restent ; le panneau passe sous l'emblème.
+
+### Vérifications (« fini » quand)
+- `npm test` passe : tests unitaires du découpage et Playwright (arrivée, mouvement réduit, hors de l'écran, sans JavaScript, aucune violation de CSP).
+- Lighthouse 100 dans les quatre catégories sur l'accueil, pire de trois passages sur mobile, plus l'ordinateur, et comparé à `dev` en passages alternés.
+- Captures sur téléphone et sur ordinateur, en clair et en sombre.
+- Entrée 1.20.0 dans le CHANGELOG, README à jour.
+
 ## 1.15.0 : la signature parle russe
 
 Statut : demandée le 16 novembre 2026 (« Enchaîne sur le cyrillique »), réalisée sur la branche `feat/1.15-cyrillique`, en ligne depuis le 16 novembre 2026 avec la 1.14.1 (versions v1.14.0 et v1.15.0 sur GitHub).

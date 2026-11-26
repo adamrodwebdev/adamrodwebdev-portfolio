@@ -724,6 +724,56 @@ test('bande-son : chaque partie se joue depuis son début, et s’allume', async
   await expect(page.locator('#nav-app .sound-btn')).toHaveAttribute('aria-pressed', 'false');
 });
 
+// ----- L'emblème du hero (1.20.0) -----
+
+test('hero : l’emblème arrive en 42 éclats, puis reste entier, sans calque d’éclat (1.20.0)', async ({ page }) => {
+  await page.goto('/');
+  // Lancé une fois la page chargée, à un moment calme : ses 42 éclats existent le temps de l'arrivée.
+  await page.waitForFunction(() => document.querySelector('[data-emblem3d]').classList.contains('is-arriving'), null, { timeout: 10_000 });
+  expect(await page.locator('.emblem3d__shard').count()).toBe(42);
+  await page.waitForFunction(() => document.querySelector('[data-emblem3d]').classList.contains('is-whole'), null, { timeout: 10_000 });
+  expect(await page.evaluate(() => {
+    const root = document.querySelector('[data-emblem3d]');
+    return {
+      whole: root.classList.contains('is-whole'),
+      opacity: getComputedStyle(root.querySelector('[data-emblem-whole]')).opacity,
+      shards: root.querySelectorAll('.emblem3d__shard').length,
+      seams: root.querySelectorAll('[data-emblem-seams] line').length,
+    };
+  })).toEqual({ whole: true, opacity: '1', shards: 0, seams: 0 });
+});
+
+test('hero : avec le mouvement réduit, l’emblème est entier et immobile, sans éclat (1.20.0)', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  // Entier dès l'affichage, avant que le module de l'effet ne soit demandé.
+  expect(await page.locator('[data-emblem-whole]').evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+  await page.waitForFunction(() => document.querySelector('[data-emblem3d]').classList.contains('is-whole'), null, { timeout: 10_000 });
+  expect(await page.evaluate(() => {
+    const root = document.querySelector('[data-emblem3d]');
+    return {
+      whole: root.classList.contains('is-whole'),
+      opacity: getComputedStyle(root.querySelector('[data-emblem-whole]')).opacity,
+      shards: root.querySelectorAll('.emblem3d__shard').length,
+      seams: root.querySelectorAll('[data-emblem-seams] line').length,
+    };
+  })).toEqual({ whole: true, opacity: '1', shards: 0, seams: 0 });
+});
+
+test('hero : l’emblème hors de l’écran ne se joue pas, il attend entier (1.20.0)', async ({ page }) => {
+  await page.goto('/#contact');
+  await page.waitForFunction(() => document.querySelector('[data-emblem3d]').classList.contains('is-whole'), null, { timeout: 10_000 });
+  expect(await page.evaluate(() => {
+    const root = document.querySelector('[data-emblem3d]');
+    return {
+      whole: root.classList.contains('is-whole'),
+      opacity: getComputedStyle(root.querySelector('[data-emblem-whole]')).opacity,
+      shards: root.querySelectorAll('.emblem3d__shard').length,
+      seams: root.querySelectorAll('[data-emblem-seams] line').length,
+    };
+  })).toEqual({ whole: true, opacity: '1', shards: 0, seams: 0 });
+});
+
 // ----- Offre commerciale (1.17.0) -----
 
 test('offres : trois formules, la maintenance et le pré-audit, aux prix de la langue (1.17.0)', async ({ page }) => {
@@ -804,6 +854,12 @@ test('marque : AdamRodWebTech sur chaque page, plus jamais AdamRodWebDev (1.17.0
 
 test.describe('sans JavaScript', () => {
   test.use({ javaScriptEnabled: false });
+
+  test('l’emblème du hero est entier (1.20.0)', async ({ page }) => {
+    await page.goto('/');
+    expect(await page.locator('[data-emblem-whole]').evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+    await expect(page.locator('.emblem3d__shard')).toHaveCount(0);
+  });
 
   test('offres : les formules, leurs prix et les deux listes de projets restent lisibles (1.17.0)', async ({ page }) => {
     await page.goto('/');

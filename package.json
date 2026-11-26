@@ -9,7 +9,7 @@
     "serve": "node scripts/serve.mjs",
     "assets": "node scripts/private-assets.mjs",
     "assets:lock": "node scripts/private-assets.mjs --lock",
-    "test:unit": "node scripts/private-assets.mjs && node --test tests/unit/offers.unit.mjs tests/unit/licence.unit.mjs tests/unit/grains.unit.mjs tests/unit/private.unit.mjs",
+    "test:unit": "node scripts/private-assets.mjs && node --test tests/unit/offers.unit.mjs tests/unit/licence.unit.mjs tests/unit/emblem.unit.mjs tests/unit/grains.unit.mjs tests/unit/private.unit.mjs",
     "test": "npm run test:unit && node scripts/build.mjs && playwright test"
   },
   "engines": {
