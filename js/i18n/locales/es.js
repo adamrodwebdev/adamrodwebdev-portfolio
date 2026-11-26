@@ -182,7 +182,7 @@ export default {
       description: 'El juego de canicas en cadena, reinventado: seis mundos con mecánicas propias (espejos, imán, alquimia de colores, lava, agujero negro), jefes Colosos, modos Arcade y destrucción espectacular. Motor propio en TypeScript, renderizado Canvas y WebGL, música y sonidos generados en directo, FR / EN / ID, Lighthouse 95+.',
       tags: ['Vue 3', 'TypeScript', 'Canvas / WebGL', 'Web Audio'],
       staticText: 'El juego de canicas en cadena, reinventado: seis mundos, jefes Colosos, modos Arcade y destrucción espectacular.',
-      staticSoon: 'Próximamente en Playgama.',
+      staticLink: 'Jugar a Ballmania en Playgama',
     },
     lumirift: {
       title: 'Lumirift',
@@ -190,7 +190,7 @@ export default {
       tags: ['Vue 3', 'TypeScript', 'Canvas', 'Web Audio'],
       link: 'Jugar a Lumirift',
       staticText: 'Un puzle de arena en el que los bloques contraatacan: catorce modos, una campaña de 69 niveles y cuatro Guardianes.',
-      staticLink: 'Jugar gratis a Lumirift',
+      staticLink: 'Jugar a Lumirift en Playgama',
     },
     'short-reel': {
       title: 'Short Reel',
